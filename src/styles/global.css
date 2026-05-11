@@ -853,14 +853,19 @@
   }
 
   /* Mobile-only: swap the About backdrop to the portrait Reneonix-sign photo.
-     Two-stop gradient keeps the headline readable up top while letting the
-     lime "Reneonix" sign glow through the middle of the image. */
+     Lighter gradient so the lime "Reneonix" sign on the wall is clearly visible
+     while the headline up top still has enough contrast to read. */
   @media (max-width: 720px) {
     #about {
       background-image:
-        linear-gradient(180deg, rgba(7,8,10,.88) 0%, rgba(7,8,10,.55) 40%, rgba(7,8,10,.20) 75%, rgba(7,8,10,.50) 100%),
+        linear-gradient(180deg,
+          rgba(7,8,10,.78) 0%,
+          rgba(7,8,10,.55) 22%,
+          rgba(7,8,10,.05) 45%,
+          rgba(7,8,10,.05) 65%,
+          rgba(7,8,10,.35) 100%),
         url('/reneonix_mobile_about_bg.png') !important;
-      background-position: center top !important;
+      background-position: center center !important;
       background-size: cover !important;
     }
   }
