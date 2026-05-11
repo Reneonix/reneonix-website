@@ -1,35 +1,66 @@
+import { useEffect, useRef } from 'react';
 import ShinyText from './ShinyText.jsx';
-import LiquidEther from './LiquidEther.jsx';
 
 export default function Hero() {
+  /* Custom loop: play through, hold the LAST frame for 2 seconds, then
+     restart. We don't use the native `loop` attribute because we want the
+     freeze. */
+  const videoRef = useRef(null);
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    let timeoutId = null;
+    const HOLD_MS = 2000; // freeze the last frame for 2 seconds
+
+    const onEnded = () => {
+      // Pin to the very end so the freeze frame is the final rendered frame.
+      try {
+        v.pause();
+        v.currentTime = Math.max(0, v.duration - 0.05);
+      } catch {}
+      timeoutId = window.setTimeout(() => {
+        try {
+          v.currentTime = 0;
+          v.play().catch(() => {});
+        } catch {}
+      }, HOLD_MS);
+    };
+
+    v.addEventListener('ended', onEnded);
+    // Some browsers don't fire `ended` reliably for muted autoplay; backup via timeupdate.
+    const onTimeUpdate = () => {
+      if (!v.duration || v.paused) return;
+      if (v.currentTime >= v.duration - 0.05) {
+        v.removeEventListener('timeupdate', onTimeUpdate);
+        onEnded();
+        v.addEventListener('timeupdate', onTimeUpdate);
+      }
+    };
+    v.addEventListener('timeupdate', onTimeUpdate);
+
+    return () => {
+      v.removeEventListener('ended', onEnded);
+      v.removeEventListener('timeupdate', onTimeUpdate);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, []);
+
   return (
     <section className="hero" id="home">
-      {/* Interactive fluid simulation background (replaces the previous video).
-          Inline style.position is required — LiquidEther's internal JS reads
-          container.style.position and falls back to "relative" when it's empty,
-          which would break our absolute layering. */}
-      <LiquidEther
-        className="hero__fluid"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: -3,
-          backgroundColor: '#04060a',
-          pointerEvents: 'auto',
-        }}
-        colors={['#B2DE3A', '#C4E84A', '#9CC130']}
-        mouseForce={22}
-        cursorSize={120}
-        resolution={0.5}
-        autoDemo
-        autoSpeed={0.6}
-        autoIntensity={2.4}
-        takeoverDuration={0.3}
-        autoResumeDelay={2000}
-        autoRampDuration={0.8}
-      />
+      {/* Hero background video — plays once, holds the last frame for 2 seconds,
+          then restarts. Muted is required for autoplay on iOS/Safari. */}
+      <video
+        ref={videoRef}
+        className="hero__video"
+        autoPlay
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        data-parallax="0.18"
+      >
+        <source src="/reneonix-hero.mp4" type="video/mp4" />
+      </video>
 
       {/* Decorative overlays — kept so the headline still has the same depth treatment */}
       <div className="hero__overlay" aria-hidden="true" />
