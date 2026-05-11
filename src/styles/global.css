@@ -313,6 +313,12 @@
     filter: contrast(1.04) saturate(1.04);
   }
 
+  /* LiquidEther fluid background — its inline style handles position/inset.
+     We just make sure the hero copy sits above the canvas and is interactive. */
+  .hero__fluid canvas { width: 100% !important; height: 100% !important; }
+  .hero .container { position: relative; z-index: 1; }
+  .hero__copy { pointer-events: auto; }
+
   @keyframes heroKenBurns {
     0%   { transform: scale(1) translate3d(-0.4%, -0.2%, 0); }
     50%  { transform: scale(1) translate3d( 0.3%,  0.2%, 0); }

@@ -1,23 +1,37 @@
 import ShinyText from './ShinyText.jsx';
+import LiquidEther from './LiquidEther.jsx';
 
 export default function Hero() {
   return (
     <section className="hero" id="home">
-      {/* Animated photographic background */}
-      <video
-        className="hero__video"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        aria-hidden="true"
-        data-parallax="0.18"
-      >
-        <source src="/hero-bg.mp4" type="video/mp4" />
-      </video>
+      {/* Interactive fluid simulation background (replaces the previous video).
+          Inline style.position is required — LiquidEther's internal JS reads
+          container.style.position and falls back to "relative" when it's empty,
+          which would break our absolute layering. */}
+      <LiquidEther
+        className="hero__fluid"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: -3,
+          backgroundColor: '#04060a',
+          pointerEvents: 'auto',
+        }}
+        colors={['#B2DE3A', '#C4E84A', '#9CC130']}
+        mouseForce={22}
+        cursorSize={120}
+        resolution={0.5}
+        autoDemo
+        autoSpeed={0.6}
+        autoIntensity={2.4}
+        takeoverDuration={0.3}
+        autoResumeDelay={2000}
+        autoRampDuration={0.8}
+      />
 
-      {/* Decorative overlays */}
+      {/* Decorative overlays — kept so the headline still has the same depth treatment */}
       <div className="hero__overlay" aria-hidden="true" />
       <div className="hero__glow" aria-hidden="true" />
       <div className="hero__scanlines" aria-hidden="true" />

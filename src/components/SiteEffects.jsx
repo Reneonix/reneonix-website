@@ -87,7 +87,10 @@ export default function SiteEffects() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('is-in');
+            // The original CSS uses `.reveal.in` to fade in, while section-level
+            // selectors (.brands.is-in, .zz-row.is-in, .about__values .value.is-in)
+            // use `.is-in`. Add BOTH so every existing CSS rule fires regardless.
+            entry.target.classList.add('in', 'is-in');
             io.unobserve(entry.target);
           }
         });
