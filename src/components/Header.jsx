@@ -71,7 +71,7 @@ export default function Header() {
         </a>
 
         <nav className="nav__menu" id="navMenu">
-          <Dropdown label="Solutions" items={SOLUTIONS} />
+          <Dropdown label="SolutionS" items={SOLUTIONS} />
           <Dropdown label="Technology" items={TECH} />
           <Dropdown label="Industries" items={INDUSTRIES} />
           <Dropdown label="Resources" items={RESOURCES} />
