@@ -551,7 +551,10 @@
 
   /* ---------- OUR SOLUTION (zig-zag, glassmorphism, scroll-reveal) ---------- */
   #solutions {
-    overflow: hidden;
+    /* overflow: hidden was clipping the ScrollStack card transforms — keep
+       overflow visible so cards can extend past the section's bounding box
+       during the pin/scale animation. */
+    overflow: visible;
     background: #ffffff !important;
     color: var(--on-light);
   }
@@ -954,6 +957,21 @@
 
   /* ---------- TESTIMONIALS ---------- */
   .testimonials__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+  /* MagicRings WebGL backdrop — sits behind the testimonial cards.
+     pointer-events: none so cards stay interactive; the rings still react to
+     mouse position via their own internal listeners on the section. */
+  #testimonials { position: relative; overflow: hidden; isolation: isolate; }
+  .testimonials__rings {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    /* Slight radial mask so the rings fade out near the section edges */
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 80%);
+    mask-image: radial-gradient(ellipse at center, #000 45%, transparent 80%);
+  }
+  #testimonials .container { position: relative; z-index: 1; }
   .quote {
     background: rgba(255,255,255,.04); border: 1px solid var(--line-dark);
     border-radius: var(--r-lg); padding: 32px; position: relative;
@@ -2098,3 +2116,125 @@
     .partner-tile:hover img { filter: none; transform: none; }
   }
 
+
+  /* ============================================================
+     STICKY-STACK STYLING for Solutions (Hardware / Software / Material Science)
+     Each card pins at the top of the viewport while the next card scrolls up
+     and FULLY covers it. Pure CSS — no JavaScript involved.
+     ============================================================ */
+  .solutions-stack {
+    height: auto !important;
+    overflow: visible !important;
+    /* Break out of .container's horizontal padding for wider cards. */
+    width: calc(100vw - 48px);
+    max-width: 1480px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .solutions-stack .scroll-stack-inner {
+    /* Premium 3-card runway:
+       — Top: 8vh so Card 1 isn't pressed against the section heading
+       — Bottom: 50vh so Card 3 has room to fully settle + sit on screen alone
+         before the next section appears. */
+    padding: 8vh 0 50vh !important;
+    min-height: 0 !important;
+  }
+  /* Card sizing — fits on screen like the demo but tall enough to hold all
+     our content (longest card = Software with 4 features + 3 stats + CTA). */
+  .scroll-stack-card.solutions-stack__card {
+    background: var(--card-bg, #ffffff);
+    border: 1px solid rgba(13,14,12,.08);
+    border-radius: 32px;
+    box-shadow:
+      0 30px 60px -25px rgba(13,14,12,.18),
+      0 18px 32px -16px rgba(178,222,58,.12);
+    padding: clamp(36px, 4vw, 64px) !important;
+    min-height: 78vh;                 /* fits on screen, similar to demo */
+    height: auto !important;          /* but grows to fit content (no cut-off) */
+    max-height: none;                 /* allow tallest card to size naturally */
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    overflow: visible;                /* don't clip content like CTAs/stats */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* Hardware-acceleration hints to reduce flicker during Lenis-driven scroll */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    will-change: transform;
+    contain: layout style paint;      /* isolates layout work to this card */
+  }
+  /* Inner zigzag — clean spacing inside the card */
+  .scroll-stack-card.solutions-stack__card .zz-row {
+    margin: 0 !important;
+  }
+  /* Don't force an aspect ratio on the media panel — let images display fully
+     without cropping. The default 16/9 from the original zz-row__media-inner CSS
+     takes care of consistent panel sizing. */
+  .scroll-stack-card.solutions-stack__card .zz-row__media-inner > img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+  }
+  .solutions-stack__card {
+    background: var(--card-bg, #ffffff);
+    border: 1px solid rgba(13,14,12,.08);
+    border-radius: 32px;
+    box-shadow:
+      0 30px 60px -25px rgba(13,14,12,.18),
+      0 18px 32px -16px rgba(178,222,58,.12);
+    padding: clamp(36px, 4vw, 72px);
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  /* Make the eyebrow row that sits at the top of each card visually weight-y
+     so it reads as a "card header" when only the lip is visible. */
+  .solutions-stack__card .zz-row__step {
+    margin-bottom: 18px !important;
+  }
+  /* Force inner card content always-visible inside ScrollStack cards.
+     The ScrollStack already controls per-card visibility via transforms; the
+     legacy per-row IntersectionObserver-driven reveal animations conflict
+     (transforms prevent the threshold from firing) so content gets stuck at
+     opacity: 0. Skip the reveal animation entirely for stacked cards. */
+  .solutions-stack__card .zz-row,
+  .solutions-stack__card .zz-row > *,
+  .solutions-stack__card .zz-row__copy > *,
+  .solutions-stack__card .zz-row__media,
+  .solutions-stack__card .zz-row__media-inner,
+  .solutions-stack__card .zz-iconfeats li,
+  .solutions-stack__card .sw-flist li,
+  .solutions-stack__card .ms-stat,
+  .solutions-stack__card .zz-row__cta-btn,
+  .solutions-stack__card .zz-row__cta {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  /* Software row sits on a slightly tinted lime card for contrast */
+  .solutions-stack__card:has(.zz-row--sw) {
+    background: linear-gradient(160deg, #ffffff 0%, #f6fae7 100%);
+  }
+  /* Material Science card — white background to match the other two */
+  .solutions-stack__card:has(.zz-row--ms) {
+    background: linear-gradient(160deg, #ffffff 0%, #fafbf7 100%);
+    border-color: rgba(13,14,12,.08);
+    box-shadow:
+      0 30px 60px -25px rgba(13,14,12,.18),
+      0 18px 32px -16px rgba(178,222,58,.12);
+  }
+  /* Inside the stacked cards, neutralize the zigzag row's own background/padding */
+  .solutions-stack__card .zz-row { padding: 0 !important; }
+  @media (max-width: 960px) {
+    .solutions-stack__card {
+      padding: 24px;
+      border-radius: 24px;
+    }
+  }

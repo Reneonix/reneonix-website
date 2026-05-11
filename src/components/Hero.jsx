@@ -57,7 +57,6 @@ export default function Hero() {
         playsInline
         preload="auto"
         aria-hidden="true"
-        data-parallax="0.18"
       >
         <source src="/reneonix-hero.mp4" type="video/mp4" />
       </video>

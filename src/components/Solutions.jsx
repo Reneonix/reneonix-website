@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   UsersRound,
 } from 'lucide-react';
+import ScrollStack, { ScrollStackItem } from './ScrollStack.jsx';
 
 const Arrow = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -81,7 +82,21 @@ export default function Solutions() {
           </p>
         </div>
 
-        <div className="solutions-zz">
+        <ScrollStack
+          className="solutions-stack"
+          useWindowScroll
+          /* Mirrors the React Bits demo behavior:
+             - Cards sized to fit on screen (≈ 75vh, constrained in CSS)
+             - Default-ish stacking values give the deck-of-cards feel
+             - Each card scales from 85% → 100% as it becomes the active one */
+          itemDistance={100}
+          itemStackDistance={30}
+          stackPosition="20%"
+          scaleEndPosition="10%"
+          baseScale={0.85}
+          itemScale={0.03}
+        >
+        <ScrollStackItem itemClassName="solutions-stack__card">
           {/* 1. HARDWARE LAYER */}
           <ZzRow>
             <div className="zz-row__copy">
@@ -112,7 +127,9 @@ export default function Solutions() {
               </div>
             </div>
           </ZzRow>
+        </ScrollStackItem>
 
+        <ScrollStackItem itemClassName="solutions-stack__card">
           {/* 2. SOFTWARE LAYER */}
           <ZzRow className="zz-row--reverse zz-row--sw">
             <div className="zz-row__media">
@@ -166,7 +183,9 @@ export default function Solutions() {
               </a>
             </div>
           </ZzRow>
+        </ScrollStackItem>
 
+        <ScrollStackItem itemClassName="solutions-stack__card">
           {/* 3. MATERIAL SCIENCE */}
           <ZzRow className="zz-row--ms">
             <div className="zz-row__copy">
@@ -201,7 +220,8 @@ export default function Solutions() {
               </div>
             </div>
           </ZzRow>
-        </div>
+        </ScrollStackItem>
+        </ScrollStack>
       </div>
     </section>
   );

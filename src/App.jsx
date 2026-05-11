@@ -1,7 +1,8 @@
 import Header from './components/Header.jsx';
 import Hero from './components/Hero.jsx';
 import Brands from './components/Brands.jsx';
-import Solutions from './components/Solutions.jsx';
+import Solutions from './components/SolutionsNew.jsx';
+// import Solutions from './components/Solutions.jsx';
 import About from './components/About.jsx';
 import Investors from './components/Investors.jsx';
 import Testimonials from './components/Testimonials.jsx';

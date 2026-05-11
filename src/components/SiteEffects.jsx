@@ -41,7 +41,7 @@ export default function SiteEffects() {
     toggle?.addEventListener('click', onToggle);
     navLinks.forEach((a) => a.addEventListener('click', onNavLinkClick));
 
-    /* ---------- Parallax ---------- */
+    /* ---------- Parallax (kept for any element that still uses [data-parallax]) ---------- */
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const parallaxNodes = Array.from(document.querySelectorAll('[data-parallax]'));
     let ticking = false;
@@ -57,12 +57,12 @@ export default function SiteEffects() {
       ticking = false;
     }
     function onScroll() {
-      if (!ticking && !reduceMotion) {
+      if (!ticking && !reduceMotion && parallaxNodes.length > 0) {
         window.requestAnimationFrame(applyParallax);
         ticking = true;
       }
     }
-    if (!reduceMotion) {
+    if (!reduceMotion && parallaxNodes.length > 0) {
       window.addEventListener('scroll', onScroll, { passive: true });
       applyParallax();
     }
@@ -99,6 +99,68 @@ export default function SiteEffects() {
     );
     document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 
+    /* ---------- Lime cursor glow ---------- */
+    // Skip on touch devices and reduced-motion users.
+    const isFinePointer =
+      typeof window.matchMedia === 'function' && window.matchMedia('(pointer: fine)').matches;
+    let glow = null;
+    let glowRaf = null;
+    let onCursorMove = null;
+    let onCursorLeave = null;
+    let onCursorEnter = null;
+    let onCursorDown = null;
+    let onCursorUp = null;
+    const hoverEnterFns = [];
+    const hoverLeaveFns = [];
+    if (isFinePointer && !reduceMotion) {
+      glow = document.createElement('div');
+      glow.className = 'cursor-glow';
+      document.body.appendChild(glow);
+
+      let mx = window.innerWidth / 2;
+      let my = window.innerHeight / 2;
+      let gx = mx;
+      let gy = my;
+
+      onCursorMove = (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+        if (!document.body.classList.contains('cursor-ready')) {
+          document.body.classList.add('cursor-ready');
+        }
+      };
+      onCursorLeave = () => document.body.classList.remove('cursor-ready');
+      onCursorEnter = () => document.body.classList.add('cursor-ready');
+      onCursorDown = () => document.body.classList.add('cursor-down');
+      onCursorUp = () => document.body.classList.remove('cursor-down');
+
+      window.addEventListener('mousemove', onCursorMove, { passive: true });
+      document.addEventListener('mouseleave', onCursorLeave);
+      document.addEventListener('mouseenter', onCursorEnter);
+      window.addEventListener('mousedown', onCursorDown);
+      window.addEventListener('mouseup', onCursorUp);
+
+      const interactiveSel =
+        'a, button, [role="button"], .has-dropdown > button, .nav__toggle, .marquee__item, .marquee__logo, .marquee__pill, .partner-tile, .highlight, .feature-card, .quote, .solution-slide';
+      document.querySelectorAll(interactiveSel).forEach((el) => {
+        const enter = () => document.body.classList.add('cursor-hover');
+        const leave = () => document.body.classList.remove('cursor-hover');
+        el.addEventListener('mouseenter', enter);
+        el.addEventListener('mouseleave', leave);
+        hoverEnterFns.push([el, enter]);
+        hoverLeaveFns.push([el, leave]);
+      });
+
+      const tick = () => {
+        // Smooth trailing glow — 0.18 ease per frame
+        gx += (mx - gx) * 0.18;
+        gy += (my - gy) * 0.18;
+        glow.style.transform = `translate3d(${gx}px, ${gy}px, 0) translate(-50%, -50%)`;
+        glowRaf = requestAnimationFrame(tick);
+      };
+      glowRaf = requestAnimationFrame(tick);
+    }
+
     /* ---------- Cleanup ---------- */
     return () => {
       handlers.forEach(([btn, h]) => btn.removeEventListener('click', h));
@@ -107,6 +169,19 @@ export default function SiteEffects() {
       navLinks.forEach((a) => a.removeEventListener('click', onNavLinkClick));
       window.removeEventListener('scroll', onScroll);
       io.disconnect();
+
+      if (glow) {
+        if (glowRaf) cancelAnimationFrame(glowRaf);
+        if (onCursorMove) window.removeEventListener('mousemove', onCursorMove);
+        if (onCursorLeave) document.removeEventListener('mouseleave', onCursorLeave);
+        if (onCursorEnter) document.removeEventListener('mouseenter', onCursorEnter);
+        if (onCursorDown) window.removeEventListener('mousedown', onCursorDown);
+        if (onCursorUp) window.removeEventListener('mouseup', onCursorUp);
+        hoverEnterFns.forEach(([el, fn]) => el.removeEventListener('mouseenter', fn));
+        hoverLeaveFns.forEach(([el, fn]) => el.removeEventListener('mouseleave', fn));
+        if (glow.parentNode) glow.parentNode.removeChild(glow);
+        document.body.classList.remove('cursor-ready', 'cursor-hover', 'cursor-down');
+      }
     };
   }, []);
 
