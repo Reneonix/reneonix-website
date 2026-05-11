@@ -1,0 +1,7 @@
+.shiny-text {
+  /* inline (not inline-block) so the span stays on the same baseline as the
+     surrounding text — prevents extra vertical gaps in headlines. */
+  display: inline;
+  line-height: inherit;
+  vertical-align: baseline;
+}
