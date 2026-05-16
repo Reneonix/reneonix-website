@@ -1,0 +1,291 @@
+/* =======================================================
+   Careers — animation & effect layer
+   Loads after global.css; only adds effects, never
+   overrides layout rules.
+   ======================================================= */
+
+/* ─── Keyframes ─────────────────────────────────────────── */
+
+/* Pulsing lime border-glow on the hero image frame */
+@keyframes c-frame-glow {
+  0%, 100% {
+    box-shadow:
+      0 30px 60px rgba(0,0,0,.45),
+      inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  50% {
+    box-shadow:
+      0 30px 60px rgba(0,0,0,.45),
+      inset 0 1px 0 rgba(255,255,255,.06),
+      0 0 0 1px rgba(178,222,58,.16),
+      0 0 48px rgba(178,222,58,.13);
+  }
+}
+
+/* Shimmer light that sweeps across the hero image */
+@keyframes c-scan-image {
+  0%   { transform: translateX(-200%); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translateX(400%); opacity: 0; }
+}
+
+/* Ring ripple on growth-card icon hover */
+@keyframes c-icon-ring {
+  0%   { box-shadow: 0 0 0 0   rgba(178,222,58,.55); }
+  100% { box-shadow: 0 0 0 20px rgba(178,222,58, 0); }
+}
+
+/* Staggered counter pop for role cards */
+@keyframes c-badge-pop {
+  0%   { transform: scale(0.4); opacity: 0; }
+  70%  { transform: scale(1.15); }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* ─── Generic scroll-reveal ─────────────────────────────── */
+.c-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity   0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.c-reveal.c-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Hero copy: staggered entrance ─────────────────────── */
+.careers-hero__copy > * {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity   0.72s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.careers-hero__copy.c-hero-in > *:nth-child(1) {
+  opacity: 1; transform: none; transition-delay: 0.06s;
+}
+.careers-hero__copy.c-hero-in > *:nth-child(2) {
+  opacity: 1; transform: none; transition-delay: 0.20s;
+}
+.careers-hero__copy.c-hero-in > *:nth-child(3) {
+  opacity: 1; transform: none; transition-delay: 0.34s;
+}
+.careers-hero__copy.c-hero-in > *:nth-child(4) {
+  opacity: 1; transform: none; transition-delay: 0.48s;
+}
+
+/* ─── Hero image frame: entrance + pulsing lime glow ─────── */
+.careers-hero__frame {
+  opacity: 0;
+  transform: scale(0.97) translateY(20px);
+  transition:
+    opacity   0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.28s,
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.28s;
+}
+.careers-hero__frame.c-frame-in {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  animation: c-frame-glow 4.5s ease-in-out 1.8s infinite;
+}
+
+/* Scan-line shimmer sweeping over the hero image */
+.careers-hero__frame::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 45%; height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.04) 30%,
+    rgba(255,255,255,.10) 50%,
+    rgba(255,255,255,.04) 70%,
+    transparent 100%
+  );
+  z-index: 3;
+  pointer-events: none;
+  animation: c-scan-image 7s cubic-bezier(0.45, 0, 0.55, 1) 2.6s infinite;
+}
+
+/* ─── Role cards ────────────────────────────────────────── */
+.role-card {
+  position: relative; /* needed for ::before top-bar */
+}
+
+/* Lime gradient bar that sweeps in from the left on hover */
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--lime-deep) 0%, var(--lime-bright) 100%);
+  border-radius: var(--r-md) var(--r-md) 0 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.role-card:hover::before { transform: scaleX(1); }
+
+/* Lime-tinted lift shadow */
+.role-card:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 22px 44px rgba(0,0,0,.13),
+    0 0 0 1px rgba(156,193,48,.22);
+}
+
+/* Ordinal badge (01–04) in the top-right, revealed via JS class */
+.roles-grid { counter-reset: role-counter; }
+.role-card::after {
+  counter-increment: role-counter;
+  content: counter(role-counter, decimal-leading-zero);
+  position: absolute;
+  top: 18px; right: 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: .78rem; font-weight: 800;
+  color: rgba(0,0,0,.10);
+  line-height: 1;
+  letter-spacing: .04em;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.4);
+}
+.role-card.c-in::after {
+  animation: c-badge-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s forwards;
+}
+
+/* ─── Growth cards ──────────────────────────────────────── */
+.growth-card__icon {
+  transition:
+    background    0.3s ease,
+    color         0.3s ease,
+    border-color  0.3s ease,
+    transform     0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.growth-card:hover .growth-card__icon {
+  background:   rgba(178,222,58,.22);
+  color:        var(--lime-deep);
+  border-color: rgba(178,222,58,.48);
+  transform:    scale(1.14) rotate(-6deg);
+  animation:    c-icon-ring 0.55s ease-out forwards;
+}
+.growth-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 24px 50px rgba(0,0,0,.13),
+    0 0 0 1.5px rgba(156,193,48,.24),
+    0 8px 28px rgba(178,222,58,.07);
+}
+
+/* ─── Life features ─────────────────────────────────────── */
+.life-feature {
+  transition: transform 0.22s ease, background 0.22s ease;
+  border-radius: var(--r-sm);
+  cursor: default;
+}
+.life-feature:hover {
+  transform: translateX(5px);
+  background: rgba(255,255,255,.06);
+}
+.life-feature__icon {
+  transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.life-feature:hover .life-feature__icon {
+  transform: scale(1.2) rotate(-8deg);
+}
+
+/* ─── CTA box ───────────────────────────────────────────── */
+.careers-cta {
+  transition:
+    transform    0.3s ease,
+    border-color 0.3s ease,
+    box-shadow   0.3s ease;
+}
+.careers-cta:hover {
+  transform: translateY(-3px);
+  border-color: rgba(178,222,58,.24);
+  box-shadow:
+    0 32px 64px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 0 0 1px rgba(178,222,58,.08);
+}
+.careers-cta__icon {
+  transition:
+    background   0.3s ease,
+    border-color 0.3s ease,
+    color        0.3s ease,
+    transform    0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.careers-cta:hover .careers-cta__icon {
+  background:   rgba(178,222,58,.12);
+  border-color: rgba(178,222,58,.34);
+  color:        var(--lime);
+  transform:    scale(1.1) rotate(-10deg);
+}
+
+/* ─── Life at Reneonix marquee ──────────────────────────── */
+.life-marquee {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+  width: 100%;
+  padding: 8px 0;
+  margin-top: 32px;
+}
+
+.life-marquee__track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: life-marquee 38s linear infinite;
+  will-change: transform;
+}
+
+.life-marquee:hover .life-marquee__track {
+  animation-play-state: paused;
+}
+
+.life-marquee__card {
+  flex: 0 0 auto;
+  width: clamp(280px, 30vw, 420px);
+  aspect-ratio: 4 / 3;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--panel-2, #14171A);
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 20px 48px rgba(0,0,0,.45);
+}
+
+.life-marquee__card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+@keyframes life-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* ─── Reduced-motion safety net ─────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .careers-hero__copy > *,
+  .careers-hero__frame,
+  .c-reveal {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+  .careers-hero__copy.c-hero-in > * { transition-delay: 0s; }
+  .careers-hero__frame.c-frame-in  { animation: none; }
+  .careers-hero__frame::after       { animation: none; }
+  .role-card.c-in::after            { animation: none; opacity: 1; transform: none; }
+  .life-marquee__track              { animation: none; }
+  .life-marquee                     { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}

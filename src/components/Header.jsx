@@ -1,11 +1,6 @@
 import { useState } from 'react';
+import './Header.css';
 
-const SOLUTIONS = [
-  ['Hardware Layer', 'Modular systems for collection, sorting, and processing', '#solutions'],
-  ['Software Layer', 'Material data systems for traceability and compliance', '#solutions'],
-  ['Material Science', 'Testing, formulation, and product development', '#solutions'],
-  ['Integrated Stack', 'End-to-end material circularity infrastructure', '#solutions'],
-];
 const TECH = [
   ['AI Vision & Sorting', 'Computer vision for material identification', '#'],
   ['Sensor Networks', 'Live process monitoring and quality control', '#'],
@@ -26,12 +21,6 @@ const RESOURCES = [
   ['Whitepapers', null, '#'],
   ['Press & Media', null, '#highlights'],
   ['FAQ', null, '#'],
-];
-const COMPANY = [
-  ['About Reneonix', 'Our mission, story, and material circularity vision', '#about'],
-  ['Investors & Partners', 'The leaders backing our long-term build', '#investors'],
-  ['Careers', 'Join the team building circularity infrastructure', '#'],
-  ['Contact', 'Talk to sales, partnerships, or press', '#contact'],
 ];
 
 function Chevron() {
@@ -61,29 +50,82 @@ function Dropdown({ label, items }) {
   );
 }
 
-export default function Header() {
-  const [, setOpen] = useState(false);
+/**
+ * Smooth-scroll to an in-page section without changing the URL hash.
+ */
+function scrollToId(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+export default function Header({ route = 'home', animate = true }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const isCareers = route === 'careers';
+  const isSolutions = route === 'solutions';
+
+  const close = () => setMobileOpen(false);
+  const toggle = () => setMobileOpen((o) => !o);
+
   return (
-    <header className="nav">
+    <header className={`nav ${animate ? '' : 'nav--no-entrance'}`.trim()}>
       <div className="container nav__inner">
-        <a href="#home" className="brand" aria-label="Reneonix home">
+        <a href="#home" className="brand" aria-label="Reneonix home" onClick={close}>
           <img src="/reneonix-logo.svg" alt="Reneonix" className="brand__img" />
         </a>
 
-        <nav className="nav__menu" id="navMenu">
-          <Dropdown label="Solutions" items={SOLUTIONS} />
-          <Dropdown label="Technology" items={TECH} />
-          <Dropdown label="Industries" items={INDUSTRIES} />
-          <Dropdown label="Resources" items={RESOURCES} />
-          <Dropdown label="Company" items={COMPANY} />
+        <nav className={`nav__menu${mobileOpen ? ' open' : ''}`} id="navMenu">
+          {isCareers ? (
+            <>
+              <a className="nav__link" href="#home" onClick={close}>Home</a>
+              <a className="nav__link nav__link--active" href="#careers" aria-current="page" onClick={close}>
+                Careers
+              </a>
+              <a
+                className="nav__link"
+                href="#growth"
+                onClick={(e) => { e.preventDefault(); scrollToId('growth'); close(); }}
+              >
+                Why Reneonix
+              </a>
+              <a className="nav__link" href="#solutions" onClick={close}>Solutions</a>
+            </>
+          ) : isSolutions ? (
+            <>
+              <a className="nav__link" href="#home" onClick={close}>Home</a>
+              <a className="nav__link nav__link--active" href="#solutions" aria-current="page" onClick={close}>
+                Solutions
+              </a>
+              <a className="nav__link" href="#careers" onClick={close}>Careers</a>
+              <a
+                className="nav__link"
+                href="#careers"
+                onClick={(e) => {
+                  e.preventDefault();
+                  sessionStorage.setItem('reneonix-scroll-to', 'life-at-reneonix');
+                  window.location.hash = '#careers';
+                  close();
+                }}
+              >Life at Reneonix</a>
+            </>
+          ) : (
+            <>
+              <a className="nav__link" href="#solutions" onClick={close}>Solutions</a>
+              <Dropdown label="Technology" items={TECH} />
+              <Dropdown label="Industries" items={INDUSTRIES} />
+              <Dropdown label="Resources" items={RESOURCES} />
+              <a className="nav__link" href="#careers" onClick={close}>Careers</a>
+            </>
+          )}
         </nav>
 
         <div className="nav__cta">
           <button
-            className="nav__toggle"
+            className={`nav__toggle${mobileOpen ? ' is-open' : ''}`}
             id="navToggle"
-            aria-label="Open menu"
-            onClick={() => setOpen((o) => !o)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+            onClick={toggle}
           >
             <span /><span /><span />
           </button>

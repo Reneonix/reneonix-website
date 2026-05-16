@@ -1,0 +1,106 @@
+/* ============================================================
+   Header — staggered entrance animation
+   Slides the logo + each nav item in from the right with a
+   subtle delay between siblings. Same motion language is used
+   for dropdown items on open/close.
+   ============================================================ */
+
+@keyframes nav-slide-in {
+  from {
+    opacity: 0;
+    transform: translate3d(22px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.brand,
+.nav__menu > *,
+.nav__cta > * {
+  animation: nav-slide-in 0.5s cubic-bezier(0.22, 0.85, 0.2, 1) both;
+  /* `both` keeps the from-state applied during the delay so items don't flash */
+}
+
+/* Logo first */
+.brand {
+  animation-delay: 0.05s;
+  animation-duration: 0.55s;
+}
+
+/* Nav items stagger after the logo */
+.nav__menu > *:nth-child(1) { animation-delay: 0.18s; }
+.nav__menu > *:nth-child(2) { animation-delay: 0.24s; }
+.nav__menu > *:nth-child(3) { animation-delay: 0.30s; }
+.nav__menu > *:nth-child(4) { animation-delay: 0.36s; }
+.nav__menu > *:nth-child(5) { animation-delay: 0.42s; }
+.nav__menu > *:nth-child(6) { animation-delay: 0.48s; }
+
+/* Right-side CTA / mobile toggle slides in last */
+.nav__cta > * { animation-delay: 0.45s; }
+
+/* ----- Dropdown items: staggered open/close ----- */
+.dropdown > a {
+  opacity: 0;
+  transform: translate3d(8px, 0, 0);
+  transition:
+    opacity 0.26s cubic-bezier(0.22, 0.85, 0.2, 1),
+    transform 0.30s cubic-bezier(0.22, 0.85, 0.2, 1);
+}
+
+/* Cover both click-open (.has-dropdown.open) and hover-open styles */
+.has-dropdown.open .dropdown > a,
+.has-dropdown:hover .dropdown > a {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.has-dropdown.open .dropdown > a:nth-child(1),
+.has-dropdown:hover .dropdown > a:nth-child(1) { transition-delay: 0.04s; }
+.has-dropdown.open .dropdown > a:nth-child(2),
+.has-dropdown:hover .dropdown > a:nth-child(2) { transition-delay: 0.08s; }
+.has-dropdown.open .dropdown > a:nth-child(3),
+.has-dropdown:hover .dropdown > a:nth-child(3) { transition-delay: 0.12s; }
+.has-dropdown.open .dropdown > a:nth-child(4),
+.has-dropdown:hover .dropdown > a:nth-child(4) { transition-delay: 0.16s; }
+.has-dropdown.open .dropdown > a:nth-child(5),
+.has-dropdown:hover .dropdown > a:nth-child(5) { transition-delay: 0.20s; }
+.has-dropdown.open .dropdown > a:nth-child(6),
+.has-dropdown:hover .dropdown > a:nth-child(6) { transition-delay: 0.24s; }
+
+/* When closing, drop all delays so the items collapse together */
+.has-dropdown:not(.open):not(:hover) .dropdown > a {
+  transition-delay: 0s;
+}
+
+/* ── Hamburger → X animation ───────────────────────────────── */
+/* Three bars collapse into an X when .is-open is applied.
+   Bar spacing: each span has margin 5px 0, so center-to-center = 12px. */
+.nav__toggle.is-open span:nth-child(1) { transform: translateY(12px) rotate(45deg); }
+.nav__toggle.is-open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav__toggle.is-open span:nth-child(3) { transform: translateY(-12px) rotate(-45deg); }
+
+/* Respect users who prefer no motion */
+@media (prefers-reduced-motion: reduce) {
+  .brand,
+  .nav__menu > *,
+  .nav__cta > *,
+  .dropdown > a {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* When the header mounts on first paint (Preloader still on top), we
+   skip the entrance animation entirely. The .nav--no-entrance class
+   neutralises the keyframe + fill-mode so items appear instantly. */
+.nav.nav--no-entrance .brand,
+.nav.nav--no-entrance .nav__menu > *,
+.nav.nav--no-entrance .nav__cta > * {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
