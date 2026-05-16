@@ -10,7 +10,7 @@ import Highlights from './components/Highlights.jsx';
 import CtaBanner from './components/CtaBanner.jsx';
 import Careers from './components/Careers.jsx';
 import ApplicationForm from './components/ApplicationForm.jsx';
-import SolutionsPage from './components/SolutionsPage.jsx';
+// import SolutionsPage from './components/SolutionsPage.jsx';
 // import MaterialSciencePage from './components/MaterialSciencePage.jsx';
 // import HardwareSystems from './components/HardwareSystems.jsx';
 // import SoftwarePage from './components/SoftwarePage.jsx';
