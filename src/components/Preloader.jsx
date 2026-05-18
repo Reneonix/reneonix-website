@@ -1,53 +1,55 @@
 import { useEffect, useState } from 'react';
 import './Preloader.css';
 
-// Resets on every page refresh (new JS runtime), persists during SPA navigation
-let _shown = false;
-
 export default function Preloader({ minDisplayMs = 1600 }) {
-  const [skip] = useState(() => {
-    if (_shown) return true;
-    _shown = true;
-    return false;
-  });
-  const [hide, setHide] = useState(skip);
-  const [done, setDone] = useState(skip);
+  const [hide, setHide] = useState(false);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (skip) return;
+    // Only show on the home route — skip on Solutions, Careers, or any other page refresh
+    const hash = window.location.hash.split('?')[0];
+    const isHome = !hash || hash === '#' || hash === '#home';
 
+    if (!isHome || window.__preloaderShown) {
+      setDone(true);
+      return;
+    }
+
+    // Mark shown. Reset in cleanup so StrictMode's 2nd effect-run starts fresh.
+    window.__preloaderShown = true;
     document.body.classList.add('preloader-active');
 
     const startedAt = performance.now();
+    let hideTimer = null;
+    let fallbackTimer = null;
 
     const dismiss = () => {
       const elapsed = performance.now() - startedAt;
       const wait = Math.max(0, minDisplayMs - elapsed);
-      window.setTimeout(() => setHide(true), wait);
+      hideTimer = window.setTimeout(() => setHide(true), wait);
     };
 
     if (document.readyState === 'complete') {
       dismiss();
     } else {
       window.addEventListener('load', dismiss, { once: true });
-      const fallback = window.setTimeout(dismiss, 6000);
-      return () => {
-        window.removeEventListener('load', dismiss);
-        window.clearTimeout(fallback);
-        document.body.classList.remove('preloader-active');
-      };
+      fallbackTimer = window.setTimeout(dismiss, 6000);
     }
 
     return () => {
+      window.__preloaderShown = false; // allow StrictMode 2nd run
+      window.clearTimeout(hideTimer);
+      window.clearTimeout(fallbackTimer);
+      window.removeEventListener('load', dismiss);
       document.body.classList.remove('preloader-active');
     };
-  }, [skip, minDisplayMs]);
+  }, [minDisplayMs]);
 
-  // After CSS fade-out completes, unmount the node entirely
   useEffect(() => {
     if (!hide) return;
     const t = window.setTimeout(() => {
       setDone(true);
+      window.__preloaderShown = true; // permanently mark done after fade-out
       document.body.classList.remove('preloader-active');
     }, 750);
     return () => window.clearTimeout(t);

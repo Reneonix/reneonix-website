@@ -13,7 +13,7 @@ export default function Highlights() {
         <div className="section-head">
           <span className="eyebrow">Highlights</span>
           <h2>
-            Latest news, research, <em>and milestones</em>.
+            Latest news, research, <em>and milestones</em>
           </h2>
           <p>A look at what our teams have shipped, written, and announced recently.</p>
         </div>

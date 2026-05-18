@@ -43,7 +43,7 @@ const COLUMNS = [
     items: [
       ['About', '#about'],
       ['Investors & Partners', '#investors'],
-      ['Careers', '#'],
+      ['Careers', '#careers'],
       ['Contact', '#contact'],
     ],
   },
@@ -55,7 +55,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer__grid">
           <div className="footer__about">
-            <a href="#" className="footer__brand" aria-label="Reneonix home">
+            <a href="#home" className="footer__brand" aria-label="Reneonix home">
               <img src="/reneonix-logo.svg" alt="Reneonix" className="footer__brand-img" />
             </a>
             <p style={{ marginTop: 20 }}>

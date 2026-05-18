@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import ShinyText from './ShinyText.jsx';
 
 export default function Hero() {
   /* Custom loop: play through, hold the LAST frame for 2 seconds, then
@@ -73,15 +72,7 @@ export default function Hero() {
           <div className="hero__copy">
             <h1>
               Engineering the next generation of{' '}
-              <ShinyText
-                className="lime-text"
-                text="Material Circularity."
-                color="#b2de3a"
-                shineColor="#ffffff"
-                speed={3}
-                delay={0.6}
-                spread={120}
-              />
+              <span className="lime-text">Material Circularity</span>
             </h1>
             <p className="lead">
               Reneonix is a material circularity deeptech company building technology

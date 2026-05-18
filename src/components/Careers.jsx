@@ -7,6 +7,7 @@ import {
   Mail,
   MapPin,
   ChevronDown,
+  Briefcase,
 } from 'lucide-react';
 import './Careers.css';
 
@@ -16,30 +17,201 @@ const Arrow = () => (
   </svg>
 );
 
-/** Department → list of roles. Add/remove freely; UI is data-driven. */
+/**
+ * Department → list of roles.
+ * An empty array means the department exists but has no current openings.
+ * The UI shows "Currently no roles found." in the role dropdown for those.
+ */
 const DEPARTMENT_ROLES = {
   Hardware: [
     'Mechanical Design Engineer',
-    'Industrial Hardware Engineer',
+    'Embedded System Engineer',
+    'Embedded Firmware Engineer',
     'Manufacturing Engineer',
-    'CAD Designer',
+    'Quality Engineer',
+    'Manufacturing Technician',
   ],
   Software: [
-    'Full Stack Developer',
-    'Frontend Engineer',
-    'Backend Engineer',
-    'Blockchain Developer',
-    'DevOps Engineer',
+    'AI Research Trainee',
+    'AI System Architect',
   ],
-  'Material Science': [
-    'Materials Research Scientist',
-    'Polymer / Glass Chemist',
-    'Lab Technician',
-    'Material Validation Engineer',
+  'Material Science': [],
+  'Business & Development': [
+    'Founder Office Associate',
+    'Graphic Designer Fresher',
   ],
 };
 
 const DEPARTMENTS = Object.keys(DEPARTMENT_ROLES);
+
+/**
+ * Builds a Gmail compose URL for a specific role.
+ * Subject and "Applying for Role" field are pre-filled from the selected role.
+ * Reusable for any current or future opening — just pass the role name.
+ */
+function buildMailHref(role) {
+  const subject = `Application for ${role}`;
+  const body =
+    `Name:\n\n` +
+    `Email Address:\n\n` +
+    `Years of Experience:\n\n` +
+    `Applying for Role: ${role}\n\n` +
+    `Phone Number:\n\n` +
+    `Resume/CV: (Mandatory Attachment)\n\n` +
+    `Additional Documents: (Optional)\n` +
+    `- Portfolio\n` +
+    `- Certifications\n` +
+    `- Project Documents`;
+  return (
+    `https://mail.google.com/mail/?view=cm&fs=1` +
+    `&to=careers@reneonix.com` +
+    `&su=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(body)}`
+  );
+}
+
+/**
+ * Builds the Gmail compose URL for the general "Send Your Resume" button.
+ * Uses a fixed subject — no role selection required.
+ */
+function buildResumeMailHref() {
+  const subject = `Resume Submission | Reneonix`;
+  const body =
+    `Name:\n\n` +
+    `Email Address:\n\n` +
+    `Years of Experience:\n\n` +
+    `Applying for Role:\n\n` +
+    `Phone Number:\n\n` +
+    `Resume/CV: (Mandatory Attachment)\n\n` +
+    `Additional Documents: (Optional)\n` +
+    `- Portfolio\n` +
+    `- Certifications\n` +
+    `- Project Documents`;
+  return (
+    `https://mail.google.com/mail/?view=cm&fs=1` +
+    `&to=careers@reneonix.com` +
+    `&su=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(body)}`
+  );
+}
+
+/**
+ * Active job openings.
+ * To take a role offline, remove its entry here.
+ * If this array is empty the Current Openings box shows the empty state.
+ */
+const CURRENT_OPENINGS = [
+  {
+    id: 'mechanical-design-engineer',
+    role: 'Mechanical Design Engineer',
+    dept: 'Hardware',
+    type: 'Full-time',
+    location: 'Chennai, India',
+    experience: '0–2 years',
+    description:
+      'Design and develop mechanical components for Reneonix\'s industrial waste sorting and material recovery systems.',
+    responsibilities: [
+      'Design mechanical assemblies and components using SolidWorks or equivalent CAD software',
+      'Develop prototypes and coordinate manufacturing of components with vendors',
+      'Collaborate with embedded and electrical engineering teams for system integration',
+      'Ensure designs meet GD&T tolerances, material specifications, and production requirements',
+    ],
+    requirements: [
+      'B.E. / B.Tech in Mechanical Engineering or related field',
+      'Proficiency in SolidWorks, AutoCAD, or equivalent CAD tool',
+      'Understanding of GD&T, manufacturing processes, and material properties',
+      'Strong analytical, problem-solving, and communication skills',
+    ],
+  },
+  {
+    id: 'embedded-system-engineer',
+    role: 'Embedded System Engineer',
+    dept: 'Hardware',
+    type: 'Full-time',
+    location: 'Chennai, India',
+    experience: '0–2 years',
+    description:
+      'Develop and integrate embedded systems for Reneonix\'s IoT-connected hardware platforms used in material recovery operations.',
+    responsibilities: [
+      'Design and develop embedded software in C/C++ for microcontroller platforms',
+      'Integrate sensors, actuators, and communication modules (UART, I2C, SPI, BLE, LoRa)',
+      'Write hardware abstraction layers and device drivers',
+      'Debug and validate embedded systems through unit and integration testing',
+    ],
+    requirements: [
+      'B.E. / B.Tech in Electronics, Embedded Systems, or related field',
+      'Proficiency in C/C++ for bare-metal or RTOS-based development',
+      'Experience with STM32, ESP32, or similar MCU platforms',
+      'Knowledge of communication protocols: UART, I2C, SPI, MQTT',
+    ],
+  },
+  {
+    id: 'embedded-firmware-engineer',
+    role: 'Embedded Firmware Engineer',
+    dept: 'Hardware',
+    type: 'Full-time',
+    location: 'Chennai, India',
+    experience: '0–2 years',
+    description:
+      'Write, optimize, and maintain firmware for Reneonix\'s hardware devices deployed in industrial environments.',
+    responsibilities: [
+      'Develop real-time firmware using FreeRTOS or bare-metal frameworks',
+      'Optimize firmware for low-power and resource-constrained embedded targets',
+      'Implement OTA (over-the-air) update and secure boot protocols',
+      'Collaborate with the hardware design team to validate firmware–hardware integration',
+    ],
+    requirements: [
+      'B.E. / B.Tech in Electronics, Computer Science, or related field',
+      'Strong C programming skills for embedded targets',
+      'Familiarity with RTOS concepts, bootloaders, and memory management',
+      'Experience with STM32CubeIDE, Keil MDK, or similar toolchains',
+    ],
+  },
+  {
+    id: 'ai-research-trainee',
+    role: 'AI Research Trainee',
+    dept: 'Software',
+    type: 'Full-time / Internship',
+    location: 'Chennai, India',
+    experience: 'Fresher',
+    description:
+      'Research and develop AI/ML models for material classification, quality grading, and waste stream analytics at Reneonix.',
+    responsibilities: [
+      'Design and train computer vision models for material sorting and defect detection',
+      'Build and evaluate machine learning pipelines for quality and contamination prediction',
+      'Work with real-world sensor and imaging data collected from field deployments',
+      'Collaborate with software and hardware teams to integrate AI models into products',
+    ],
+    requirements: [
+      'B.E. / B.Tech or M.Tech in Computer Science, AI/ML, or related field',
+      'Proficiency in Python and ML frameworks (PyTorch, TensorFlow, or scikit-learn)',
+      'Knowledge of computer vision techniques and dataset annotation workflows',
+      'Strong mathematical foundation in linear algebra, probability, and statistics',
+    ],
+  },
+  {
+    id: 'graphic-designer-fresher',
+    role: 'Graphic Designer Fresher',
+    dept: 'Business & Development',
+    type: 'Full-time',
+    location: 'Chennai, India',
+    experience: '0–1 year',
+    description:
+      'Create compelling visual assets for Reneonix\'s brand identity, marketing campaigns, and product communication.',
+    responsibilities: [
+      'Design digital and print materials: social media posts, presentations, and reports',
+      'Maintain and evolve Reneonix\'s visual brand identity across all channels',
+      'Collaborate with business and product teams to translate ideas into visuals',
+      'Create motion graphics and short explainer videos as needed',
+    ],
+    requirements: [
+      'Degree or diploma in Graphic Design, Visual Communication, or related field',
+      'Proficiency in Adobe Photoshop, Illustrator, and Figma',
+      'Strong portfolio demonstrating typography, color, and layout skills',
+      'Basic knowledge of motion design (After Effects) is a plus',
+    ],
+  },
+];
 
 const LIFE_GALLERY = [
   { src: '/life-photo-1.jpeg', caption: 'Life at Reneonix' },
@@ -79,16 +251,21 @@ function RolesPicker() {
   const [role, setRole] = useState('');
 
   const roleOptions = useMemo(() => (dept ? DEPARTMENT_ROLES[dept] || [] : []), [dept]);
+  const hasRoles    = roleOptions.length > 0;
+  const roleDisabled = !dept || !hasRoles;
 
-  const applyHref = useMemo(() => {
-    const params = new URLSearchParams();
-    if (dept) params.set('dept', dept);
-    if (role) params.set('role', role);
-    const qs = params.toString();
-    return qs ? `#apply?${qs}` : '#apply';
-  }, [dept, role]);
+  const canSend = Boolean(dept && role);
 
-  const canApply = Boolean(dept && role);
+  const mailHref = useMemo(
+    () => (canSend ? buildMailHref(role) : undefined),
+    [canSend, role, dept]
+  );
+
+  const hintText = useMemo(() => {
+    if (canSend) return `Click below to send your application for the ${role} role in ${dept}.`;
+    if (dept && !hasRoles) return `There are currently no open roles in the ${dept} department.`;
+    return 'Pick a department and a role to send your application.';
+  }, [canSend, dept, hasRoles, role]);
 
   return (
     <div className="roles-picker">
@@ -112,15 +289,19 @@ function RolesPicker() {
 
         <div className="roles-picker__field">
           <label className="roles-picker__label" htmlFor="role">Role</label>
-          <div className={`roles-picker__select ${!dept ? 'is-disabled' : ''}`}>
+          <div className={`roles-picker__select ${roleDisabled ? 'is-disabled' : ''}`}>
             <select
               id="role"
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              disabled={!dept}
+              disabled={roleDisabled}
             >
               <option value="" disabled>
-                {dept ? 'Select role' : 'Select department first'}
+                {!dept
+                  ? 'Select department first'
+                  : !hasRoles
+                    ? 'Currently no roles found.'
+                    : 'Select role'}
               </option>
               {roleOptions.map((r) => (
                 <option key={r} value={r}>{r}</option>
@@ -131,21 +312,121 @@ function RolesPicker() {
         </div>
       </div>
 
-      <p className="roles-picker__hint">
-        {canApply
-          ? `Here is your application form for the ${role} role in ${dept}.`
-          : 'Pick a department and a role to continue to the application form.'}
-      </p>
+      <p className="roles-picker__hint">{hintText}</p>
 
       <a
-        href={canApply ? applyHref : undefined}
-        className={`btn btn-primary roles-picker__cta ${!canApply ? 'is-disabled' : ''}`}
-        aria-disabled={!canApply}
-        onClick={(e) => { if (!canApply) e.preventDefault(); }}
+        href={mailHref}
+        target={canSend ? '_blank' : undefined}
+        rel="noopener noreferrer"
+        className={`btn btn-primary roles-picker__cta ${!canSend ? 'is-disabled' : ''}`}
+        aria-disabled={!canSend}
+        onClick={(e) => { if (!canSend) e.preventDefault(); }}
       >
-        Application Form
+        Send Your Application
         <Arrow />
       </a>
+    </div>
+  );
+}
+
+function CurrentOpenings({ openings }) {
+  const [openId, setOpenId] = useState(null);
+  const toggle = (id) => setOpenId((prev) => (prev === id ? null : id));
+
+  return (
+    <div className="openings-box c-reveal">
+      <div className="openings-box__head">
+        <h3 className="openings-box__title">Current Openings</h3>
+        {openings.length > 0 && (
+          <span className="openings-count">
+            {openings.length} open {openings.length === 1 ? 'role' : 'roles'}
+          </span>
+        )}
+      </div>
+
+      {openings.length === 0 ? (
+        <div className="openings-empty">
+          <div className="openings-empty__icon">
+            <Briefcase size={28} />
+          </div>
+          <p className="openings-empty__title">Currently No Openings found.</p>
+          <p className="openings-empty__sub">
+            We'll update this section as new roles become available. Check back soon!
+          </p>
+        </div>
+      ) : (
+        <div className="openings-list">
+          {openings.map((job) => {
+            const isOpen = openId === job.id;
+            return (
+              <div
+                key={job.id}
+                className={`opening-item${isOpen ? ' is-open' : ''}`}
+              >
+                <button
+                  className="opening-item__header"
+                  onClick={() => toggle(job.id)}
+                  aria-expanded={isOpen}
+                  aria-controls={`opening-body-${job.id}`}
+                >
+                  <div className="opening-item__meta">
+                    <span className="opening-item__role">{job.role}</span>
+                    <div className="opening-item__tags">
+                      <span className="opening-tag opening-tag--dept">{job.dept}</span>
+                      <span className="opening-tag">{job.type}</span>
+                      <span className="opening-tag">{job.location}</span>
+                    </div>
+                  </div>
+                  <ChevronDown className="opening-item__chev" size={20} aria-hidden="true" />
+                </button>
+
+                <div
+                  className="opening-item__body"
+                  id={`opening-body-${job.id}`}
+                  role="region"
+                >
+                  <div className="opening-item__inner">
+                    <p className="opening-item__desc">{job.description}</p>
+
+                    <div className="opening-item__cols">
+                      <div className="opening-item__col">
+                        <h4>Responsibilities</h4>
+                        <ul>
+                          {job.responsibilities.map((r, i) => (
+                            <li key={i}>{r}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div className="opening-item__col">
+                        <h4>Requirements</h4>
+                        <ul>
+                          {job.requirements.map((r, i) => (
+                            <li key={i}>{r}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="opening-item__foot">
+                      <span className="opening-item__exp">
+                        Experience: {job.experience}
+                      </span>
+                      <a
+                        href={buildMailHref(job.role)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-primary opening-item__apply"
+                      >
+                        Apply Now <Arrow />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -180,7 +461,7 @@ export default function Careers() {
           }
         });
       },
-      { threshold: 0.14, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.10, rootMargin: '0px 0px -40px 0px' }
     );
     document.querySelectorAll('.c-reveal').forEach((el) => io.observe(el));
 
@@ -247,7 +528,7 @@ export default function Careers() {
         </div>
       </div>
 
-      {/* ---------- OPEN ROLES (department + role pickers) ---------- */}
+      {/* ---------- OPEN ROLES ---------- */}
       <div className="section section-paper-grad" id="open-roles">
         <div className="container">
           <div className="roles-head c-reveal">
@@ -262,10 +543,12 @@ export default function Careers() {
           <div className="c-reveal">
             <RolesPicker />
           </div>
+
+          <CurrentOpenings openings={CURRENT_OPENINGS} />
         </div>
       </div>
 
-      {/* ---------- LIFE AT RENEONIX (images only) ---------- */}
+      {/* ---------- LIFE AT RENEONIX ---------- */}
       <div className="section section-dark" id="life-at-reneonix">
         <div className="container">
           <div className="section-head c-reveal">
@@ -314,7 +597,6 @@ export default function Careers() {
         </div>
       </div>
 
-
       {/* ---------- DON'T SEE THE PERFECT ROLE CTA ---------- */}
       <div className="section careers-cta-section">
         <div className="container">
@@ -334,7 +616,7 @@ export default function Careers() {
 
             <div className="careers-cta__actions">
               <a
-                href="https://mail.google.com/mail/?view=cm&fs=1&to=careers@reneonix.com&su=Job+Application+%7C+Reneonix"
+                href={buildResumeMailHref()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary"

@@ -1,26 +1,26 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './Header.css';
 
 const TECH = [
-  ['AI Vision & Sorting', 'Computer vision for material identification', '#'],
-  ['Sensor Networks', 'Live process monitoring and quality control', '#'],
-  ['Trace OS Platform', 'End-to-end material traceability software', '#'],
-  ['R&D Labs', 'Materials testing, formulation, and validation', '#'],
+  ['AI Vision & Sorting',   'Computer vision for material identification',    '#'],
+  ['Sensor Networks',        'Live process monitoring and quality control',    '#'],
+  ['Trace OS Platform',      'End-to-end material traceability software',      '#'],
+  ['R&D Labs',               'Materials testing, formulation, and validation', '#'],
 ];
 const INDUSTRIES = [
-  ['Glass Manufacturers', null, '#'],
+  ['Glass Manufacturers',         null, '#'],
   ['Municipalities & Government', null, '#'],
-  ['Beverage & FMCG Brands', null, '#'],
-  ['Construction & Real Estate', null, '#'],
-  ['Recycling Operators', null, '#'],
+  ['Beverage & FMCG Brands',      null, '#'],
+  ['Construction & Real Estate',  null, '#'],
+  ['Recycling Operators',         null, '#'],
 ];
 const RESOURCES = [
-  ['Blog', null, '#'],
-  ['Case Studies', null, '#'],
+  ['Blog',                   null, '#'],
+  ['Case Studies',           null, '#'],
   ['Sustainability Reports', null, '#'],
-  ['Whitepapers', null, '#'],
-  ['Press & Media', null, '#highlights'],
-  ['FAQ', null, '#'],
+  ['Whitepapers',            null, '#'],
+  ['Press & Media',          null, '#highlights'],
+  ['FAQ',                    null, '#'],
 ];
 
 function Chevron() {
@@ -31,16 +31,45 @@ function Chevron() {
   );
 }
 
-function Dropdown({ label, items }) {
+/**
+ * Self-contained dropdown — owns its own open/close state in React.
+ * No longer depends on SiteEffects DOM manipulation, so it works
+ * correctly even when the Header remounts on route changes.
+ */
+function Dropdown({ label, items, onItemClick }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+
+  // Close when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const toggle = (e) => {
+    e.stopPropagation();
+    setOpen((o) => !o);
+  };
+
+  const handleItemClick = () => {
+    setOpen(false);
+    onItemClick?.();
+  };
+
   return (
-    <div className="has-dropdown">
-      <button type="button">
+    <div className={`has-dropdown${open ? ' open' : ''}`} ref={wrapRef}>
+      <button type="button" onClick={toggle}>
         {label}
         <Chevron />
       </button>
       <div className="dropdown">
         {items.map(([title, sub, href]) => (
-          <a key={title} href={href}>
+          <a key={title} href={href} onClick={handleItemClick}>
             <strong>{title}</strong>
             {sub && <span>{sub}</span>}
           </a>
@@ -51,85 +80,81 @@ function Dropdown({ label, items }) {
 }
 
 /**
- * Smooth-scroll to an in-page section without changing the URL hash.
+ * Dynamic left/right nav links based on current route:
+ *   home     → Solutions | … | Careers
+ *   careers  → Home      | … | Solutions
+ *   solutions → Home     | … | Careers
  */
-function scrollToId(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+function getEdgeLinks(route) {
+  if (route === 'careers') {
+    return {
+      left:  { label: 'Home',      href: '#home' },
+      right: { label: 'Solutions', href: '#solutions' },
+    };
+  }
+  if (route === 'solutions') {
+    return {
+      left:  { label: 'Home',    href: '#home' },
+      right: { label: 'Careers', href: '#careers' },
+    };
+  }
+  // home (default)
+  return {
+    left:  { label: 'Solutions', href: '#solutions' },
+    right: { label: 'Careers',   href: '#careers' },
+  };
 }
 
 export default function Header({ route = 'home', animate = true }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const isCareers = route === 'careers';
-  const isSolutions = route === 'solutions';
 
-  const close = () => setMobileOpen(false);
-  const toggle = () => setMobileOpen((o) => !o);
+  const closeNav = () => setMobileOpen(false);
+  const toggleNav = () => setMobileOpen((o) => !o);
+
+  const { left, right } = getEdgeLinks(route);
 
   return (
     <header className={`nav ${animate ? '' : 'nav--no-entrance'}`.trim()}>
       <div className="container nav__inner">
-        <a href="#home" className="brand" aria-label="Reneonix home" onClick={close}>
+
+        {/* Brand — always goes home */}
+        <a href="#home" className="brand" aria-label="Reneonix home" onClick={closeNav}>
           <img src="/reneonix-logo.svg" alt="Reneonix" className="brand__img" />
         </a>
 
+        {/* ── Nav ── */}
         <nav className={`nav__menu${mobileOpen ? ' open' : ''}`} id="navMenu">
-          {isCareers ? (
-            <>
-              <a className="nav__link" href="#home" onClick={close}>Home</a>
-              <a className="nav__link nav__link--active" href="#careers" aria-current="page" onClick={close}>
-                Careers
-              </a>
-              <a
-                className="nav__link"
-                href="#growth"
-                onClick={(e) => { e.preventDefault(); scrollToId('growth'); close(); }}
-              >
-                Why Reneonix
-              </a>
-              <a className="nav__link" href="#solutions" onClick={close}>Solutions</a>
-            </>
-          ) : isSolutions ? (
-            <>
-              <a className="nav__link" href="#home" onClick={close}>Home</a>
-              <a className="nav__link nav__link--active" href="#solutions" aria-current="page" onClick={close}>
-                Solutions
-              </a>
-              <a className="nav__link" href="#careers" onClick={close}>Careers</a>
-              <a
-                className="nav__link"
-                href="#careers"
-                onClick={(e) => {
-                  e.preventDefault();
-                  sessionStorage.setItem('reneonix-scroll-to', 'life-at-reneonix');
-                  window.location.hash = '#careers';
-                  close();
-                }}
-              >Life at Reneonix</a>
-            </>
-          ) : (
-            <>
-              <a className="nav__link" href="#solutions" onClick={close}>Solutions</a>
-              <Dropdown label="Technology" items={TECH} />
-              <Dropdown label="Industries" items={INDUSTRIES} />
-              <Dropdown label="Resources" items={RESOURCES} />
-              <a className="nav__link" href="#careers" onClick={close}>Careers</a>
-            </>
-          )}
+
+          {/* 1st item — changes per page */}
+          <a className="nav__link" href={left.href} onClick={closeNav}>
+            {left.label}
+          </a>
+
+          {/* Center 3 — always the same */}
+          <Dropdown label="Technology" items={TECH}       onItemClick={closeNav} />
+          <Dropdown label="Industries" items={INDUSTRIES} onItemClick={closeNav} />
+          <Dropdown label="Resources"  items={RESOURCES}  onItemClick={closeNav} />
+
+          {/* 5th item — changes per page */}
+          <a className="nav__link" href={right.href} onClick={closeNav}>
+            {right.label}
+          </a>
+
         </nav>
 
+        {/* Mobile toggle */}
         <div className="nav__cta">
           <button
             className={`nav__toggle${mobileOpen ? ' is-open' : ''}`}
             id="navToggle"
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
-            onClick={toggle}
+            onClick={toggleNav}
           >
             <span /><span /><span />
           </button>
         </div>
+
       </div>
     </header>
   );

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * Mounts the global JS behaviors that the original static site relied on:
@@ -11,35 +11,77 @@ import { useEffect } from 'react';
  * double-invocation in dev does not leak handlers.
  */
 export default function SiteEffects() {
-  useEffect(() => {
-    /* ---------- Dropdowns ---------- */
-    const buttons = Array.from(document.querySelectorAll('.has-dropdown > button'));
-    const onBtnClick = (btn) => (e) => {
-      e.stopPropagation();
-      const parent = btn.parentElement;
-      document.querySelectorAll('.has-dropdown.open').forEach((el) => {
-        if (el !== parent) el.classList.remove('open');
-      });
-      parent.classList.toggle('open');
-    };
-    const handlers = buttons.map((btn) => {
-      const h = onBtnClick(btn);
-      btn.addEventListener('click', h);
-      return [btn, h];
-    });
-    const closeAll = () => {
-      document.querySelectorAll('.has-dropdown.open').forEach((el) => el.classList.remove('open'));
-    };
-    document.addEventListener('click', closeAll);
+  const glowRef = useRef(null);
 
-    /* ---------- Mobile nav ---------- */
-    const toggle = document.getElementById('navToggle');
-    const menu = document.getElementById('navMenu');
-    const onToggle = () => menu?.classList.toggle('open');
-    const navLinks = Array.from(document.querySelectorAll('.nav__menu a'));
-    const onNavLinkClick = () => menu?.classList.remove('open');
-    toggle?.addEventListener('click', onToggle);
-    navLinks.forEach((a) => a.addEventListener('click', onNavLinkClick));
+  /* ---------- Cursor glow ---------- */
+  useEffect(() => {
+    const glow = glowRef.current;
+    if (!glow) return;
+
+    // Skip on touch / coarse-pointer devices
+    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isTouch || prefersReduced) return;
+
+    const RADIUS = 28; // half of 56px glow size
+    let cx = window.innerWidth / 2;
+    let cy = window.innerHeight / 2;
+    let tx = cx;
+    let ty = cy;
+    let rafId;
+    let ready = false;
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function loop() {
+      cx = lerp(cx, tx, 0.14);
+      cy = lerp(cy, ty, 0.14);
+      glow.style.transform = `translate(${(cx - RADIUS).toFixed(1)}px, ${(cy - RADIUS).toFixed(1)}px)`;
+      rafId = requestAnimationFrame(loop);
+    }
+    rafId = requestAnimationFrame(loop);
+
+    const onMouseMove = (e) => {
+      tx = e.clientX;
+      ty = e.clientY;
+      if (!ready) {
+        ready = true;
+        document.body.classList.add('cursor-ready');
+      }
+    };
+
+    const onMouseOver = (e) => {
+      if (e.target.closest('a, button, [role="button"], input, textarea, select, label')) {
+        document.body.classList.add('cursor-hover');
+      }
+    };
+    const onMouseOut = (e) => {
+      if (e.target.closest('a, button, [role="button"], input, textarea, select, label')) {
+        document.body.classList.remove('cursor-hover');
+      }
+    };
+    const onMouseDown = () => document.body.classList.add('cursor-down');
+    const onMouseUp   = () => document.body.classList.remove('cursor-down');
+
+    document.addEventListener('mousemove', onMouseMove, { passive: true });
+    document.addEventListener('mouseover', onMouseOver, { passive: true });
+    document.addEventListener('mouseout',  onMouseOut,  { passive: true });
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mouseup',   onMouseUp);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseover', onMouseOver);
+      document.removeEventListener('mouseout',  onMouseOut);
+      document.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('mouseup',   onMouseUp);
+      document.body.classList.remove('cursor-ready', 'cursor-hover', 'cursor-down');
+    };
+  }, []);
+
+  useEffect(() => {
+    /* Note: nav toggle + dropdowns are managed by React state in Header.jsx */
 
     /* ---------- Parallax ---------- */
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -87,28 +129,24 @@ export default function SiteEffects() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // The original CSS uses `.reveal.in` to fade in, while section-level
-            // selectors (.brands.is-in, .zz-row.is-in, .about__values .value.is-in)
-            // use `.is-in`. Add BOTH so every existing CSS rule fires regardless.
+            // `.reveal.in` and `.reveal-img.in` fade in via CSS.
+            // `.stagger.in` triggers staggered child delays.
+            // `.is-in` covers legacy section-level selectors.
             entry.target.classList.add('in', 'is-in');
             io.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.18, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.14, rootMargin: '0px 0px -40px 0px' }
     );
-    document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+    document.querySelectorAll('.reveal, .reveal-img, .stagger').forEach((el) => io.observe(el));
 
     /* ---------- Cleanup ---------- */
     return () => {
-      handlers.forEach(([btn, h]) => btn.removeEventListener('click', h));
-      document.removeEventListener('click', closeAll);
-      toggle?.removeEventListener('click', onToggle);
-      navLinks.forEach((a) => a.removeEventListener('click', onNavLinkClick));
       window.removeEventListener('scroll', onScroll);
       io.disconnect();
     };
   }, []);
 
-  return null;
+  return <div className="cursor-glow" ref={glowRef} aria-hidden="true" />;
 }

@@ -278,11 +278,38 @@
   .nav__toggle span { display: block; width: 22px; height: 2px; background: var(--white); margin: 5px 0; border-radius: 2px; transition: transform .2s; }
 
   /* ---------- Reveal on scroll ---------- */
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
-  .reveal.in { opacity: 1; transform: none; }
+  .reveal { opacity: 0; filter: blur(12px); transform: translateY(28px); transition: opacity .8s ease, filter .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; filter: none; transform: none; }
   .reveal.delay-1 { transition-delay: .08s; }
   .reveal.delay-2 { transition-delay: .16s; }
   .reveal.delay-3 { transition-delay: .24s; }
+
+  /* Reveal variant for images — softer blur + slight zoom */
+  .reveal-img { opacity: 0; filter: blur(24px) saturate(0.6); transform: scale(1.04); transition: opacity .9s ease, filter .9s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+  .reveal-img.in { opacity: 1; filter: none; transform: none; }
+
+  /* Stagger — delays each direct child when parent gets .in */
+  .stagger > * { transition-delay: 0s; }
+  .stagger.in > *:nth-child(1) { transition-delay: 0s; }
+  .stagger.in > *:nth-child(2) { transition-delay: .08s; }
+  .stagger.in > *:nth-child(3) { transition-delay: .16s; }
+  .stagger.in > *:nth-child(4) { transition-delay: .24s; }
+  .stagger.in > *:nth-child(5) { transition-delay: .32s; }
+  .stagger.in > *:nth-child(6) { transition-delay: .40s; }
+  .stagger.in > *:nth-child(7) { transition-delay: .48s; }
+  .stagger.in > *:nth-child(8) { transition-delay: .56s; }
+
+  /* Lime ring-pulse animation — for active / highlighted elements */
+  @keyframes ringPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(178,222,58,.40); }
+    50%       { box-shadow: 0 0 0 9px rgba(178,222,58,.0); }
+  }
+
+  /* scrollX alias — same as marqueeScroll, used by newer components */
+  @keyframes scrollX {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
 
   /* ---------- HERO (cinematic full-bleed, ref: rubicon.com / greyparrot.ai / recycleye.com) ---------- */
   .hero {
@@ -1109,7 +1136,8 @@
       transition-duration: .001s !important; scroll-behavior: auto !important;
     }
     .marquee__track { animation: none !important; }
-    .reveal { opacity: 1; transform: none; }
+    .reveal { opacity: 1; filter: none; transform: none; }
+    .reveal-img { opacity: 1; filter: none; transform: none; }
   }
 
   /* ---------- Responsive ---------- */
@@ -1137,6 +1165,7 @@
     .solutions__grid, .testimonials__grid, .highlights__grid { grid-template-columns: 1fr; }
     .about__values { grid-template-columns: 1fr; }
     .cta-banner { padding: 48px 24px; }
+    .footer__grid { grid-template-columns: 1fr 1fr; gap: 28px; }
   }
 
   /* zig-zag background images (resolved to embedded SVG / photo) */
@@ -2517,6 +2546,10 @@
     .growth-card { padding: 20px 16px; }
     /* CTA email wraps cleanly */
     .careers-cta__email { font-size: .82rem; }
+    /* Stack department + role selects on small phones */
+    .roles-picker__grid { grid-template-columns: 1fr; }
+    /* Footer: single column on small phones */
+    .footer__grid { grid-template-columns: 1fr; }
   }
 
   /* ========= Careers-page simplified nav links (Home | Careers) ========= */
