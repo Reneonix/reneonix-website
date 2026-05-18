@@ -42,11 +42,11 @@ export default function Investors() {
         <div className="section-head">
           <span className="eyebrow">Investors & Partners</span>
           <h2>
-            Backed by leaders who build <em>for the long term</em>.
+            Backed by leaders who build <em>for the long term</em>
           </h2>
           <p>
             We're proud to partner with operators, researchers, and capital allocators who
-            share our conviction that the next era of technology will be built on substance.
+            share our conviction that the next era of technology will be built on substance
           </p>
         </div>
         <div className="partner-marquee">

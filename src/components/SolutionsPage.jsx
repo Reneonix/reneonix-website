@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react';
 import {
   Cpu,
   FlaskConical,
@@ -10,16 +11,9 @@ import {
   ClipboardCheck,
   Sparkles,
   Recycle,
-  Star,
   Zap,
 } from 'lucide-react';
 import './SolutionsPage.css';
-
-const Arrow = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <path d="M5 12h14M13 6l6 6-6 6" />
-  </svg>
-);
 
 const HERO_PILLS = [
   { Icon: Recycle,  title: 'Integrated Ecosystem', sub: 'End-to-end synergy' },
@@ -33,21 +27,18 @@ const SOLUTIONS_CARDS = [
     body: 'AI-powered hardware systems for smarter machines and industrial infrastructure.',
     img: '/solutions-hardware.png',
     Icon: Wrench,
-    href: '#solutions/hardware',
   },
   {
     title: 'Software',
     body: 'AI & technology platform for traceability, transparency and compliance.',
     img: '/software.png',
     Icon: Cpu,
-    href: '#solutions/software',
   },
   {
     title: 'Material Science',
     body: 'AI-driven material science to re-engineer waste into advanced sustainable materials.',
     img: '/solutions-material.png',
     Icon: FlaskConical,
-    href: '#solutions/material-science',
   },
 ];
 
@@ -90,13 +81,6 @@ const PROOF_AFTER = [
   { label: 'Compliance Ready',        value: '100%' },
 ];
 
-const TESTIMONIALS = [
-  { quote: 'Reneonix transformed our waste operations with real-time visibility and measurable impact.', name: 'Arun Prakash', role: 'Head, Sustainability' },
-  { quote: 'The hardware and software integration is seamless and efficiency-driven.', name: 'Meena Joseph', role: 'Operations Director' },
-  { quote: 'Their material science innovation is helping us build greener and stronger products.', name: 'Rohit Menon', role: 'CTO' },
-  { quote: 'A true partner in our circularity journey. Transparent, reliable and future-ready.', name: 'Sneha Iyer', role: 'ESG Lead' },
-];
-
 function MiniChart({ direction = 'up' }) {
   const w = 420, h = 150, padX = 24, padY = 18;
   const data = direction === 'down'
@@ -125,17 +109,29 @@ function MiniChart({ direction = 'up' }) {
   );
 }
 
-function Stars({ n = 5 }) {
-  return (
-    <span className="testi-stars" aria-label={`${n} out of 5 stars`}>
-      {Array.from({ length: n }).map((_, i) => (
-        <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
-      ))}
-    </span>
-  );
-}
-
 export default function SolutionsPage() {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className="sol-page" id="solutions-page">
       {/* ---------- HERO ---------- */}
@@ -190,7 +186,7 @@ export default function SolutionsPage() {
           </div>
 
           <div className="sol-grid">
-            {SOLUTIONS_CARDS.map(({ title, body, img, Icon, href }) => (
+            {SOLUTIONS_CARDS.map(({ title, body, img, Icon }) => (
               <article className="sol-card" key={title}>
                 <div className="sol-card__media">
                   <img src={img} alt={title} loading="lazy" />
@@ -198,9 +194,9 @@ export default function SolutionsPage() {
                 </div>
                 <h3 className="sol-card__title">{title}</h3>
                 <p className="sol-card__body">{body}</p>
-                <a href={href || '#'} className="sol-card__more">
-                  Explore more <Arrow />
-                </a>
+                <span className="sol-card__more sol-card__more--soon">
+                  Coming Soon
+                </span>
               </article>
             ))}
           </div>
@@ -289,40 +285,18 @@ export default function SolutionsPage() {
 
           <div className="sol-proof-video">
             <video
+              ref={videoRef}
               className="sol-proof-video__player"
-              src="/proof-solutions.mp4"
+              src="/proof-solutions.webm"
               controls
               playsInline
+              muted
               preload="metadata"
             />
           </div>
         </div>
       </div>
 
-      {/* ---------- TESTIMONIALS ---------- */}
-      <div className="section section-paper-grad">
-        <div className="container">
-          <div className="section-head">
-            <h2>
-              Satisfaction of <em>our customers</em>
-            </h2>
-          </div>
-
-          <div className="sol-testi-grid">
-            {TESTIMONIALS.map(({ quote, name, role }) => (
-              <article className="sol-testi" key={name}>
-                <span className="sol-testi__quote-mark" aria-hidden="true">&ldquo;</span>
-                <p className="sol-testi__quote">{quote}</p>
-                <div className="sol-testi__meta">
-                  <strong>{name}</strong>
-                  <span>{role}</span>
-                </div>
-                <Stars n={5} />
-              </article>
-            ))}
-          </div>
-        </div>
-      </div>
     </section>
   );
 }

@@ -72,11 +72,11 @@ export default function Solutions() {
         <div className="section-head">
           <span className="eyebrow eyebrow--lg">Our Solution</span>
           <h2>
-            Three layers, <em>one circular system</em>.
+            Three layers,<em>One Circular system</em>
           </h2>
           <p>
             From the bin on the street to the regenerated material that goes back into a
-            product — Reneonix unifies hardware, software, and material science into a
+            product - Reneonix unifies hardware, software, and material science into a
             single circular-economy platform.
           </p>
         </div>
@@ -89,7 +89,7 @@ export default function Solutions() {
                 <b>01</b> Hardware Layer
               </span>
               <h3>
-                Industrial hardware for <em>material recovery.</em>
+                Industrial hardware for <em>material recovery</em>
               </h3>
               <p className="lead">
                 Reneonix builds modular hardware systems that sort, process, and prepare
@@ -130,7 +130,7 @@ export default function Solutions() {
                 <b>02</b> Software Layer
               </span>
               <h3>
-                Software that makes <em>circularity measurable.</em>
+                Software that makes <em>circularity measurable</em>
               </h3>
               <p className="lead">
                 Reneonix connects material movement, traceability, quality, and impact data
@@ -174,7 +174,7 @@ export default function Solutions() {
                 <b>03</b> Material Science
               </span>
               <h3>
-                Material science for <em>higher-value products.</em>
+                Material science for <em>higher-value products</em>
               </h3>
               <p className="lead">
                 Reneonix tests, validates, and engineers recovered materials into reliable

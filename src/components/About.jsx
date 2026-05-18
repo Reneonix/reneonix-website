@@ -14,7 +14,7 @@ export default function About() {
         <div className="about__wrap">
           <span className="eyebrow on-dark">About Us</span>
           <h2 className="about__head">
-            We are building the infrastructure for <em>material circularity.</em>
+            We are building the infrastructure for <em>material circularity</em>
           </h2>
           <div className="about__body">
             <p>
