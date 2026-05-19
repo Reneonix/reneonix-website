@@ -99,12 +99,14 @@ function buildResumeGmailHref() {
   );
 }
 
-// Opens Gmail web compose in a new tab — works on every device and browser
-// without relying on a configured mail client or native app.
-// window.open called directly from a click handler is never blocked by popup blockers.
 function handleMailOpen(e, mailtoUrl, gmailUrl) {
   e.preventDefault();
-  window.open(gmailUrl, '_blank', 'noopener,noreferrer');
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile) {
+    window.location.href = mailtoUrl;
+  } else {
+    window.location.href = gmailUrl;
+  }
 }
 
 /**
