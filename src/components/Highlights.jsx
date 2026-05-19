@@ -31,13 +31,14 @@ export default function Highlights() {
                 src="/richard-reneonix.png"
                 alt="Richard, Founder of Reneonix"
                 loading="lazy"
+                decoding="async"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                 }}
               />
             </div>
             <div className="highlight__body">
-              <img src="/isn.png" alt="Indian Startup News" className="highlight__source-badge" loading="lazy" />
+              <img src="/isn.png" alt="Indian Startup News" className="highlight__source-badge" loading="lazy" decoding="async" />
               <span className="highlight__tag">Funding · In the Press</span>
               <h3>Reneonix raises ₹1.7 crore from Inflection Point Ventures</h3>
               <p>
@@ -54,7 +55,7 @@ export default function Highlights() {
           {/* 2) YouTube #1 */}
           <a className="highlight" href="https://www.youtube.com/watch?v=F31IlaSo1_8" target="_blank" rel="noopener">
             <div className="highlight__img highlight__img--video">
-              <img src="https://img.youtube.com/vi/F31IlaSo1_8/hqdefault.jpg" alt="Reneonix on YouTube" loading="lazy" />
+              <img src="https://img.youtube.com/vi/F31IlaSo1_8/hqdefault.jpg" alt="Reneonix on YouTube" loading="lazy" decoding="async" />
               <div className="highlight__play">
                 <span>
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -79,7 +80,7 @@ export default function Highlights() {
           {/* 3) YouTube #2 */}
           <a className="highlight" href="https://www.youtube.com/watch?v=hXbU8nLBLGY" target="_blank" rel="noopener">
             <div className="highlight__img highlight__img--video">
-              <img src="https://img.youtube.com/vi/hXbU8nLBLGY/hqdefault.jpg" alt="Reneonix on YouTube" loading="lazy" />
+              <img src="https://img.youtube.com/vi/hXbU8nLBLGY/hqdefault.jpg" alt="Reneonix on YouTube" loading="lazy" decoding="async" />
               <div className="highlight__play">
                 <span>
                   <svg viewBox="0 0 24 24" fill="currentColor">

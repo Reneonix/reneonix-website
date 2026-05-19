@@ -157,6 +157,7 @@ export default function SolutionsPage() {
                   alt="Reneonix circular economy — recycling ecosystem"
                   loading="eager"
                   decoding="async"
+                  fetchPriority="high"
                 />
               </div>
 
@@ -189,13 +190,13 @@ export default function SolutionsPage() {
             {SOLUTIONS_CARDS.map(({ title, body, img, Icon }) => (
               <article className="sol-card" key={title}>
                 <div className="sol-card__media">
-                  <img src={img} alt={title} loading="lazy" />
+                  <img src={img} alt={title} loading="lazy" decoding="async" />
                   <span className="sol-card__badge"><Icon size={22} /></span>
                 </div>
                 <h3 className="sol-card__title">{title}</h3>
                 <p className="sol-card__body">{body}</p>
-                <span className="sol-card__more sol-card__more--soon">
-                  Coming Soon
+                <span className="sol-card__more">
+                  Explore More <span style={{ fontSize: '1.3em', lineHeight: 1 }}>→</span>
                 </span>
               </article>
             ))}
@@ -204,7 +205,7 @@ export default function SolutionsPage() {
       </div>
 
       {/* ---------- HOW MUCH TIME AI SAVES ---------- */}
-      <div className="section section-paper-grad sol-compare-section">
+      <div className="section section-dark sol-compare-section">
         <div className="container">
           <div className="section-head">
             <h2>
@@ -245,35 +246,6 @@ export default function SolutionsPage() {
         </div>
       </div>
 
-      {/* ---------- INDUSTRIES MARQUEE ---------- */}
-      <div className="section section-dark">
-        <div className="container">
-          <div className="section-head">
-            <span className="eyebrow on-dark">Industries</span>
-            <h2>
-              Industries we <em>serve</em>
-            </h2>
-          </div>
-
-          <div
-            className="sol-industries-marquee"
-            role="region"
-            aria-label="Industries we serve"
-          >
-            <div className="sol-industries-marquee__track" aria-hidden="false">
-              {[...INDUSTRIES, ...INDUSTRIES].map(({ label, img }, i) => (
-                <article className="sol-industry-card" key={`${label}-${i}`}>
-                  <div className="sol-industry-card__media">
-                    <img src={img} alt={label} loading="lazy" draggable="false" />
-                  </div>
-                  <span className="sol-industry-card__label">{label}</span>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* ---------- PROOF / VIDEO ---------- */}
       <div className="section section-paper-grad">
         <div className="container">
@@ -293,6 +265,35 @@ export default function SolutionsPage() {
               muted
               preload="metadata"
             />
+          </div>
+        </div>
+      </div>
+
+      {/* ---------- INDUSTRIES MARQUEE ---------- */}
+      <div className="section section-dark">
+        <div className="container">
+          <div className="section-head">
+            <span className="eyebrow on-dark">Industries</span>
+            <h2>
+              Industries we <em>serve</em>
+            </h2>
+          </div>
+
+          <div
+            className="sol-industries-marquee"
+            role="region"
+            aria-label="Industries we serve"
+          >
+            <div className="sol-industries-marquee__track" aria-hidden="false">
+              {[...INDUSTRIES, ...INDUSTRIES].map(({ label, img }, i) => (
+                <article className="sol-industry-card" key={`${label}-${i}`}>
+                  <div className="sol-industry-card__media">
+                    <img src={img} alt={label} loading="lazy" decoding="async" draggable="false" />
+                  </div>
+                  <span className="sol-industry-card__label">{label}</span>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </div>
