@@ -22,12 +22,12 @@ function PartnerRow({ tiles, reverse = false, speed }) {
       <div className="marquee__track">
         {tiles.map((t) => (
           <div key={t.src} className="partner-tile">
-            <img src={t.src} alt={t.alt} loading="lazy" />
+            <img src={t.src} alt={t.alt} loading="lazy" decoding="async" />
           </div>
         ))}
         {tiles.map((t) => (
           <div key={`dup-${t.src}`} className="partner-tile" aria-hidden="true">
-            <img src={t.src} alt="" loading="lazy" />
+            <img src={t.src} alt="" loading="lazy" decoding="async" />
           </div>
         ))}
       </div>

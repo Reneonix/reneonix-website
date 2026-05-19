@@ -54,7 +54,7 @@ export default function Hero() {
         autoPlay
         muted
         playsInline
-        preload="auto"
+        preload="metadata"
         aria-hidden="true"
         data-parallax="0.18"
       >

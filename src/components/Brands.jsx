@@ -24,13 +24,13 @@ export default function Brands() {
         <div className="marquee__track">
           {BRANDS.map((b) => (
             <span key={b.src} className="marquee__pill">
-              <img src={b.src} alt={b.alt} loading="lazy" />
+              <img src={b.src} alt={b.alt} loading="lazy" decoding="async" />
             </span>
           ))}
           {/* duplicate set for seamless loop */}
           {BRANDS.map((b) => (
             <span key={`dup-${b.src}`} className="marquee__pill" aria-hidden="true">
-              <img src={b.src} alt="" loading="lazy" />
+              <img src={b.src} alt="" loading="lazy" decoding="async" />
             </span>
           ))}
         </div>

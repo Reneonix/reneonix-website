@@ -108,7 +108,7 @@ export default function Solutions() {
             <div className="zz-row__media">
               <div className="zz-row__media-inner">
                 <span className="zz-row__media-tag">Hardware · Live</span>
-                <img src="/hardware-flow.png" alt="Reneonix hardware processing flow" loading="lazy" />
+                <img src="/hardware-flow.png" alt="Reneonix hardware processing flow" loading="lazy" decoding="async" />
               </div>
             </div>
           </ZzRow>
@@ -122,6 +122,7 @@ export default function Solutions() {
                   src="/software.png"
                   alt="Reneonix software dashboard for material traceability"
                   loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
@@ -197,6 +198,7 @@ export default function Solutions() {
                   src="/material-science.png"
                   alt="Reneonix material science lab — recovered samples engineered into circular products"
                   loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>

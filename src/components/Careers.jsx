@@ -44,55 +44,67 @@ const DEPARTMENT_ROLES = {
 
 const DEPARTMENTS = Object.keys(DEPARTMENT_ROLES);
 
-/**
- * Builds a Gmail compose URL for a specific role.
- * Subject and "Applying for Role" field are pre-filled from the selected role.
- * Reusable for any current or future opening — just pass the role name.
- */
-function buildMailHref(role) {
-  const subject = `Application for ${role}`;
-  const body =
-    `Name:\n\n` +
-    `Email Address:\n\n` +
-    `Years of Experience:\n\n` +
-    `Applying for Role: ${role}\n\n` +
-    `Phone Number:\n\n` +
-    `Resume/CV: (Mandatory Attachment)\n\n` +
-    `Additional Documents: (Optional)\n` +
-    `- Portfolio\n` +
-    `- Certifications\n` +
-    `- Project Documents`;
+const CAREERS_EMAIL = 'careers@reneonix.com';
+
+function buildBody(role) {
   return (
-    `https://mail.google.com/mail/?view=cm&fs=1` +
-    `&to=careers@reneonix.com` +
-    `&su=${encodeURIComponent(subject)}` +
-    `&body=${encodeURIComponent(body)}`
+    `Name:\r\n\r\n` +
+    `Email Address:\r\n\r\n` +
+    `Years of Experience:\r\n\r\n` +
+    `Applying for Role: ${role || ''}\r\n\r\n` +
+    `Phone Number:\r\n\r\n` +
+    `Resume/CV: (Mandatory Attachment)\r\n\r\n` +
+    `Additional Documents: (Optional)\r\n` +
+    `- Portfolio\r\n` +
+    `- Certifications\r\n` +
+    `- Project Documents`
   );
 }
 
-/**
- * Builds the Gmail compose URL for the general "Send Your Resume" button.
- * Uses a fixed subject — no role selection required.
- */
-function buildResumeMailHref() {
-  const subject = `Resume Submission | Reneonix`;
-  const body =
-    `Name:\n\n` +
-    `Email Address:\n\n` +
-    `Years of Experience:\n\n` +
-    `Applying for Role:\n\n` +
-    `Phone Number:\n\n` +
-    `Resume/CV: (Mandatory Attachment)\n\n` +
-    `Additional Documents: (Optional)\n` +
-    `- Portfolio\n` +
-    `- Certifications\n` +
-    `- Project Documents`;
+function buildMailHref(role) {
+  const subject = `Application for ${role}`;
+  return (
+    `mailto:${CAREERS_EMAIL}` +
+    `?subject=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(buildBody(role))}`
+  );
+}
+
+function buildGmailHref(role) {
+  const subject = `Application for ${role}`;
   return (
     `https://mail.google.com/mail/?view=cm&fs=1` +
-    `&to=careers@reneonix.com` +
+    `&to=${CAREERS_EMAIL}` +
     `&su=${encodeURIComponent(subject)}` +
-    `&body=${encodeURIComponent(body)}`
+    `&body=${encodeURIComponent(buildBody(role).replace(/\r\n/g, '\n'))}`
   );
+}
+
+function buildResumeMailHref() {
+  const subject = `Resume Submission | Reneonix`;
+  return (
+    `mailto:${CAREERS_EMAIL}` +
+    `?subject=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(buildBody(''))}`
+  );
+}
+
+function buildResumeGmailHref() {
+  const subject = `Resume Submission | Reneonix`;
+  return (
+    `https://mail.google.com/mail/?view=cm&fs=1` +
+    `&to=${CAREERS_EMAIL}` +
+    `&su=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(buildBody('').replace(/\r\n/g, '\n'))}`
+  );
+}
+
+// Opens Gmail web compose in a new tab — works on every device and browser
+// without relying on a configured mail client or native app.
+// window.open called directly from a click handler is never blocked by popup blockers.
+function handleMailOpen(e, mailtoUrl, gmailUrl) {
+  e.preventDefault();
+  window.open(gmailUrl, '_blank', 'noopener,noreferrer');
 }
 
 /**
@@ -316,11 +328,12 @@ function RolesPicker() {
 
       <a
         href={mailHref}
-        target={canSend ? '_blank' : undefined}
-        rel="noopener noreferrer"
         className={`btn btn-primary roles-picker__cta ${!canSend ? 'is-disabled' : ''}`}
         aria-disabled={!canSend}
-        onClick={(e) => { if (!canSend) e.preventDefault(); }}
+        onClick={(e) => {
+          if (!canSend) { e.preventDefault(); return; }
+          handleMailOpen(e, buildMailHref(role), buildGmailHref(role));
+        }}
       >
         Send Your Application
         <Arrow />
@@ -413,8 +426,7 @@ function CurrentOpenings({ openings }) {
                       </span>
                       <a
                         href={buildMailHref(job.role)}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        onClick={(e) => handleMailOpen(e, buildMailHref(job.role), buildGmailHref(job.role))}
                         className="btn btn-primary opening-item__apply"
                       >
                         Apply Now <Arrow />
@@ -521,6 +533,7 @@ export default function Careers() {
                   alt="Reneonix team on the factory floor — material recovery operations"
                   loading="eager"
                   decoding="async"
+                  fetchPriority="high"
                 />
               </div>
             </div>
@@ -562,7 +575,7 @@ export default function Careers() {
             <div className="life-marquee__track">
               {[...LIFE_GALLERY, ...LIFE_GALLERY].map(({ src, caption }, i) => (
                 <div className="life-marquee__card" key={`${src}-${i}`}>
-                  <img src={src} alt={caption} loading="lazy" draggable="false" />
+                  <img src={src} alt={caption} loading="lazy" decoding="async" draggable="false" />
                 </div>
               ))}
             </div>
@@ -617,8 +630,7 @@ export default function Careers() {
             <div className="careers-cta__actions">
               <a
                 href={buildResumeMailHref()}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={(e) => handleMailOpen(e, buildResumeMailHref(), buildResumeGmailHref())}
                 className="btn btn-primary"
               >
                 Send Your Resume

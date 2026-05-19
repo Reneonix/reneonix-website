@@ -197,6 +197,19 @@
   font-weight: 900;
 }
 
+/* Dark background overrides for compare section */
+.section-dark.sol-compare-section .section-head h2 em { color: var(--lime); }
+.section-dark .sol-compare__title { color: rgba(255,255,255,.9); }
+.section-dark .sol-compare__col--trad .sol-compare__title { color: #ff8a87; }
+.section-dark .sol-compare__col--ren  .sol-compare__title { color: #5fd494; }
+.section-dark .sol-compare__label { color: rgba(255,255,255,.85); }
+.section-dark .sol-compare__label::before { background: rgba(255,255,255,.12); }
+.section-dark .sol-compare__row { border-top-color: rgba(255,255,255,.12); }
+.section-dark .sol-compare__value--trad { color: #ff8a87; }
+.section-dark .sol-compare__value--ren  { color: #5fd494; }
+.section-dark .sol-compare__col--trad { background: rgba(217,83,79,.12); border-color: rgba(217,83,79,.35); }
+.section-dark .sol-compare__col--ren  { background: rgba(31,110,74,.15);  border-color: rgba(31,110,74,.40); }
+
 .sol-compare {
   position: relative;
   display: grid;
