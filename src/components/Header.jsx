@@ -38,9 +38,19 @@ function Chevron() {
  */
 function Dropdown({ label, items, onItemClick }) {
   const [open, setOpen] = useState(false);
-  const wrapRef = useRef(null);
+  const wrapRef  = useRef(null);
+  const closeTimer = useRef(null);
 
-  // Close when clicking outside
+  const show = () => {
+    clearTimeout(closeTimer.current);
+    setOpen(true);
+  };
+
+  const hide = () => {
+    closeTimer.current = setTimeout(() => setOpen(false), 120);
+  };
+
+  // Close when clicking outside (fallback for touch / keyboard)
   useEffect(() => {
     const handler = (e) => {
       if (wrapRef.current && !wrapRef.current.contains(e.target)) {
@@ -48,13 +58,11 @@ function Dropdown({ label, items, onItemClick }) {
       }
     };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      clearTimeout(closeTimer.current);
+    };
   }, []);
-
-  const toggle = (e) => {
-    e.stopPropagation();
-    setOpen((o) => !o);
-  };
 
   const handleItemClick = () => {
     setOpen(false);
@@ -62,8 +70,13 @@ function Dropdown({ label, items, onItemClick }) {
   };
 
   return (
-    <div className={`has-dropdown${open ? ' open' : ''}`} ref={wrapRef}>
-      <button type="button" onClick={toggle}>
+    <div
+      className={`has-dropdown${open ? ' open' : ''}`}
+      ref={wrapRef}
+      onMouseEnter={show}
+      onMouseLeave={hide}
+    >
+      <button type="button" onClick={() => setOpen((o) => !o)}>
         {label}
         <Chevron />
       </button>

@@ -407,6 +407,7 @@
   }
   .hero__copy { max-width: 760px; }
   .hero h1 {
+    font-family: 'Arimo', sans-serif;
     font-size: clamp(2.6rem, 6vw, 5.2rem);
     line-height: 1.04;
     letter-spacing: -.015em;
@@ -2153,6 +2154,7 @@
   }
   .careers-hero__copy { max-width: 560px; }
   .careers-hero__title {
+    font-family: 'Arimo', sans-serif;
     font-size: clamp(2.4rem, 5vw, 4rem);
     font-weight: 900;
     line-height: 1.05;

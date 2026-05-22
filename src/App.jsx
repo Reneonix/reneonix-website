@@ -10,6 +10,9 @@ import Highlights from './components/Highlights.jsx';
 import CtaBanner from './components/CtaBanner.jsx';
 import Careers from './components/Careers.jsx';
 import SolutionsPage from './components/SolutionsPage.jsx';
+import HardwareSystems from './components/HardwareSystems.jsx';
+// import SoftwarePage from './components/SoftwarePage.jsx';
+// import MaterialSciencePage from './components/MaterialSciencePage.jsx';
 import Footer from './components/Footer.jsx';
 import SiteEffects from './components/SiteEffects.jsx';
 import Preloader from './components/Preloader.jsx';
@@ -20,6 +23,9 @@ function getRoute() {
   const path = hash.split('?')[0];
   if (path === '#solutions' || path.startsWith('#solutions/')) return 'solutions';
   if (path === '#careers' || path.startsWith('#careers/')) return 'careers';
+  if (path === '#hardware') return 'hardware';
+  // if (path === '#software') return 'software';
+  // if (path === '#material-science') return 'material-science';
   return 'home';
 }
 
@@ -58,6 +64,12 @@ export default function App() {
     page = <SolutionsPage />;
   } else if (route === 'careers') {
     page = <Careers />;
+  } else if (route === 'hardware') {
+    page = <HardwareSystems />;
+  // } else if (route === 'software') {
+  //   page = <SoftwarePage />;
+  // } else if (route === 'material-science') {
+  //   page = <MaterialSciencePage />;
   } else {
     page = (
       <>
