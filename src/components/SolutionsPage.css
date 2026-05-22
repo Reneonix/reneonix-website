@@ -27,6 +27,7 @@
 }
 .sol-hero__copy { max-width: 620px; }
 .sol-hero__title {
+  font-family: 'Arimo', sans-serif;
   font-size: clamp(2.2rem, 4.4vw, 3.4rem);
   line-height: 1.05;
   color: var(--white);
@@ -171,6 +172,7 @@
   padding-bottom: 4px;
   border-bottom: 1.5px solid transparent;
   transition: color .2s, border-color .2s, transform .2s;
+  text-decoration: none;
 }
 .sol-card__more:hover {
   color: var(--ink);
@@ -188,6 +190,10 @@
   color: var(--muted, #888);
   border-color: transparent;
   transform: none;
+}
+.sol-card__more--inactive {
+  cursor: default;
+  pointer-events: none;
 }
 
 /* ---------- COMPARE (How much time AI saves) ---------- */
