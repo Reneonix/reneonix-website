@@ -50,19 +50,28 @@ function buildBody(role) {
   return (
     `Name:\r\n\r\n` +
     `Email Address:\r\n\r\n` +
-    `Years of Experience:\r\n\r\n` +
-    `Applying for Role: ${role || ''}\r\n\r\n` +
     `Phone Number:\r\n\r\n` +
+    `Applying for Role: ${role || ''}\r\n\r\n` +
+    `Years of Experience:\r\n\r\n` +
+    `Current Location:\r\n\r\n` +
+    `Current Company:\r\n\r\n` +
+    `Current Role:\r\n\r\n` +
+    `Notice Period:\r\n\r\n` +
+    `Immediate Joining: Yes / No\r\n\r\n` +
+    `Expected Salary:\r\n\r\n` +
+    `LinkedIn / Portfolio / GitHub:\r\n\r\n` +
     `Resume/CV: (Mandatory Attachment)\r\n\r\n` +
     `Additional Documents: (Optional)\r\n` +
     `- Portfolio\r\n` +
     `- Certifications\r\n` +
-    `- Project Documents`
+    `- Project Documents\r\n\r\n` +
+    `Why are you interested in this role?\r\n\r\n` +
+    `Any other notes:\r\n`
   );
 }
 
 function buildMailHref(role) {
-  const subject = `Application for ${role}`;
+  const subject = `Application | ${role} | [Candidate Name]`;
   return (
     `mailto:${CAREERS_EMAIL}` +
     `?subject=${encodeURIComponent(subject)}` +
@@ -71,7 +80,7 @@ function buildMailHref(role) {
 }
 
 function buildGmailHref(role) {
-  const subject = `Application for ${role}`;
+  const subject = `Application | ${role} | [Candidate Name]`;
   return (
     `https://mail.google.com/mail/?view=cm&fs=1` +
     `&to=${CAREERS_EMAIL}` +
@@ -81,7 +90,7 @@ function buildGmailHref(role) {
 }
 
 function buildResumeMailHref() {
-  const subject = `Resume Submission | Reneonix`;
+  const subject = `Application | [Role] | [Candidate Name]`;
   return (
     `mailto:${CAREERS_EMAIL}` +
     `?subject=${encodeURIComponent(subject)}` +
@@ -90,7 +99,7 @@ function buildResumeMailHref() {
 }
 
 function buildResumeGmailHref() {
-  const subject = `Resume Submission | Reneonix`;
+  const subject = `Application | [Role] | [Candidate Name]`;
   return (
     `https://mail.google.com/mail/?view=cm&fs=1` +
     `&to=${CAREERS_EMAIL}` +
