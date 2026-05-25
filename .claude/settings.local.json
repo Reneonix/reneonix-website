@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(\\(Get-Item \"d:\\\\Documents\\\\reneonix-website\\\\public\\\\orbit-video.gif\"\\).Length)"
+    ]
+  }
+}

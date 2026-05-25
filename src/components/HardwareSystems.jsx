@@ -330,6 +330,196 @@ export default function HardwareSystems() {
         </div>
       </section>
 
+      {/* ── MRM ── */}
+      <section className="hw-product-section hw-product-section--dark">
+        <div className="container">
+          <span className="hw-chapter-tag">HARDWARE 01</span>
+          <div className="hw-product__inner">
+            <div className="hw-product__copy">
+              <h2 className="hw-product__title">
+                MRM (AI) Material Recovery Machine.{' '}
+                <span className="hw-product__title-lime">Modular front-end recovery system.</span>
+              </h2>
+              <p className="hw-product__subtitle">Multi-material smart intake at the source.</p>
+              <p className="hw-product__body">
+                Accepts post-consumer materials at the point of disposal. Identifies and grades
+                in real time using on-edge computer vision and sensors. Separates reuse from
+                recycling streams. Digitally logs every deposit to Trace OS.
+              </p>
+              <div className="hw-dual-layer">
+                <p className="hw-dual-layer__label">DUAL INTELLIGENCE LAYER</p>
+                <div className="hw-dual-layer__grid">
+                  <div className="hw-dual-layer__col">
+                    <p className="hw-dual-layer__col-title">Reuse Stream</p>
+                    <p className="hw-dual-layer__col-sub">VALUE MAXIMIZATION</p>
+                    <ul>
+                      <li>Brand-level identification</li>
+                      <li>Size and condition segregation</li>
+                      <li>Refill ecosystem ready</li>
+                    </ul>
+                  </div>
+                  <div className="hw-dual-layer__col">
+                    <p className="hw-dual-layer__col-title">Recycling Stream</p>
+                    <p className="hw-dual-layer__col-sub">MATERIAL PURITY</p>
+                    <ul>
+                      <li>Color sorting</li>
+                      <li>Contamination removal</li>
+                      <li>Processor-ready output</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div className="hw-status-bar">
+                <span className="hw-status-bar__label">STATUS</span>
+                Late-stage R&amp;D · validated at MRF sites · production deployment in next 2 months.
+              </div>
+            </div>
+
+            <div className="hw-product__visual">
+              <div className="hw-product__img-placeholder">
+                <span>MRM v1</span>
+                <p>Product image coming soon</p>
+              </div>
+              <div className="hw-product__spec-card">
+                <p className="hw-spec-card__eyebrow">CAPABILITIES</p>
+                <h3 className="hw-spec-card__name">MRM v1</h3>
+                <div className="hw-spec-card__rows">
+                  <div className="hw-spec-row">
+                    <span className="hw-spec-row__key">MATERIAL TYPES</span>
+                    <span className="hw-spec-row__val">Glass · plastic · paper · metal</span>
+                  </div>
+                  <div className="hw-spec-row">
+                    <span className="hw-spec-row__key">REUSABLE BOTTLE BIN</span>
+                    <span className="hw-spec-row__val">450–500 bottles</span>
+                  </div>
+                  <div className="hw-spec-row">
+                    <span className="hw-spec-row__key">RECYCLING CAPACITY</span>
+                    <span className="hw-spec-row__val">Up to 250 kg / cycle</span>
+                  </div>
+                  <div className="hw-spec-row">
+                    <span className="hw-spec-row__key">VISION SYSTEM</span>
+                    <span className="hw-spec-row__val">Multi-spectral camera + on-edge AI</span>
+                  </div>
+                  <div className="hw-spec-row">
+                    <span className="hw-spec-row__key">STATUS</span>
+                    <span className="hw-spec-row__val">Late-stage R&amp;D → production</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── AI SORTING MODULE ── */}
+      <section className="hw-product-section hw-product-section--light">
+        <div className="container">
+          <span className="hw-chapter-tag hw-chapter-tag--dark">HARDWARE 02</span>
+          <h2 className="hw-product__title hw-product__title--dark">
+            AI Sorting Module —{' '}
+            <span className="hw-product__title-lime">first commercial-grade deployment, glass.</span>
+          </h2>
+          <p className="hw-product__body hw-product__body--dark">
+            Vision-based, non-destructive sortation. The first physical instantiation of our
+            portable AI vision module.
+          </p>
+          <div className="hw-sorter__inner">
+            <div className="hw-sorter__img-placeholder">
+              <span>AI Sorting Module</span>
+              <p>Product image coming soon</p>
+            </div>
+            <div className="hw-sorter__metrics">
+              <div className="hw-metric-card">
+                <p className="hw-metric-card__label">Colour Detection Accuracy</p>
+                <div className="hw-metric-card__bar"><div className="hw-metric-card__fill" style={{ width: '98%' }} /></div>
+                <p className="hw-metric-card__num">98%</p>
+                <p className="hw-metric-card__desc">Separates flint, amber, green, and mixed glass with near-perfect precision</p>
+              </div>
+              <div className="hw-metric-card">
+                <p className="hw-metric-card__label">Brand Detection Accuracy</p>
+                <div className="hw-metric-card__bar"><div className="hw-metric-card__fill" style={{ width: '95%' }} /></div>
+                <p className="hw-metric-card__num">95%</p>
+                <p className="hw-metric-card__desc">Identifies brand by label, bottle shape &amp; embossing — currently fine tuning model</p>
+              </div>
+              <div className="hw-metric-card">
+                <p className="hw-metric-card__label">Bottles Sorted Per Hour</p>
+                <div className="hw-metric-card__bar"><div className="hw-metric-card__fill" style={{ width: '80%' }} /></div>
+                <p className="hw-metric-card__num">1200</p>
+                <p className="hw-metric-card__desc">Industrial throughput with &lt;300ms response time.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── AI INSPECTION BOX ── */}
+      <section className="hw-product-section hw-product-section--dark">
+        <div className="container">
+          <span className="hw-chapter-tag">HARDWARE 03</span>
+          <div className="hw-product__inner">
+            <div className="hw-product__copy">
+              <h2 className="hw-product__title">
+                AI Inspection Box.{' '}
+                <span className="hw-product__title-lime">Portable vision intelligence, anywhere.</span>
+              </h2>
+              <p className="hw-product__subtitle">Drop-in inspection for any conveyor line.</p>
+              <p className="hw-product__body">
+                A compact, self-contained AI vision unit that mounts above any existing conveyor.
+                Real-time material classification with no line stoppage, no retooling.
+              </p>
+              <div className="hw-inspection__features">
+                <div className="hw-inspection__feat">
+                  <span className="hw-inspection__feat-dot" />
+                  <div>
+                    <p className="hw-inspection__feat-title">Plug-and-inspect</p>
+                    <p className="hw-inspection__feat-body">Installs in under 30 minutes on any line</p>
+                  </div>
+                </div>
+                <div className="hw-inspection__feat">
+                  <span className="hw-inspection__feat-dot" />
+                  <div>
+                    <p className="hw-inspection__feat-title">Edge inference</p>
+                    <p className="hw-inspection__feat-body">On-device AI — no cloud latency, works offline</p>
+                  </div>
+                </div>
+                <div className="hw-inspection__feat">
+                  <span className="hw-inspection__feat-dot" />
+                  <div>
+                    <p className="hw-inspection__feat-title">Multi-material ready</p>
+                    <p className="hw-inspection__feat-body">Glass, plastic, metal, paper — one model</p>
+                  </div>
+                </div>
+                <div className="hw-inspection__feat">
+                  <span className="hw-inspection__feat-dot" />
+                  <div>
+                    <p className="hw-inspection__feat-title">Trace OS connected</p>
+                    <p className="hw-inspection__feat-body">Live dashboard, alerts, and audit trail</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="hw-product__visual">
+              <div className="hw-product__img-placeholder">
+                <span>AI Inspection Box</span>
+                <p>Product image coming soon</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── MATERIALS MARQUEE ── */}
+      <div className="hw-marquee-strip">
+        <div className="hw-marquee-track">
+          {['Glass', 'Plastic', 'Metal', 'Paper', 'Ceramics', 'E-waste', 'Textiles', 'Solar Panels', 'Composites', 'Batteries',
+            'Glass', 'Plastic', 'Metal', 'Paper', 'Ceramics', 'E-waste', 'Textiles', 'Solar Panels', 'Composites', 'Batteries'].map((m, i) => (
+            <span key={i} className="hw-marquee-item">
+              {m} <span className="hw-marquee-dot" aria-hidden="true">·</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* ── WHAT RENEONIX ENABLES ── */}
       <section className="hw2-section" id="hw2-enables">
         <div className="container">
@@ -398,165 +588,6 @@ export default function HardwareSystems() {
         </div>
       </section>
 
-      {/* ── MATERIAL STREAMS — Fade & Scale Scroll Stack ── */}
-      <section className="hw2-mat-stack" ref={matStackRef}>
-        {/* Section header */}
-        <div className="container">
-          <div className="hw2-mat-stack__header hw2-reveal">
-            <h2>Designed for diverse <em>material streams</em></h2>
-            <p>
-              Reneonix hardware is built to process different material categories
-              through a unified recovery framework — sorting, routing, and recovering
-              materials with precision and full traceability.
-            </p>
-          </div>
-        </div>
-
-        {/* Scroll-stack cards */}
-        <div className="hw2-mat-stack__cards">
-          {MATERIALS.map(({ label, body, img }, i) => (
-            <div
-              key={label}
-              className="hw2-mat-stack__wrapper"
-              ref={el => { matStackWrapperRefs.current[i] = el; }}
-            >
-              <div
-                className="hw2-mat-stack__card"
-                ref={el => { matStackCardRefs.current[i] = el; }}
-              >
-                <img
-                  className="hw2-mat-stack__card-img"
-                  src={img}
-                  alt={label}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="hw2-mat-stack__card-content">
-                  <h3 className="hw2-mat-stack__card-label">{label}</h3>
-                  <p className="hw2-mat-stack__card-body">{body}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── INDUSTRIAL INFRASTRUCTURE ── */}
-      <section className="hw2-section">
-        <div className="container">
-          <div className="section-head hw2-reveal">
-            <h2>Built as industrial <em>infrastructure</em></h2>
-            <p>
-              Reneonix systems are engineered for reliability, scale, and long-term
-              operational performance.
-            </p>
-          </div>
-          <div className="hw2-infra-grid hw2-reveal">
-            {INFRA.map(({ Icon, title, body }) => (
-              <div className="hw2-infra-card" key={title}>
-                <span className="hw2-infra-card__icon"><Icon size={28} /></span>
-                <h3 className="hw2-infra-card__title">{title}</h3>
-                <p className="hw2-infra-card__body">{body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── WORKFLOW — Cinematic Scroll Story ── */}
-      <section className="hw2-story" id="hw2-workflow" ref={storyRef}>
-        <div className="hw2-story__sticky">
-
-          {/* Top bar */}
-          <div className="hw2-story__topbar">
-            <div className="hw2-story__topbar-inner">
-              <h2 className="hw2-story__section-label">From intake to <em>recovery</em></h2>
-              <p className="hw2-story__topbar-sub">
-                A five-stage end-to-end process — from mixed material intake through AI-powered
-                detection, automated sorting, industrial recovery, and full traceability output.
-              </p>
-            </div>
-          </div>
-
-          {/* Content + Visuals */}
-          <div className="hw2-story__main">
-            <div className="hw2-story__content">
-              {WORKFLOW.map(({ n, Icon, label, headline, body, tags }, i) => (
-                <div
-                  key={label}
-                  className={`hw2-story__panel${i === activeWorkflow ? ' hw2-story__panel--active' : ''}`}
-                >
-                  <span className="hw2-story__ghost-n">{String(n).padStart(2, '0')}</span>
-                  <div className="hw2-story__step-meta">
-                    <span className="hw2-story__step-num">{String(n).padStart(2, '0')}</span>
-                    <span className="hw2-story__step-name">{label}</span>
-                  </div>
-                  <h2 className="hw2-story__headline">{headline}</h2>
-                  <p className="hw2-story__desc">{body}</p>
-                  <div className="hw2-story__tags">
-                    {tags.map(t => <span key={t} className="hw2-story__tag">{t}</span>)}
-                  </div>
-
-                  {/* Mobile-only inline video — appears after tags, hidden on desktop */}
-                  <div className="hw2-story__mob-video">
-                    <video
-                      className="hw2-story__mob-video-el"
-                      src={`/part${n}.mp4`}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="hw2-story__visuals">
-              {WORKFLOW.map(({ visual, label }, i) => (
-                <div
-                  key={label}
-                  className={`hw2-story__vis-wrap${i === activeWorkflow ? ' hw2-story__vis-wrap--active' : ''}`}
-                >
-                  {visual === 'intake'  && <VisVideo src="/part1.mp4" hud="MATERIAL INTAKE // ACTIVE"         isActive={i === activeWorkflow} />}
-                  {visual === 'scan'    && <VisVideo src="/part2.mp4" hud="AI DETECTION // ACTIVE"            isActive={i === activeWorkflow} />}
-                  {visual === 'sort'    && <VisVideo src="/part3.mp4" hud="SORTING & ROUTING // ACTIVE"       isActive={i === activeWorkflow} />}
-                  {visual === 'recover' && <VisVideo src="/part4.mp4" hud="RECOVERY & PROCESSING // ACTIVE"  isActive={i === activeWorkflow} />}
-                  {visual === 'trace'   && <VisVideo src="/part5.mp4" hud="TRACEABLE OUTPUT // ACTIVE"        isActive={i === activeWorkflow} />}
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── IMPACT BANNER ── */}
-      <section className="hw2-impact">
-        <div className="container">
-          <div className="hw2-impact__inner hw2-reveal">
-            <div className="hw2-impact__copy">
-              <h2 className="hw2-impact__title">
-                Driving impact across all material streams
-              </h2>
-              <p className="hw2-impact__lead">
-                Our infrastructure helps facilities recover more, operate smarter,
-                and build a more circular future.
-              </p>
-            </div>
-            <div className="hw2-impact__metrics">
-              {IMPACT_METRICS.map(({ Icon, title, body }) => (
-                <div className="hw2-impact__metric" key={title}>
-                  <span className="hw2-impact__metric-icon"><Icon size={18} /></span>
-                  <strong>{title}</strong>
-                  <p>{body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
 
 
     </div>
