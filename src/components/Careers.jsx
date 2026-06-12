@@ -25,8 +25,6 @@ const Arrow = () => (
 const DEPARTMENT_ROLES = {
   Hardware: [
     'Mechanical Design Engineer',
-    'Embedded System Engineer',
-    'Embedded Firmware Engineer',
     'Manufacturing Engineer',
     'Quality Engineer',
     'Manufacturing Technician',
@@ -144,50 +142,6 @@ const CURRENT_OPENINGS = [
       'Proficiency in SolidWorks, AutoCAD, or equivalent CAD tool',
       'Understanding of GD&T, manufacturing processes, and material properties',
       'Strong analytical, problem-solving, and communication skills',
-    ],
-  },
-  {
-    id: 'embedded-system-engineer',
-    role: 'Embedded System Engineer',
-    dept: 'Hardware',
-    type: 'Full-time',
-    location: 'Chennai, India',
-    experience: '0–2 years',
-    description:
-      'Develop and integrate embedded systems for Reneonix\'s IoT-connected hardware platforms used in material recovery operations.',
-    responsibilities: [
-      'Design and develop embedded software in C/C++ for microcontroller platforms',
-      'Integrate sensors, actuators, and communication modules (UART, I2C, SPI, BLE, LoRa)',
-      'Write hardware abstraction layers and device drivers',
-      'Debug and validate embedded systems through unit and integration testing',
-    ],
-    requirements: [
-      'B.E. / B.Tech in Electronics, Embedded Systems, or related field',
-      'Proficiency in C/C++ for bare-metal or RTOS-based development',
-      'Experience with STM32, ESP32, or similar MCU platforms',
-      'Knowledge of communication protocols: UART, I2C, SPI, MQTT',
-    ],
-  },
-  {
-    id: 'embedded-firmware-engineer',
-    role: 'Embedded Firmware Engineer',
-    dept: 'Hardware',
-    type: 'Full-time',
-    location: 'Chennai, India',
-    experience: '0–2 years',
-    description:
-      'Write, optimize, and maintain firmware for Reneonix\'s hardware devices deployed in industrial environments.',
-    responsibilities: [
-      'Develop real-time firmware using FreeRTOS or bare-metal frameworks',
-      'Optimize firmware for low-power and resource-constrained embedded targets',
-      'Implement OTA (over-the-air) update and secure boot protocols',
-      'Collaborate with the hardware design team to validate firmware–hardware integration',
-    ],
-    requirements: [
-      'B.E. / B.Tech in Electronics, Computer Science, or related field',
-      'Strong C programming skills for embedded targets',
-      'Familiarity with RTOS concepts, bootloaders, and memory management',
-      'Experience with STM32CubeIDE, Keil MDK, or similar toolchains',
     ],
   },
   {
