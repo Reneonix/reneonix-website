@@ -96,6 +96,7 @@ export default function HorizontalScroll({ items, heightPerItemVH = 100 }) {
                   draggable="false"
                   style={imgStyle}
                 />
+                {caption && <p className="hscroll__caption">{caption}</p>}
               </article>
             ))}
           </div>

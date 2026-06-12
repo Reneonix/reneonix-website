@@ -81,7 +81,7 @@ const ScrollStack = ({
     const scaleEndPositionPx = parsePercentage(scaleEndPosition, containerHeight);
 
     const endElement = useWindowScroll
-      ? scrollerRef.current?.querySelector('.scroll-stack-end')
+      ? document.querySelector('.scroll-stack-end')
       : scrollerRef.current?.querySelector('.scroll-stack-end');
 
     const endElementTop = endElement ? getElementOffset(endElement) : 0;
@@ -246,11 +246,7 @@ const ScrollStack = ({
     const scroller = scrollerRef.current;
     if (!scroller) return;
 
-    const cards = Array.from(
-      useWindowScroll
-        ? scroller.querySelectorAll('.scroll-stack-card')
-        : scroller.querySelectorAll('.scroll-stack-card')
-    );
+    const cards = Array.from(scroller.querySelectorAll('.scroll-stack-card'));
 
     cardsRef.current = cards;
     const transformsCache = lastTransformsRef.current;
@@ -291,7 +287,6 @@ const ScrollStack = ({
     stackPosition,
     scaleEndPosition,
     baseScale,
-    scaleDuration,
     rotationAmount,
     blurAmount,
     useWindowScroll,

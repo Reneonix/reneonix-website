@@ -46,10 +46,11 @@ export default function BounceCards({
   };
 
   const getPushedTransform = (base, offsetX) => {
-    const m = base.match(/translate\(([-0-9.]+)px\)/);
+    // Match translate(Xpx), translateX(Xpx), or translate3d(Xpx, ...)
+    const m = base.match(/translate(?:X|3d)?\(([-0-9.]+)px/);
     if (m) {
       const newX = parseFloat(m[1]) + offsetX;
-      return base.replace(/translate\(([-0-9.]+)px\)/, `translate(${newX}px)`);
+      return base.replace(/translate(?:X|3d)?\(([-0-9.]+)px[^)]*\)/, `translate(${newX}px)`);
     }
     return base === 'none' ? `translate(${offsetX}px)` : `${base} translate(${offsetX}px)`;
   };

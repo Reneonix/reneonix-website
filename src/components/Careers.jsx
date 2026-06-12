@@ -503,7 +503,7 @@ export default function Careers() {
             <div className="careers-hero__copy" ref={copyRef}>
               <span className="eyebrow on-dark">Careers</span>
               <h1 className="careers-hero__title">
-                Build the <em>Circular Future.</em>
+                Build the <em>Circular Future</em>
               </h1>
               <p className="careers-hero__lead">
                 Join Reneonix in building technologies that transform waste into
@@ -578,7 +578,7 @@ export default function Careers() {
           <div className="section-head c-reveal">
             <span className="eyebrow on-dark">Life at Reneonix</span>
             <h2>
-              Where <em>builders</em> belong.
+              Where <em>builders</em> belong
             </h2>
           </div>
 
