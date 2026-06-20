@@ -30,7 +30,6 @@ const DEPARTMENT_ROLES = {
     'Manufacturing Technician',
   ],
   Software: [
-    'AI Research Trainee',
     'AI System Architect',
   ],
   'Material Science': [],
@@ -142,28 +141,6 @@ const CURRENT_OPENINGS = [
       'Proficiency in SolidWorks, AutoCAD, or equivalent CAD tool',
       'Understanding of GD&T, manufacturing processes, and material properties',
       'Strong analytical, problem-solving, and communication skills',
-    ],
-  },
-  {
-    id: 'ai-research-trainee',
-    role: 'AI Research Trainee',
-    dept: 'Software',
-    type: 'Full-time / Internship',
-    location: 'Chennai, India',
-    experience: 'Fresher',
-    description:
-      'Research and develop AI/ML models for material classification, quality grading, and waste stream analytics at Reneonix.',
-    responsibilities: [
-      'Design and train computer vision models for material sorting and defect detection',
-      'Build and evaluate machine learning pipelines for quality and contamination prediction',
-      'Work with real-world sensor and imaging data collected from field deployments',
-      'Collaborate with software and hardware teams to integrate AI models into products',
-    ],
-    requirements: [
-      'B.E. / B.Tech or M.Tech in Computer Science, AI/ML, or related field',
-      'Proficiency in Python and ML frameworks (PyTorch, TensorFlow, or scikit-learn)',
-      'Knowledge of computer vision techniques and dataset annotation workflows',
-      'Strong mathematical foundation in linear algebra, probability, and statistics',
     ],
   },
   {
@@ -314,7 +291,7 @@ function CurrentOpenings({ openings }) {
   return (
     <div className="openings-box c-reveal">
       <div className="openings-box__head">
-        <h3 className="openings-box__title">Current Openings</h3>
+        <h3 className="openings-box__title">Current <em>Openings</em></h3>
         {openings.length > 0 && (
           <span className="openings-count">
             {openings.length} open {openings.length === 1 ? 'role' : 'roles'}
