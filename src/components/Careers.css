@@ -294,7 +294,7 @@
 }
 
 .openings-box__title {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Arimo', sans-serif;
   font-size: 1rem;
   font-weight: 700;
   color: var(--ink);
@@ -304,7 +304,7 @@
 }
 .openings-box__title em {
   font-style: normal;
-  color: var(--lime-deep);
+  color: var(--ink);
   font-weight: 900;
 }
 
@@ -357,7 +357,7 @@
 }
 
 .opening-item__role {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Arimo', sans-serif;
   font-size: 1rem;
   font-weight: 700;
   color: var(--ink);

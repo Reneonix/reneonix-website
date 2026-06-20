@@ -24,12 +24,12 @@ const Arrow = () => (
  */
 const DEPARTMENT_ROLES = {
   Hardware: [
-    'Mechanical Design Engineer',
     'Manufacturing Engineer',
     'Quality Engineer',
     'Manufacturing Technician',
   ],
   Software: [
+    'AI Research Trainee',
     'AI System Architect',
   ],
   'Material Science': [],
@@ -121,28 +121,6 @@ function handleMailOpen(e, mailtoUrl, gmailUrl) {
  * If this array is empty the Current Openings box shows the empty state.
  */
 const CURRENT_OPENINGS = [
-  {
-    id: 'mechanical-design-engineer',
-    role: 'Mechanical Design Engineer',
-    dept: 'Hardware',
-    type: 'Full-time',
-    location: 'Chennai, India',
-    experience: '0–2 years',
-    description:
-      'Design and develop mechanical components for Reneonix\'s industrial waste sorting and material recovery systems.',
-    responsibilities: [
-      'Design mechanical assemblies and components using SolidWorks or equivalent CAD software',
-      'Develop prototypes and coordinate manufacturing of components with vendors',
-      'Collaborate with embedded and electrical engineering teams for system integration',
-      'Ensure designs meet GD&T tolerances, material specifications, and production requirements',
-    ],
-    requirements: [
-      'B.E. / B.Tech in Mechanical Engineering or related field',
-      'Proficiency in SolidWorks, AutoCAD, or equivalent CAD tool',
-      'Understanding of GD&T, manufacturing processes, and material properties',
-      'Strong analytical, problem-solving, and communication skills',
-    ],
-  },
   {
     id: 'graphic-designer-fresher',
     role: 'Graphic Designer Fresher',
