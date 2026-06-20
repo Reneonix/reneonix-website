@@ -3,10 +3,19 @@ import {
   ArrowRight, ChevronRight, ChevronDown,
   Recycle, Microscope, FlaskConical, Package, ShieldCheck, Factory,
   BarChart2, Layers, Zap, MapPin, Truck, TestTube,
-  GlassWater, Shirt, Building2, Sun, Leaf, Globe, Sparkles, Thermometer,
+  Shirt, Building2, Sun, Leaf, Globe, Sparkles,
+  Landmark, HardHat, Lightbulb,
   Users, TrendingUp, CheckCircle,
 } from 'lucide-react';
 import './MaterialSciencePage.css';
+
+const GlassBottleIcon = ({ size = 24, ...props }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <rect x="9" y="2" width="6" height="3" rx="1" />
+    <path d="M9 5C9 7 4 8 4 11v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8c0-3-5-4-5-6" />
+  </svg>
+);
 
 const RESEARCH_STEPS = [
   {
@@ -85,14 +94,14 @@ const RESEARCH_STEPS = [
 
 const WASTE_TYPES = [
   {
-    id: 'glass', tab: 'Glass Waste', TabIcon: GlassWater,
+    id: 'glass', tab: 'Glass Waste', TabIcon: GlassBottleIcon,
     title: 'Glass Waste',
     body: 'We recover and process post-consumer and industrial glass waste to convert it into high-performance materials for real-world applications.',
     img: '/glass waste - ms.jpg',
     tagline: 'Sustainable Innovation',
     taglineBody: 'Turning discarded glass into advanced materials that build a cleaner, stronger, and more sustainable future.',
     sources: [
-      { Icon: GlassWater, label: 'Bottles & Containers' },
+      { Icon: GlassBottleIcon, label: 'Bottles & Containers' },
       { Icon: Layers,     label: 'Window Glass' },
       { Icon: Factory,    label: 'Industrial Glass Scrap' },
       { Icon: Zap,        label: 'Glass Fines & Powder' },
@@ -246,11 +255,11 @@ const IMPACT_STATS = [
 // 5 nodes evenly spaced at 72° apart (pentagon), r=213 in 560×560 viewBox
 // dotX = 280 + 213·sin(θ),  dotY = 280 − 213·cos(θ)
 const ORBIT_NODES = [
-  { id: '01', Icon: Globe,        title: 'Infrastructure',        body: 'Durable materials for roads, bridges and public infrastructure.',              dotX: 280, dotY: 67  }, // θ=0°
+  { id: '01', Icon: Landmark,      title: 'Infrastructure',        body: 'Durable materials for roads, bridges and public infrastructure.',              dotX: 280, dotY: 67  }, // θ=0°
   { id: '02', Icon: Factory,      title: 'Manufacturing',         body: 'Engineered materials for industrial equipment, panels and systems.',           dotX: 483, dotY: 214 }, // θ=72°
   { id: '03', Icon: FlaskConical, title: 'Research & Innovation', body: 'Enabling new material solutions through continuous research and development.', dotX: 405, dotY: 452 }, // θ=144°
-  { id: '04', Icon: Thermometer,  title: 'Thermal Management',    body: 'Advanced materials for energy efficiency and temperature regulation.',         dotX: 155, dotY: 452 }, // θ=216°
-  { id: '05', Icon: Building2,    title: 'Construction',          body: 'High-performance materials for sustainable and resilient construction.',       dotX: 77,  dotY: 214 }, // θ=288°
+  { id: '04', Icon: Lightbulb,    title: 'Thermal Management',    body: 'Advanced materials for energy efficiency and temperature regulation.',         dotX: 155, dotY: 452 }, // θ=216°
+  { id: '05', Icon: HardHat,      title: 'Construction',          body: 'High-performance materials for sustainable and resilient construction.',       dotX: 77,  dotY: 214 }, // θ=288°
 ];
 
 const BANNER_ITEMS = [
@@ -366,9 +375,8 @@ export default function MaterialSciencePage() {
               <div className="ms-wt__info-sources">
                 <span className="ms-wt__info-sources-label">Sources</span>
                 <ul className="ms-wt__info-sources-list">
-                  {wt.sources.map(({ Icon, label }) => (
+                  {wt.sources.map(({ label }) => (
                     <li key={label} className="ms-wt__info-source-item">
-                      <Icon size={14} aria-hidden="true" />
                       {label}
                     </li>
                   ))}
@@ -384,6 +392,8 @@ export default function MaterialSciencePage() {
                 alt={wt.title}
                 className="ms-wt__photo-img"
                 draggable="false"
+                loading="lazy"
+                decoding="async"
               />
               <div className="ms-wt__photo-overlay">
                 <span className="ms-wt__photo-mission-label">Our Mission</span>
@@ -397,13 +407,10 @@ export default function MaterialSciencePage() {
               <h4 className="ms-wt__products-heading">Products</h4>
               <div className="ms-wt__products-rule" aria-hidden="true" />
               <div className="ms-wt__products-grid">
-                {wt.products.map(({ name, img, Icon: PIcon }) => (
+                {wt.products.map(({ name, img }) => (
                   <div key={name} className="ms-wt__product-card">
-                    <img src={img} alt={name} className="ms-wt__product-img" draggable="false" />
+                    <img src={img} alt={name} className="ms-wt__product-img" draggable="false" loading="lazy" decoding="async" />
                     <div className="ms-wt__product-info">
-                      <div className="ms-wt__product-icon-wrap">
-                        <PIcon size={13} aria-hidden="true" />
-                      </div>
                       <p className="ms-wt__product-name">{name}</p>
                     </div>
                   </div>
@@ -440,6 +447,8 @@ export default function MaterialSciencePage() {
                 alt={active.title}
                 className="ms-ra__visual-img"
                 draggable="false"
+                loading="lazy"
+                decoding="async"
               />
               <div className="ms-ra__visual-overlay" aria-hidden="true" />
 
@@ -515,8 +524,8 @@ export default function MaterialSciencePage() {
           <div className="ms-impact__left">
             <span className="ms-impact__eyebrow">The Impact</span>
             <h2 className="ms-impact__title">
-              Powering Multiple<br />Industries<br />
-              Creating <span>Real Impact</span>
+              Powering Multiple<br />Industries,<br />
+              <span>Creating Real Impact</span>
             </h2>
             <p className="ms-impact__subtitle">
               Our science-backed materials are designed to solve real-world challenges
@@ -557,13 +566,12 @@ export default function MaterialSciencePage() {
 
               {/* Center image */}
               <div className="ms-impact__orbit-center">
-                <img src="/impact-ms.jpeg" alt="" draggable="false" />
+                <img src="/impact-ms.jpeg" alt="" draggable="false" loading="lazy" decoding="async" />
               </div>
 
               {/* Orbit cards */}
               {ORBIT_NODES.map(({ id, Icon, title, body }) => (
                 <div key={id} className={`ms-impact__orbit-card ms-impact__orbit-card--${id}`}>
-                  <div className="ms-impact__orbit-card-icon"><Icon size={22} aria-hidden="true" /></div>
                   <div className="ms-impact__orbit-card-text">
                     <strong className="ms-impact__orbit-card-title">{title}</strong>
                     <p className="ms-impact__orbit-card-body">{body}</p>

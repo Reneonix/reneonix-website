@@ -1,4 +1,7 @@
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useRef, Fragment } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+gsap.registerPlugin(ScrollTrigger);
 import {
   Database, Shield, FileText,
   Eye, ShieldAlert,
@@ -10,59 +13,59 @@ import {
   Box, Clock, Link2, GitBranch,
   TrendingUp, LineChart, Target, Lightbulb,
   Share2, BookOpen, Settings,
-  Archive, Zap, Battery,
+  Layers, Scissors, Sun,
+  Calendar, ChevronDown,
+  Truck, Factory, Recycle, Download,
 } from 'lucide-react';
 
 import './SoftwarePage.css';
 import './SoftwarePage_how.css';
-import './SoftwarePage_viz.css';
 
-const STEP_VISUALS = [VizCapture, VizVerify, VizTrace, VizAnalyze, VizReport];
-
-const MATERIAL_TYPES = [
-  { name: 'Plastic Bottle', Icon: Box,     color: '#22c55e' },
-  { name: 'Aluminium Can',  Icon: Archive, color: '#94a3b8' },
-  { name: 'Copper Wire',    Icon: Zap,     color: '#f59e0b' },
-  { name: 'E-waste PCB',    Icon: Cpu,     color: '#60a5fa' },
-  { name: 'Battery Cell',   Icon: Battery, color: '#a78bfa' },
+const RETRIAZ_STEPS = [
+  {
+    num: '01', key: 'capture', eyebrow: 'Capture',
+    title: 'Capture Material Data',
+    desc: 'Upload any material documents or files. Our AI extracts key information instantly.',
+    features: ['PDF reports & certificates', 'CSV data files', 'COA documents', 'Images & scans'],
+    img: '/retriaz1.jpeg',
+  },
+  {
+    num: '02', key: 'verify', eyebrow: 'Verify',
+    title: 'AI Verification',
+    desc: 'We verify composition, supplier, compliance and lab results with industry standards.',
+    features: ['Composition verified', 'Supplier verified', 'Compliance checked', 'Lab results matched'],
+    img: '/retriaz2.jpeg',
+  },
+  {
+    num: '03', key: 'trace', eyebrow: 'Trace',
+    title: 'End-to-End Traceability',
+    desc: 'We map every step of the material journey - from raw to recovery.',
+    features: ['Raw material to recovery', 'Immutable chain of custody', 'Time & location stamps', 'Blockchain-backed records'],
+    img: '/retriaz3.jpeg',
+  },
+  {
+    num: '04', key: 'analyze', eyebrow: 'Analyze',
+    title: 'Insights & Analytics',
+    desc: 'Get actionable insights, trend analysis and quality metrics to drive better decisions.',
+    features: ['Purity & quality scores', 'Compliance tracking', 'Recovered weight metrics', 'Quality trend charts'],
+    img: '/retriaz4.jpeg',
+  },
+  {
+    num: '05', key: 'report', eyebrow: 'Report',
+    title: 'Material Passport',
+    desc: 'Export, share and stay audit-ready at all times.',
+    features: ['Material passport generation', 'Audit-ready reports', 'Secure sharing', 'Download in one click'],
+    img: '/retriaz5.jpeg',
+  },
 ];
 
-const STORY_STEPS = [
-  {
-    num: '01', key: 'capture', label: 'Capture', icon: Smartphone,
-    body: 'Collect recovery data at the source using mobile and IoT-enabled tools.',
-    features: ['Source details', 'Material type', 'Location', 'Collector info'],
-    outLabel: 'Data Captured',
-    outBody: 'Real-time data captured and synced to the platform. Audit trail begins.',
-  },
-  {
-    num: '02', key: 'verify', label: 'Verify', icon: ShieldCheck,
-    body: 'AI-powered verification ensures the material is authentic, accurate, and audit-ready.',
-    features: ['AI validation', 'Anomaly detection', 'Image recognition', 'Quality checks'],
-    outLabel: 'Verified & Trusted',
-    outBody: 'Only verified data moves forward. Built for trust and compliance.',
-  },
-  {
-    num: '03', key: 'trace', label: 'Trace', icon: Link2,
-    body: 'Every movement recorded on blockchain, creating an immutable and transparent trail.',
-    features: ['Immutable ledger', 'End-to-end traceability', 'Time & location stamps', 'Chain of custody'],
-    outLabel: 'Fully Traceable',
-    outBody: 'Each movement recorded on blockchain. Tamper-proof and transparent.',
-  },
-  {
-    num: '04', key: 'analyze', label: 'Analyze', icon: BarChart3,
-    body: 'Real-time analytics turn recovery data into actionable insights and performance metrics.',
-    features: ['Recovery metrics', 'Quality insights', 'Environmental impact', 'Performance trends'],
-    outLabel: 'Actionable Insights',
-    outBody: 'Insights generated. Performance and impact measured.',
-  },
-  {
-    num: '05', key: 'report', label: 'Report', icon: FileText,
-    body: 'Generate audit-ready reports and digital passports for complete compliance.',
-    features: ['Compliance reports', 'Digital passports', 'Stakeholder sharing', 'Regulatory ready'],
-    outLabel: 'Audit Ready',
-    outBody: 'Audit-ready report generated. Compliance achieved.',
-  },
+const MARQUEE_ITEMS = [
+  { label: 'Glass',         Icon: Eye,        color: '#67e8f9' },
+  { label: 'Plastics',      Icon: Box,        color: '#4ade80' },
+  { label: 'Ceramics',      Icon: Layers,     color: '#fb923c' },
+  { label: 'Solar Panels',  Icon: Sun,        color: '#fbbf24' },
+  { label: 'Textiles',      Icon: Scissors,   color: '#f472b6' },
+  { label: 'E-Waste',       Icon: Cpu,        color: '#60a5fa' },
 ];
 
 const TOP_CAPS = [
@@ -104,13 +107,18 @@ const BOT_CAPS = [
 ];
 
 export default function SoftwarePage() {
-  const [activeStep, setActiveStep] = useState(0);
-  const [activeMatType, setActiveMatType] = useState(null);
-  const [pinState, setPinState] = useState('before'); // 'before' | 'pinned' | 'after'
-  const pinRef = useRef('before');
-  const wrapRef = useRef(null);
-  const mobileCardRefs = useRef([]);
+  const pinRef = useRef(null);
 
+  // Reveal elements already in view on first paint
+  useLayoutEffect(() => {
+    const vh = window.innerHeight;
+    document.querySelectorAll('.sw-reveal').forEach(el => {
+      const { top, bottom } = el.getBoundingClientRect();
+      if (top < vh && bottom > 0) el.classList.add('sw-in');
+    });
+  }, []);
+
+  // Scroll-reveal for below-fold elements
   useEffect(() => {
     const io = new IntersectionObserver(
       entries => entries.forEach(e => {
@@ -118,50 +126,57 @@ export default function SoftwarePage() {
       }),
       { threshold: 0.05 }
     );
-    document.querySelectorAll('.sw-reveal').forEach(el => io.observe(el));
+    document.querySelectorAll('.sw-reveal:not(.sw-in)').forEach(el => io.observe(el));
     return () => io.disconnect();
   }, []);
 
-  /* JS pin + step detection — position:fixed bypasses overflow-x:hidden sticky issues */
+  // GSAP pinned scroll storytelling
   useEffect(() => {
-    const handleScroll = () => {
-      if (!wrapRef.current) return;
-      const rect = wrapRef.current.getBoundingClientRect();
-      const total = wrapRef.current.offsetHeight - window.innerHeight;
-      if (total <= 0) return;
+    const pin = pinRef.current;
+    if (!pin) return;
 
-      let next;
-      if (rect.top > 0) {
-        next = 'before';
-      } else if (rect.bottom <= window.innerHeight) {
-        next = 'after';
-        setActiveStep(STORY_STEPS.length - 1);
-      } else {
-        next = 'pinned';
-        const progress = Math.max(0, Math.min(1, -rect.top / total));
-        const step = Math.min(STORY_STEPS.length - 1, Math.floor(progress * (STORY_STEPS.length - 0.8)));
-        setActiveStep(step);
+    const N          = RETRIAZ_STEPS.length;
+    const isMobile   = window.innerWidth < 768;
+    const xStep      = isMobile ? 80  : 150;
+    const xImg       = isMobile ? 50  : 100;
+    const stepEls    = gsap.utils.toArray(pin.querySelectorAll('.rzp-step'));
+    const imgWraps   = gsap.utils.toArray(pin.querySelectorAll('.rzp-img-wrap'));
+    const indItems   = gsap.utils.toArray(pin.querySelectorAll('.rzp-ind__item'));
+
+    const ctx = gsap.context(() => {
+      // Position all steps: first visible, rest waiting right
+      gsap.set(stepEls,     { x: xStep, opacity: 0 });
+      gsap.set(imgWraps,    { x: xImg,  opacity: 0, scale: 0.95 });
+      gsap.set(stepEls[0],  { x: 0, opacity: 1 });
+      gsap.set(imgWraps[0], { x: 0, opacity: 1, scale: 1 });
+      indItems[0]?.classList.add('is-active');
+
+      // Build scrub timeline: each transition at t = i-1
+      const tl = gsap.timeline({ defaults: { ease: 'power3.inOut', duration: 1 } });
+      for (let i = 1; i < N; i++) {
+        const t = i - 1;
+        tl.to(stepEls[i - 1],  { x: -xStep, opacity: 0 }, t)
+          .to(imgWraps[i - 1], { x: -xImg,  opacity: 0, scale: 0.95 }, t)
+          .to(stepEls[i],      { x: 0,      opacity: 1 }, t)
+          .to(imgWraps[i],     { x: 0,      opacity: 1, scale: 1 }, t);
       }
-      if (pinRef.current !== next) {
-        pinRef.current = next;
-        setPinState(next);
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
+      // Pin + scrub through all transitions
+      ScrollTrigger.create({
+        trigger: pin,
+        pin: true,
+        scrub: 1.5,
+        start: 'top top',
+        end: () => `+=${(N - 1) * window.innerHeight * 1.3}`,
+        animation: tl,
+        onUpdate(self) {
+          const active = Math.min(N - 1, Math.round(self.progress * (N - 1)));
+          indItems.forEach((el, j) => el.classList.toggle('is-active', j === active));
+        },
+      });
+    }, pin);
 
-  const goToStep = useCallback(i => {
-    const step = Math.max(0, Math.min(STORY_STEPS.length - 1, i));
-    if (!wrapRef.current) return;
-    const total = wrapRef.current.offsetHeight - window.innerHeight;
-    const y =
-      wrapRef.current.getBoundingClientRect().top +
-      window.scrollY +
-      (step / (STORY_STEPS.length - 0.8)) * total + 4;
-    window.scrollTo({ top: y, behavior: 'smooth' });
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -169,6 +184,18 @@ export default function SoftwarePage() {
 
       {/* ══ HERO ══ */}
       <section className="sw-hero">
+        {/* Background — responsive desktop / mobile image */}
+        <picture>
+          <source media="(max-width: 768px)" srcSet="/software-hero-mobile.jpeg" />
+          <img
+            className="sw-hero__bg"
+            src="/software-hero.png"
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+            fetchPriority="high"
+          />
+        </picture>
         {/* cross flare — dark left */}
         <div className="sw-hero__cross" aria-hidden="true" />
         {/* green glow — upper-right */}
@@ -255,222 +282,83 @@ export default function SoftwarePage() {
 
 
         </div>
+
       </section>
 
       {/* ══ HOW RETRIAZ WORKS ══ */}
-      <section className="sw-story">
 
-        {/* Header */}
-        <div className="sw-story__head">
-          <div className="container">
-            <span className="sw-story__eyebrow">How Retriaz Works</span>
-            <h2 className="sw-story__title">
-              One Material,&nbsp;<span className="sw-story__accent">Fully Verified</span>
-            </h2>
-            <p className="sw-story__sub">
-              Retriaz brings transparency, intelligence, and trust to every step of your recovery journey.
-            </p>
+      {/* Section header — scrolls normally above the pin */}
+      <div className="rzs-header">
+        <span className="rzs-header__eyebrow">How Retriaz Works</span>
+        <h2 className="rzs-header__title">
+          One Material,<br className="rzs-title-br" /> <span className="rzs-header__accent">Complete Confidence</span>
+        </h2>
+        <p className="rzs-header__desc">
+          Retriaz brings transparency, intelligence, and trust to every step of your recovery journey.
+        </p>
+        <p className="rzs-header__sub">
+          Works for all types of Materials
+        </p>
+        <div className="rzs-marquee" aria-hidden="true">
+          <div className="rzs-marquee__track">
+            {MARQUEE_ITEMS.map(({ label, Icon, color }, i) => (
+              <div key={i} className="rzs-badge">
+                <Icon size={16} color={color} strokeWidth={1.8} />
+                <span>{label}</span>
+              </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Desktop scroll body */}
-        <div className="sw-story__scroll-wrap" ref={wrapRef}>
-          <div className={`sw-story__sticky-outer${pinState === 'pinned' ? ' is-pinned' : pinState === 'after' ? ' is-after' : ''}`}>
-            <div className="sw-story__sticky-inner container">
+      {/* Pinned 5-step presentation */}
+      <div className="rzp-wrap" ref={pinRef}>
+        <div className="rzp-stage">
 
-              {/* Left: step nav */}
-              <nav className="sw-story__sidenav" aria-label="Workflow steps">
-                {STORY_STEPS.map((step, i) => (
-                  <button
-                    key={step.key}
-                    className={`sw-snav__item${i === activeStep ? ' is-active' : ''}${i < activeStep ? ' is-done' : ''}`}
-                    onClick={() => {
-                      if (!wrapRef.current) return;
-                      const total = wrapRef.current.offsetHeight - window.innerHeight;
-                      const y = wrapRef.current.getBoundingClientRect().top + window.scrollY
-                                + (i / (STORY_STEPS.length - 0.8)) * total + 4;
-                      window.scrollTo({ top: y, behavior: 'smooth' });
-                    }}
-                  >
-                    <div className="sw-snav__track-col">
-                      <div className="sw-snav__dot-wrap">
-                        <div className="sw-snav__dot" />
-                      </div>
-                      {i < STORY_STEPS.length - 1 && <div className="sw-snav__line" />}
-                    </div>
-                    <div className="sw-snav__text">
-                      <span className="sw-snav__num">{step.num}</span>
-                      <span className="sw-snav__label">{step.label}</span>
-                      <p className="sw-snav__body">{step.body}</p>
-                      <span className="sw-snav__dash" />
-                    </div>
-                  </button>
-                ))}
-              </nav>
-
-              {/* Center: step label → viz → dots */}
-              <div className="sw-story__center-col">
-
-                {/* Step label — sits above the visual */}
-                <div className="sw-story__step-label">
-                  {STORY_STEPS.map((step, i) => (
-                    <div
-                      key={step.key}
-                      className={`sw-slabel${i === activeStep ? ' sw-slabel--active' : ''}`}
-                    >
-                      <span className="sw-slabel__tag">STEP {step.num}</span>
-                      <h3 className="sw-slabel__title">{step.label}</h3>
-                      <p className="sw-slabel__body">{step.body}</p>
-                      <ul className="sw-slabel__checklist">
-                        {step.features.map(f => (
-                          <li key={f} className="sw-slabel__check-item">
-                            <CheckCircle2 size={14} className="sw-slabel__check-ico" />
-                            {f}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+          {/* Vertical progress indicator */}
+          <div className="rzp-indicator">
+            {RETRIAZ_STEPS.map((step, i) => (
+              <div key={step.key} className="rzp-ind__item">
+                <div className="rzp-ind__track">
+                  <div className="rzp-ind__dot" />
+                  {i < RETRIAZ_STEPS.length - 1 && <div className="rzp-ind__line" />}
                 </div>
-
-                {/* Main visualization — 5 stacked layers, active one fades in */}
-                <div className="sw-story__viz-frame">
-                  {STORY_STEPS.map((step, i) => {
-                    const Viz = STEP_VISUALS[i];
-                    return (
-                      <div key={step.key} className={`sw-viz${i === activeStep ? ' sw-viz--active' : ''}`}>
-                        <Viz active={i === activeStep} />
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Progress dots + prev/next arrows */}
-                <div className="sw-story__dots">
-                  <button
-                    className="sw-dots__arrow"
-                    onClick={() => goToStep(activeStep - 1)}
-                    disabled={activeStep === 0}
-                    aria-label="Previous step"
-                  >←</button>
-                  {STORY_STEPS.map((step, i) => (
-                    <button
-                      key={step.key}
-                      className={`sw-dots__dot${i === activeStep ? ' is-active' : ''}`}
-                      onClick={() => goToStep(i)}
-                      aria-label={`Go to step ${step.num}`}
-                    />
-                  ))}
-                  <button
-                    className="sw-dots__arrow"
-                    onClick={() => goToStep(activeStep + 1)}
-                    disabled={activeStep === STORY_STEPS.length - 1}
-                    aria-label="Next step"
-                  >→</button>
-                </div>
-
+                <span className="rzp-ind__num">{step.num}</span>
               </div>
-
-              {/* Right: single outcome card per active step */}
-              <div className="sw-story__outcomes-col">
-                {STORY_STEPS.map((step, i) => {
-                  const Icon = step.icon;
-                  return i === activeStep ? (
-                    <div key={i} className="sw-sout__card">
-                      <p className="sw-sout__heading">OUTCOME AT THIS STEP</p>
-                      <div className="sw-sout__icon-wrap">
-                        <Icon size={24} />
-                        <div className="sw-sout__check"><CheckCircle2 size={10} /></div>
-                      </div>
-                      <p className="sw-sout__label">{step.outLabel}</p>
-                      <p className="sw-sout__body">{step.outBody}</p>
-                      <span className="sw-sout__badge">● Completed</span>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-
-            </div>
-            {/* Side-edge white fade overlays */}
-            <div className="sw-story__fade-overlay" aria-hidden="true" />
+            ))}
           </div>
-        </div>
 
-        {/* Mobile layout */}
-        <div className="sw-story__mobile">
-
-
-          {/* One section per step */}
-          {STORY_STEPS.map((step, i) => {
-            const Icon = step.icon;
-            return (
-              <div
-                key={step.key}
-                ref={el => { mobileCardRefs.current[i] = el; }}
-                className="sw-smob__section"
-                data-step={i}
-              >
-                {/* Step label */}
-                <div className="sw-smob__step-label">
-                  <span className="sw-smob__step-tag">STEP {step.num}</span>
-                  <h3 className="sw-smob__step-title">{step.label}</h3>
-                  <p className="sw-smob__step-body">{step.body}</p>
-                </div>
-
-                {/* Outcome card */}
-                <div className="sw-smob__outcome">
-                  <div className="sw-smob__out-icon">
-                    <Icon size={20} />
-                    <div className="sw-smob__out-check"><CheckCircle2 size={9} /></div>
-                  </div>
-                  <div className="sw-smob__out-text">
-                    <p className="sw-smob__out-label">{step.outLabel}</p>
-                    <p className="sw-smob__out-body">{step.outBody}</p>
-                    <span className="sw-smob__out-badge">● Completed</span>
-                  </div>
-                </div>
-
-                {/* Visualization */}
-                <div className="sw-smob__viz">
-                  <MobileViz step={i} />
-                </div>
-
-                {/* Features checklist */}
-                <div className="sw-smob__feats">
-                  {step.features.map(f => (
-                    <div key={f} className="sw-smob__feat-item">
-                      <CheckCircle2 size={16} className="sw-smob__feat-ico" />
-                      <span>{f}</span>
-                    </div>
-                  ))}
-                </div>
+          {/* Step content — all stacked, GSAP controls which is visible */}
+          <div className="rzp-content">
+            {RETRIAZ_STEPS.map((step) => (
+              <div key={step.key} className="rzp-step">
+                <div className="rzp-step-bgnum" aria-hidden="true">{step.num}</div>
+                <span className="rzp-eyebrow">{step.eyebrow}</span>
+                <h3 className="rzp-title">{step.title}</h3>
+                <p className="rzp-desc">{step.desc}</p>
+                <ul className="rzp-feats">
+                  {step.features.map(f => <li key={f}>{f}</li>)}
+                </ul>
               </div>
-            );
-          })}
-        </div>
-
-        {/* ── Materials strip ── */}
-        <div className="sw-story__mats">
-          <div className="container sw-story__mats-inner">
-            <p className="sw-mats__heading">Works for all types of materials</p>
-            <div className="sw-mats__row">
-              {MATERIAL_TYPES.map((mat, i) => (
-                <button
-                  key={mat.name}
-                  className={`sw-mat-item${activeMatType === i ? ' is-active' : ''}`}
-                  onClick={() => setActiveMatType(i)}
-                >
-                  <div className="sw-mat-item__icon" style={{ color: mat.color }}>
-                    <mat.Icon size={22} />
-                  </div>
-                  <span className="sw-mat-item__name">{mat.name}</span>
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
-        </div>
 
-      </section>
+          {/* Mockup images — all stacked, GSAP controls which is visible */}
+          <div className="rzp-visual">
+            {RETRIAZ_STEPS.map((step, i) => (
+              <div key={step.key} className="rzp-img-wrap">
+                <img
+                  src={step.img}
+                  alt={step.title}
+                  className="rzp-img"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                />
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
 
       {/* ══ PLATFORM PREVIEW ══ */}
       <section className="sw-plat">
@@ -502,6 +390,7 @@ export default function SoftwarePage() {
                 src="/product-passport-sample.jpeg"
                 alt="Digital Product Passport Sample"
                 className="sw-plat__card-img"
+                loading="lazy"
               />
             </div>
             <div className="sw-plat__card">
@@ -509,6 +398,7 @@ export default function SoftwarePage() {
                 src="/live-dashboard-sample.jpeg"
                 alt="Live Dashboard Sample"
                 className="sw-plat__card-img"
+                loading="lazy"
               />
             </div>
           </div>
@@ -668,40 +558,55 @@ function MobAnalyze() {
 function MobReport() {
   return (
     <div className="sv-mob sv-mob--report">
-      <div className="sv-mob__card">
-        <p className="sv-mob__card-ttl">Compliance Report</p>
-        <div className="sv-mob__verified">
-          <CheckCircle2 size={13} color="var(--lime)" />
-          <span>Verified</span>
-        </div>
-        <div className="sv-mob__grid">
-          <div className="sv-mob__field">
-            <span className="sv-mob__key">Recovered</span>
-            <span className="sv-mob__val">1,248.6 kg</span>
+
+      {/* Card 1: Compliance Report — bottle on left, data on right */}
+      <div className="sv-mob__card sv-mob__card--compliance">
+        <div className="sv-mob__compliance-layout">
+          <img src="/glassbottle.png" alt="Glass bottle" className="sv-mob__bottle" />
+          <div className="sv-mob__compliance-info">
+            <p className="sv-mob__card-ttl">Compliance Report</p>
+            <div className="sv-mob__verified">
+              <CheckCircle2 size={13} color="var(--lime)" />
+              <span>Verified</span>
+            </div>
+            <div className="sv-mob__grid">
+              <div className="sv-mob__field">
+                <span className="sv-mob__key">Recovered</span>
+                <span className="sv-mob__val">1,248.6 kg</span>
+              </div>
+              <div className="sv-mob__field">
+                <span className="sv-mob__key">CO₂ Impact</span>
+                <span className="sv-mob__val">2.45 MT</span>
+              </div>
+            </div>
+            <div className="sv-mob__field">
+              <span className="sv-mob__key">Date</span>
+              <span className="sv-mob__val">May 12, 2024</span>
+            </div>
           </div>
-          <div className="sv-mob__field">
-            <span className="sv-mob__key">CO₂ Impact</span>
-            <span className="sv-mob__val">2.45 MT</span>
-          </div>
-        </div>
-        <div className="sv-mob__field sv-mob__field--full">
-          <span className="sv-mob__key">Date</span>
-          <span className="sv-mob__val">May 12, 2024</span>
         </div>
       </div>
+
+      {/* Card 2: Digital Product Passport — pdf icon + bottle image */}
       <div className="sv-mob__card">
         <div className="sv-mob__card-head">
           <p className="sv-mob__card-ttl">Digital Product Passport</p>
-          <span className="sv-mob__key sv-mob__ready">Ready to Share</span>
-        </div>
-        <div className="sv-mob__fields">
-          <div className="sv-mob__field sv-mob__field--full">
-            <span className="sv-mob__key">Material</span>
-            <span className="sv-mob__val">Glass (Beer Bottle)</span>
+          <div className="sv-mob__pdf-wrap">
+            <img src="/pdf-icon.png" alt="PDF" className="sv-mob__pdf-ico" />
+            <span className="sv-mob__key sv-mob__ready">Ready to Share</span>
           </div>
-          <div className="sv-mob__field sv-mob__field--full">
-            <span className="sv-mob__key">Batch ID</span>
-            <span className="sv-mob__val sv-mob__val--mono">BPL-GLS-2024-000567</span>
+        </div>
+        <div className="sv-mob__pass-body">
+          <img src="/glassbottle.png" alt="Material" className="sv-mob__pass-img" />
+          <div className="sv-mob__fields">
+            <div className="sv-mob__field">
+              <span className="sv-mob__key">Material</span>
+              <span className="sv-mob__val">Glass (Beer Bottle)</span>
+            </div>
+            <div className="sv-mob__field">
+              <span className="sv-mob__key">Batch ID</span>
+              <span className="sv-mob__val sv-mob__val--mono">BPL-GLS-2024-000567</span>
+            </div>
           </div>
         </div>
         <button className="sv-mob__btn">
@@ -709,140 +614,178 @@ function MobReport() {
           View Passport
         </button>
       </div>
+
     </div>
   );
 }
 
 /* ── Step 01: Capture ── */
 function VizCapture({ active }) {
+  const FILES = ['composition.pdf', 'test_report.csv', 'image_01.jpg', 'coa.pdf'];
   return (
-    <div className="sv-inner sv-cap">
-      <div className="sv-cap__scene">
+    <div className="sv-inner sv-cap2">
+      <div className="sv-cap2__cols">
 
-        {/* Capture image */}
-        <div className="sv-cap__img-wrap">
-          <img src="/capture.png" alt="Capture scan" className="sv-cap__phone-img" />
+        {/* Left: file upload */}
+        <div className="sv-cap2__left">
+          <div className="sv-cap2__drop">
+            <div className="sv-cap2__drop-icon"><FileText size={30} strokeWidth={1.5} /></div>
+            <p className="sv-cap2__drop-main">Drag & drop files here</p>
+            <p className="sv-cap2__drop-or">or <span>browse</span></p>
+            <p className="sv-cap2__drop-hint">Supports: PDF, CSV, Images, XLSX, JSON</p>
+          </div>
+          <div className="sv-cap2__files">
+            <span className="sv-cap2__files-lbl">Uploaded Files (4)</span>
+            <div className="sv-cap2__chips">
+              {FILES.map(f => (
+                <span key={f} className="sv-cap2__chip">
+                  <FileText size={11} />
+                  <span>{f}</span>
+                  <span className="sv-cap2__chip-close">×</span>
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Live data card */}
-        <div className="sv-cap__data">
-          <div className="sv-cap__data-title">
-            Source Collection Point #125
-          </div>
-          <div className="sv-cap__data-body">
-            <div className="sv-cap__data-grid">
-              <div className="sv-cap__field">
-                <span className="sv-key">Material</span>
-                <span className="sv-val sv-val--lime sv-cap__mat-val">GLASS<br />(BEER BOTTLE)</span>
+        {/* Right: material details form */}
+        <div className="sv-cap2__form">
+          <p className="sv-cap2__form-ttl">Material Details</p>
+          <div className="sv-cap2__form-rows">
+            <div className="sv-cap2__frow">
+              <span className="sv-cap2__flbl">Material Name</span>
+              <span className="sv-cap2__fval">Aluminum Scrap 6061</span>
+            </div>
+            <div className="sv-cap2__frow">
+              <span className="sv-cap2__flbl">Material Type</span>
+              <div className="sv-cap2__fsel">
+                <span>Metals</span>
+                <ChevronDown size={13} />
               </div>
-              <div className="sv-cap__field">
-                <span className="sv-key">Weight</span>
-                <span className="sv-val">345 g</span>
+            </div>
+            <div className="sv-cap2__frow">
+              <span className="sv-cap2__flbl">Supplier</span>
+              <span className="sv-cap2__fval">Reclaim Industries Pvt. Ltd.</span>
+            </div>
+            <div className="sv-cap2__frow">
+              <span className="sv-cap2__flbl">Batch / Lot Number</span>
+              <span className="sv-cap2__fval">RI-6061-0524</span>
+            </div>
+            <div className="sv-cap2__frow sv-cap2__frow--last">
+              <span className="sv-cap2__flbl">Collection Date</span>
+              <div className="sv-cap2__fdate">
+                <span>May 12, 2024</span>
+                <Calendar size={13} />
               </div>
             </div>
-            <div className="sv-cap__field">
-              <span className="sv-key">Collected by</span>
-              <span className="sv-val">John Doe</span>
-            </div>
-            <div className="sv-cap__field">
-              <span className="sv-key">Time</span>
-              <span className="sv-val">May 12, 2024&nbsp;&nbsp;10:30 AM</span>
-            </div>
-          </div>
-          <div className="sv-cap__sync">
-            <span className="sv-pulse sv-pulse--sm" />
-            Live Sync
           </div>
         </div>
+
       </div>
-
     </div>
   );
 }
 
 /* ── Step 02: Verify ── */
 function VizVerify({ active }) {
+  const CHECKS = [
+    'Composition Verified',
+    'Supplier Verified',
+    'Compliance Checked',
+    'Lab Results Matched',
+    'Quality Score Generated',
+  ];
   return (
-    <div className="sv-inner sv-ver">
-      <div className="sv-ver__layout">
+    <div className="sv-inner sv-ver2">
+      <div className="sv-ver2__cols">
 
-        {/* Verify image */}
-        <div className="sv-ver__img-wrap">
-          <img src="/verify.png" alt="AI Verification" className="sv-ver__img" />
-        </div>
-
-        {/* Score + checklist card */}
-        <div className="sv-ver__card">
-          <div className="sv-ver__card-title">
-            <span>AI Verification</span>
-            <CheckCircle2 size={16} className="sv-ver__card-check" />
-          </div>
-
-          <div className="sv-ver__score-row">
-            <p className="sv-ver__score-lbl">Trust Score</p>
-            <div className="sv-ver__score-inline">
-              <p className="sv-ver__score-val">98.6%</p>
-              <div className="sv-ver__stars">★★★★★</div>
-            </div>
-          </div>
-
-          <div className="sv-ver__checks">
-            {['Material Authentic','Weight Verified','Quality Verified','No Anomalies'].map(item => (
-              <div key={item} className="sv-ver__check-row">
-                <CheckCircle2 size={14} className="sv-ver__tick" />
-                <span>{item}</span>
+        {/* Left: verification progress */}
+        <div className="sv-ver2__progress">
+          <p className="sv-ver2__panel-ttl">Verification Progress</p>
+          <div className="sv-ver2__checks">
+            {CHECKS.map(c => (
+              <div key={c} className="sv-ver2__check">
+                <div className="sv-ver2__check-ico"><CheckCircle2 size={16} /></div>
+                <span className="sv-ver2__check-lbl">{c}</span>
+                <span className="sv-ver2__check-status">Completed</span>
               </div>
             ))}
-            <div className="sv-ver__check-row">
-              <CheckCircle2 size={14} className="sv-ver__tick" />
-              <div className="sv-ver__check-ts">
-                <span>Verified at</span>
-                <span className="sv-ver__timestamp">May 12, 2024&nbsp;&nbsp;10:45 AM</span>
+          </div>
+        </div>
+
+        {/* Right: verification summary */}
+        <div className="sv-ver2__summary">
+          <p className="sv-ver2__panel-ttl">Verification Summary</p>
+          <div className="sv-ver2__score-block">
+            <p className="sv-ver2__score-lbl">Overall Score</p>
+            <p className="sv-ver2__score-val">98.6%</p>
+            <span className="sv-ver2__score-badge">Excellent</span>
+          </div>
+          <div className="sv-ver2__meta">
+            <div className="sv-ver2__mrow">
+              <span className="sv-ver2__mlbl">Tested By</span>
+              <span className="sv-ver2__mval">Reneonix Labs</span>
+            </div>
+            <div className="sv-ver2__mrow">
+              <span className="sv-ver2__mlbl">Verification Date</span>
+              <span className="sv-ver2__mval">May 12, 2024, 11:30 AM</span>
+            </div>
+            <div className="sv-ver2__mrow">
+              <span className="sv-ver2__mlbl">Standards</span>
+              <span className="sv-ver2__mval">ISO 17025, ISO 9001</span>
+            </div>
+            <div className="sv-ver2__mrow sv-ver2__mrow--last">
+              <span className="sv-ver2__mlbl">Result</span>
+              <div className="sv-ver2__result">
+                <CheckCircle2 size={13} />
+                <span>Verified</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   );
 }
 
 /* ── Step 03: Trace ── */
 function VizTrace() {
+  const JOURNEY = [
+    { label: 'Raw Material',   sub: 'India',              date: 'May 01, 2024', Icon: Truck   },
+    { label: 'Processing',     sub: 'Maharashtra, India', date: 'May 03, 2024', Icon: Factory },
+    { label: 'Manufacturing',  sub: 'Gujarat, India',     date: 'May 06, 2024', Icon: Factory },
+    { label: 'Distribution',   sub: 'Karnataka, India',   date: 'May 08, 2024', Icon: Truck   },
+    { label: 'Recovery',       sub: 'Reneonix Partner',   date: 'May 10, 2024', Icon: Recycle },
+  ];
   return (
-    <div className="sv-inner sv-trc">
-      <div className="sv-trc__scene">
+    <div className="sv-inner sv-trc2">
+      <div className="sv-trc2__card">
+        <p className="sv-trc2__ttl">Material Journey</p>
 
-        {/* Trace image */}
-        <img src="/trace.png" alt="Blockchain Trace" className="sv-trc__img" />
+        <div className="sv-trc2__flow">
+          {JOURNEY.map((node, i) => (
+            <Fragment key={node.label}>
+              <div className="sv-trc2__node">
+                <div className="sv-trc2__node-ico"><node.Icon size={24} /></div>
+                <span className="sv-trc2__node-name">{node.label}</span>
+                <span className="sv-trc2__node-loc">{node.sub}</span>
+                <span className="sv-trc2__node-date">{node.date}</span>
+              </div>
+              {i < JOURNEY.length - 1 && (
+                <div className="sv-trc2__conn" aria-hidden="true">
+                  <div className="sv-trc2__conn-line" />
+                  <div className="sv-trc2__conn-dot" />
+                  <div className="sv-trc2__conn-line" />
+                </div>
+              )}
+            </Fragment>
+          ))}
+        </div>
 
-        {/* Blockchain record card */}
-        <div className="sv-trc__card">
-          <div className="sv-trc__card-title">
-            <span>Blockchain Record</span>
-            <CheckCircle2 size={16} className="sv-trc__card-check" />
-          </div>
-
-          <div className="sv-trc__fields">
-            <div className="sv-trc__field">
-              <span className="sv-key">Material ID</span>
-              <span className="sv-val sv-val--mono sv-val--lime">BPL-GLS-2024-000567</span>
-            </div>
-            <div className="sv-trc__field">
-              <span className="sv-key">Current Owner</span>
-              <span className="sv-val">GreenLoop Recycling</span>
-            </div>
-            <div className="sv-trc__field">
-              <span className="sv-key">Last Movement</span>
-              <span className="sv-val">Collection Point #125</span>
-            </div>
-            <div className="sv-trc__field">
-              <span className="sv-key">Timestamp</span>
-              <span className="sv-val">May 12, 2024&nbsp;&nbsp;11:02 AM</span>
-            </div>
-          </div>
-
+        <div className="sv-trc2__footer">
+          <span className="sv-trc2__tid">Traceability ID: TRC-6061-0524-91D2</span>
+          <button className="sv-trc2__btn">View Full Journey</button>
         </div>
       </div>
     </div>
@@ -851,91 +794,73 @@ function VizTrace() {
 
 /* ── Step 04: Analyze ── */
 function VizAnalyze() {
+  const KPIS = [
+    { label: 'Purity',            value: '98.6%',      delta: '+1.2% vs last batch'  },
+    { label: 'Quality Score',     value: '97.8%',      delta: '+2.1% vs last batch'  },
+    { label: 'Compliance',        value: '100%',       delta: 'No non-conformities'   },
+    { label: 'Recovered Weight',  value: '1,248.6 kg', delta: '+8.4% vs last batch'  },
+  ];
+  const COMPOSITION = [
+    { element: 'Aluminum (Al)',  pct: '97.30%' },
+    { element: 'Magnesium (Mg)', pct: '1.20%'  },
+    { element: 'Silicon (Si)',   pct: '0.60%'  },
+    { element: 'Iron (Fe)',      pct: '0.40%'  },
+    { element: 'Others',         pct: '0.50%'  },
+  ];
   return (
-    <div className="sv-inner sv-ana">
-      <div className="sv-ana__layout">
+    <div className="sv-inner sv-ana2">
 
-        {/* Left column: Recovery Rate + Material Purity */}
-        <div className="sv-ana__side-col">
+      {/* KPI row */}
+      <div className="sv-ana2__kpis">
+        {KPIS.map(k => (
+          <div key={k.label} className="sv-ana2__kpi">
+            <span className="sv-ana2__kpi-lbl">{k.label}</span>
+            <span className="sv-ana2__kpi-val">{k.value}</span>
+            <span className="sv-ana2__kpi-delta">{k.delta}</span>
+          </div>
+        ))}
+      </div>
 
-          <div className="sv-ana__kpi">
-            <p className="sv-ana__kpi-lbl">Recovery Rate</p>
-            <p className="sv-ana__kpi-val">98.6%</p>
-            <span className="sv-ana__trend">↑ 12.4%</span>
-            <svg className="sv-ana__spark" viewBox="0 0 80 28" preserveAspectRatio="none">
+      {/* Bottom: trend chart + composition */}
+      <div className="sv-ana2__bottom">
+
+        {/* Quality Trend chart */}
+        <div className="sv-ana2__chart-card">
+          <div className="sv-ana2__chart-head">
+            <span className="sv-ana2__chart-ttl">Quality Trend</span>
+            <span className="sv-ana2__chart-range">Last 6 Months</span>
+          </div>
+          <div className="sv-ana2__chart">
+            <svg viewBox="0 0 300 80" preserveAspectRatio="none" className="sv-ana2__svg">
               <defs>
-                <linearGradient id="sg0" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#B2DE3A" stopOpacity="0.35" />
+                <linearGradient id="ana2g" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#B2DE3A" stopOpacity="0.22" />
                   <stop offset="100%" stopColor="#B2DE3A" stopOpacity="0" />
                 </linearGradient>
               </defs>
-              <path d="M0,24 C12,20 22,22 34,14 C46,7 56,10 70,5 L80,3 L80,28 L0,28 Z" fill="url(#sg0)" />
-              <path d="M0,24 C12,20 22,22 34,14 C46,7 56,10 70,5 L80,3" stroke="#B2DE3A" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+              <path d="M0,62 C40,60 70,56 100,46 C130,36 160,32 190,22 C220,14 255,10 300,5 L300,80 L0,80 Z" fill="url(#ana2g)" />
+              <path d="M0,62 C40,60 70,56 100,46 C130,36 160,32 190,22 C220,14 255,10 300,5" stroke="#B2DE3A" strokeWidth="2" fill="none" strokeLinecap="round" />
             </svg>
+            <div className="sv-ana2__xaxis">
+              {['Dec','Jan','Feb','Mar','Apr','May'].map(m => <span key={m}>{m}</span>)}
+            </div>
           </div>
-
-          <div className="sv-ana__kpi">
-            <p className="sv-ana__kpi-lbl">Material Purity</p>
-            <p className="sv-ana__kpi-val">94%</p>
-            <span className="sv-ana__trend">↑ 8.1%</span>
-            <svg className="sv-ana__spark" viewBox="0 0 80 28" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="sg1" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#B2DE3A" stopOpacity="0.35" />
-                  <stop offset="100%" stopColor="#B2DE3A" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <path d="M0,22 C14,18 24,20 36,14 C50,8 60,11 72,6 L80,4 L80,28 L0,28 Z" fill="url(#sg1)" />
-              <path d="M0,22 C14,18 24,20 36,14 C50,8 60,11 72,6 L80,4" stroke="#B2DE3A" strokeWidth="1.8" fill="none" strokeLinecap="round" />
-            </svg>
-          </div>
-
         </div>
 
-        {/* Center: bottle on orbital scanning ring */}
-        <div className="sv-ana__center-col">
-          <div className="sv-ana__orbit">
-            <div className="sv-ana__img-wrap">
-              <img src="/analyze.png" alt="Material under analysis" className="sv-ana__center-img" />
-            </div>
-            <div className="sv-ana__platform">
-              <div className="sv-ana__platform-inner" />
-              <div className="sv-ana__ring-badge">
-                <CheckCircle2 size={9} />
+        {/* Composition Overview */}
+        <div className="sv-ana2__comp-card">
+          <div className="sv-ana2__comp-head">
+            <span className="sv-ana2__comp-ttl">Composition Overview</span>
+            <span className="sv-ana2__comp-sub">% by Weight</span>
+          </div>
+          <div className="sv-ana2__comp-rows">
+            {COMPOSITION.map(c => (
+              <div key={c.element} className="sv-ana2__comp-row">
+                <span className="sv-ana2__comp-el">{c.element}</span>
+                <span className="sv-ana2__comp-pct">{c.pct}</span>
               </div>
-            </div>
+            ))}
           </div>
-        </div>
-
-        {/* Right column: CO₂ Impact + Volume Recovered */}
-        <div className="sv-ana__side-col">
-
-          <div className="sv-ana__kpi">
-            <p className="sv-ana__kpi-lbl">CO₂ Impact</p>
-            <p className="sv-ana__kpi-val">2.45 MT</p>
-            <span className="sv-ana__trend">↑ 15.3%</span>
-            <svg className="sv-ana__spark" viewBox="0 0 80 28" preserveAspectRatio="none">
-              <defs>
-                <linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#B2DE3A" stopOpacity="0.35" />
-                  <stop offset="100%" stopColor="#B2DE3A" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              <path d="M0,26 C10,24 22,25 34,19 C48,13 60,15 72,9 L80,7 L80,28 L0,28 Z" fill="url(#sg2)" />
-              <path d="M0,26 C10,24 22,25 34,19 C48,13 60,15 72,9 L80,7" stroke="#B2DE3A" strokeWidth="1.8" fill="none" strokeLinecap="round" />
-            </svg>
-          </div>
-
-          <div className="sv-ana__kpi">
-            <p className="sv-ana__kpi-lbl">Volume Recovered</p>
-            <p className="sv-ana__kpi-val">1,248.6 kg</p>
-            <div className="sv-ana__bars">
-              {[28,38,32,50,44,66,58,80].map((h, i) => (
-                <div key={i} className="sv-ana__mini-bar" style={{ height: `${h}%` }} />
-              ))}
-            </div>
-          </div>
-
         </div>
 
       </div>
@@ -945,63 +870,79 @@ function VizAnalyze() {
 
 /* ── Step 05: Report ── */
 function VizReport() {
+  const REPORTS = [
+    { name: 'Material Passport',      meta: 'PDF · May 12, 2024 · 1.2 MB' },
+    { name: 'Verification Report',    meta: 'PDF · May 12, 2024 · 1.8 MB' },
+    { name: 'Compliance Certificate', meta: 'PDF · May 12, 2024 · 0.9 MB' },
+    { name: 'Test Results (Full)',     meta: 'PDF · May 12, 2024 · 2.6 MB' },
+  ];
+  const SUMMARY = [
+    ['Overall Score', '98.6%'],
+    ['Quality Score', '100%'],
+    ['Compliance',    '100%'],
+    ['Purity',        '97.6%'],
+  ];
   return (
-    <div className="sv-inner sv-rep">
+    <div className="sv-inner sv-rep2">
+      <div className="sv-rep2__cols">
 
-      {/* Far-left: full-height bottle */}
-      <img src="/glassbottle.png" alt="Glass bottle" className="sv-rep__bottle" />
+        {/* Left: available reports */}
+        <div className="sv-rep2__reports">
+          <p className="sv-rep2__panel-ttl">Available Reports</p>
+          <div className="sv-rep2__list">
+            {REPORTS.map(r => (
+              <div key={r.name} className="sv-rep2__item">
+                <div className="sv-rep2__item-ico"><FileText size={15} /></div>
+                <div className="sv-rep2__item-info">
+                  <span className="sv-rep2__item-name">{r.name}</span>
+                  <span className="sv-rep2__item-meta">{r.meta}</span>
+                </div>
+                <button className="sv-rep2__dl-btn"><Download size={12} /> Download</button>
+              </div>
+            ))}
+          </div>
+          <button className="sv-rep2__dl-all"><Download size={14} /> Download All</button>
+        </div>
 
-      {/* Card 1: Compliance Report */}
-      <div className="sv-rep__card">
-        <p className="sv-rep__card-ttl">Compliance Report</p>
-        <div className="sv-rep__verified">
-          <CheckCircle2 size={13} className="sv-rep__chk" />
-          <span>Verified</span>
-        </div>
-        <div className="sv-rep__stats">
-          <div className="sv-rep__stat">
-            <span className="sv-key">Recovered</span>
-            <span className="sv-val">1,248.6 kg</span>
+        {/* Right: material passport preview */}
+        <div className="sv-rep2__passport">
+          <div className="sv-rep2__pass-hd">
+            <span className="sv-rep2__pass-brand">Reneonix</span>
+            <p className="sv-rep2__pass-ttl">Material Passport</p>
           </div>
-          <div className="sv-rep__stat">
-            <span className="sv-key">CO₂ Impact</span>
-            <span className="sv-val">2.45 MT</span>
-          </div>
-        </div>
-        <div className="sv-rep__date">
-          <span className="sv-key">Date</span>
-          <span className="sv-val">May 12, 2024</span>
-        </div>
-      </div>
-
-      {/* Card 2: Digital Product Passport */}
-      <div className="sv-rep__card sv-rep__passport">
-        <div className="sv-rep__pass-top">
-          <p className="sv-rep__card-ttl">Digital Product Passport</p>
-          <div className="sv-rep__pdf">
-            <img src="/pdf-icon.png" alt="PDF" className="sv-rep__pdf-ico" />
-            <span className="sv-key">Ready to Share</span>
-          </div>
-        </div>
-        <div className="sv-rep__pass-body">
-          <img src="/glassbottle.png" alt="Material" className="sv-rep__pass-img" />
-          <div className="sv-rep__pass-fields">
-            <div className="sv-rep__pass-field">
-              <span className="sv-key">Material</span>
-              <span className="sv-val">Glass (Beer Bottle)</span>
+          <div className="sv-rep2__pass-body">
+            <div className="sv-rep2__pass-fields">
+              {[
+                ['Material ID',       'MAT-4001-0524-001'],
+                ['Batch No.',         'RI-6061-0524'],
+                ['Verification Date', 'May 12, 2024'],
+                ['Verified by',       'Reneonix AI'],
+              ].map(([lbl, val]) => (
+                <div key={lbl} className="sv-rep2__pass-row">
+                  <span className="sv-rep2__pass-lbl">{lbl}</span>
+                  <span className="sv-rep2__pass-val">{val}</span>
+                </div>
+              ))}
             </div>
-            <div className="sv-rep__pass-field">
-              <span className="sv-key">Batch ID</span>
-              <span className="sv-val sv-val--mono sv-val--lime">BPL-GLS-2024-000567</span>
+            <div className="sv-rep2__score-ring">
+              <span className="sv-rep2__score-num">98.6%</span>
+              <span className="sv-rep2__score-tag">Passed</span>
             </div>
-            <button className="sv-rep__pass-btn">
-              <span className="sv-pulse sv-pulse--sm" />
-              View Passport
-            </button>
+          </div>
+          <div className="sv-rep2__summary">
+            <span className="sv-rep2__sum-ttl">Summary</span>
+            <div className="sv-rep2__sum-grid">
+              {SUMMARY.map(([k, v]) => (
+                <div key={k} className="sv-rep2__sum-item">
+                  <span className="sv-rep2__sum-lbl">{k}</span>
+                  <span className="sv-rep2__sum-val">{v}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   );
 }
@@ -1184,27 +1125,27 @@ function BottleCanvas({ step }) {
 /* ── Illustration: AI-Powered Verification ── */
 function IllusAI() {
   return (
-    <img src="/step1-core.png" alt="AI-Powered Verification" className="sw-illus sw-illus--img" draggable="false" />
+    <img src="/step1-core.png" alt="AI-Powered Verification" className="sw-illus sw-illus--img" draggable="false" loading="lazy" decoding="async" />
   );
 }
 
 /* ── Illustration: Blockchain Traceability ── */
 function IllusBlockchain() {
   return (
-    <img src="/step2-core.png" alt="Blockchain Traceability" className="sw-illus sw-illus--img" draggable="false" />
+    <img src="/step2-core.png" alt="Blockchain Traceability" className="sw-illus sw-illus--img" draggable="false" loading="lazy" decoding="async" />
   );
 }
 
 /* ── Illustration: Digital Product Passport ── */
 function IllusPassport() {
   return (
-    <img src="/step3-core.png" alt="Digital Product Passport" className="sw-illus sw-illus--img" draggable="false" />
+    <img src="/step3-core.png" alt="Digital Product Passport" className="sw-illus sw-illus--img" draggable="false" loading="lazy" decoding="async" />
   );
 }
 
 /* ── Illustration: Compliance Automation ── */
 function IllusCompliance() {
   return (
-    <img src="/step4-core.png" alt="Compliance Automation" className="sw-illus sw-illus--img" draggable="false" />
+    <img src="/step4-core.png" alt="Compliance Automation" className="sw-illus sw-illus--img" draggable="false" loading="lazy" decoding="async" />
   );
 }

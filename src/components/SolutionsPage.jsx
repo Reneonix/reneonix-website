@@ -24,7 +24,7 @@ const SOLUTIONS_CARDS = [
   {
     title: 'Hardware System',
     body: 'AI-powered hardware systems for smarter machines and industrial infrastructure.',
-    img: '/hardware-hero.png',
+    img: '/hardware-main.webp',
     Icon: Wrench,
     href: '#hardware',
     active: true,
@@ -32,7 +32,7 @@ const SOLUTIONS_CARDS = [
   {
     title: 'Software',
     body: 'AI & technology platform for traceability, transparency and compliance.',
-    img: '/software.png',
+    img: '/software-main.jpeg',
     Icon: Cpu,
     href: '#software',
     active: true,
@@ -40,7 +40,7 @@ const SOLUTIONS_CARDS = [
   {
     title: 'Material Science',
     body: 'AI-driven material science to re-engineer waste into advanced sustainable materials.',
-    img: '/ms-image.png',
+    img: '/ms-main.webp',
     Icon: FlaskConical,
     href: '#material-science',
     active: true,
@@ -186,22 +186,29 @@ export default function SolutionsPage() {
 
           <div className="sol-grid">
             {SOLUTIONS_CARDS.map(({ title, body, img, Icon, href, active }) => (
-              <article className="sol-card" key={title}>
-                <div className="sol-card__media">
-                  <img src={img} alt={title} loading="lazy" decoding="async" />
-                </div>
-                <h3 className="sol-card__title">{title}</h3>
-                <p className="sol-card__body">{body}</p>
-                {active ? (
-                  <a className="sol-card__more" href={href}>
+              active ? (
+                <a className="sol-card" href={href} key={title}>
+                  <div className="sol-card__media">
+                    <img src={img} alt={title} loading="lazy" decoding="async" />
+                  </div>
+                  <h3 className="sol-card__title">{title}</h3>
+                  <p className="sol-card__body">{body}</p>
+                  <span className="sol-card__more">
                     Explore More <span style={{ fontSize: '1.3em', lineHeight: 1 }}>→</span>
-                  </a>
-                ) : (
+                  </span>
+                </a>
+              ) : (
+                <article className="sol-card sol-card--inactive" key={title}>
+                  <div className="sol-card__media">
+                    <img src={img} alt={title} loading="lazy" decoding="async" />
+                  </div>
+                  <h3 className="sol-card__title">{title}</h3>
+                  <p className="sol-card__body">{body}</p>
                   <span className="sol-card__more sol-card__more--inactive">
                     Explore More <span style={{ fontSize: '1.3em', lineHeight: 1 }}>→</span>
                   </span>
-                )}
-              </article>
+                </article>
+              )
             ))}
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import {
   Package,
   Eye,
@@ -41,9 +41,24 @@ function FeatureRow({ Icon, title, body, listClass = 'zz-iconfeats' }) {
 /** Adds .is-in once the row scrolls into view (reuses the original CSS animations). */
 function ZzRow({ className = '', children }) {
   const ref = useRef(null);
+
+  // Synchronous — before first paint. If any part of the row is already in the
+  // viewport (e.g. the Solutions section is visible on initial load), reveal it
+  // immediately so it never flashes invisible on first view.
+  useLayoutEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const { top, bottom } = node.getBoundingClientRect();
+    if (top < window.innerHeight && bottom > 0) {
+      node.classList.add('is-in');
+    }
+  }, []);
+
+  // Async — watches for below-fold rows and reveals them as the user scrolls.
   useEffect(() => {
     const node = ref.current;
-    if (!node || typeof IntersectionObserver === 'undefined') return;
+    if (!node || node.classList.contains('is-in')) return;
+    if (typeof IntersectionObserver === 'undefined') return;
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -53,11 +68,12 @@ function ZzRow({ className = '', children }) {
           }
         });
       },
-      { threshold: 0.18, rootMargin: '0px 0px -10% 0px' }
+      { threshold: 0.05 }
     );
     io.observe(node);
     return () => io.disconnect();
   }, []);
+
   return (
     <article className={`zz-row ${className}`.trim()} data-zz ref={ref}>
       {children}
@@ -83,14 +99,12 @@ export default function Solutions() {
 
         <div className="solutions-zz">
           {/* 1. HARDWARE LAYER */}
-          <ZzRow>
+          <ZzRow className="zz-row--hw">
             <div className="zz-row__copy-top">
               <span className="zz-row__step">
                 <b>01</b> Hardware Layer
               </span>
-              <h3>
-                Industrial hardware for <em>material recovery</em>
-              </h3>
+              <p className="zz-sol__tagline">Industrial hardware for <em>material recovery</em></p>
               <p className="lead">
                 Reneonix builds modular hardware systems that sort, process, and prepare
                 post-consumer waste into industry-ready raw materials.
@@ -120,9 +134,7 @@ export default function Solutions() {
               <span className="zz-row__step">
                 <b>02</b> Software Layer
               </span>
-              <h3>
-                Software that makes <em>circularity measurable</em>
-              </h3>
+              <p className="zz-sol__tagline">Software that makes <em>circularity measurable</em></p>
               <p className="lead">
                 Reneonix connects material movement, traceability, quality, and impact data
                 in one decision-ready system.
@@ -174,9 +186,7 @@ export default function Solutions() {
               <span className="zz-row__step">
                 <b>03</b> Material Science
               </span>
-              <h3>
-                Material science for <em>higher-value products</em>
-              </h3>
+              <p className="zz-sol__tagline">Material science for <em>higher-value products</em></p>
               <p className="lead">
                 Reneonix tests, validates, and engineers recovered materials into reliable
                 industrial applications.

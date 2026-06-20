@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-  Lock, Shield, ShieldCheck, Users, User, Monitor, Globe, Cookie,
-  Scale, Mail, Briefcase, Key, AlertCircle, RefreshCw,
-  MessageSquare, Package, BarChart2, FolderOpen, Building2,
-  Calendar, ChevronDown, FileText,
+  Lock, ShieldCheck, User, Monitor, Globe, Cookie,
+  Briefcase, Key, AlertCircle, RefreshCw,
+  Calendar, ChevronDown,
 } from 'lucide-react';
 import './PolicyPage.css';
 
@@ -20,16 +19,12 @@ const TABS = [
 
 const TAB_SECTIONS = {
   privacy: [
-    { id: 'collect',  label: 'Information We Collect' },
-    { id: 'use',      label: 'How We Use Information' },
-    { id: 'client',   label: 'Client Information Protection' },
-    { id: 'sharing',  label: 'Information Sharing' },
-    { id: 'security', label: 'Information Security' },
-    { id: 'rights',   label: 'Your Rights' },
-    { id: 'contact',  label: 'Contact Us' },
+    { id: 'collect',          label: 'Information We Collect' },
+    { id: 'usage-protection', label: 'Information Usage & Protection' },
+    { id: 'security',         label: 'Information Security' },
+    { id: 'contact',          label: 'Contact Us' },
   ],
   security: [
-    { id: 'framework',       label: 'Security Framework' },
     { id: 'website-sec',     label: 'Website Security' },
     { id: 'confidentiality', label: 'Confidentiality' },
   ],
@@ -55,22 +50,6 @@ const TAB_SECTIONS = {
   ],
 };
 
-const USAGE_ITEMS = [
-  { Icon: MessageSquare, label: 'Respond to inquiries and service requests' },
-  { Icon: Package,       label: 'Provide products and services' },
-  { Icon: BarChart2,     label: 'Improve website functionality' },
-  { Icon: Mail,          label: 'Communicate relevant business information' },
-  { Icon: Shield,        label: 'Maintain security and prevent unauthorized activity' },
-  { Icon: FileText,      label: 'Comply with legal and regulatory obligations' },
-];
-
-const CLIENT_ITEMS = [
-  { Icon: FolderOpen, label: 'Project documentation' },
-  { Icon: Scale,      label: 'Financial information' },
-  { Icon: Building2,  label: 'Business strategies' },
-  { Icon: Users,      label: 'Stakeholder information' },
-  { Icon: Lock,       label: 'Proprietary IP' },
-];
 
 /* ── Accordion section ────────────────────────────────── */
 function Section({ id, num, title, expanded, onToggle, children }) {
@@ -141,53 +120,36 @@ function PrivacyContent({ exp, tog }) {
         </div>
       </Section>
 
-      <Section id="use" num="02" title="How We Use Information" expanded={exp['use']} onToggle={tog}>
-        <p className="pol-section__text">The information collected may be used to:</p>
-        <div className="pol-usage-flow">
-          {USAGE_ITEMS.map(({ Icon, label }, i) => (
-            <span key={label} style={{ display: 'contents' }}>
-              <div className="pol-usage-item">
-                <div className="pol-usage-item__icon"><Icon size={17} /></div>
-                <span className="pol-usage-item__label">{label}</span>
-              </div>
-              {i < USAGE_ITEMS.length - 1 && <span className="pol-usage-arrow">›</span>}
-            </span>
-          ))}
-        </div>
-        <p className="pol-section__text">We do not sell, rent, or trade personal information to third parties.</p>
-      </Section>
-
-      <Section id="client" num="03" title="Client Information Protection" expanded={exp['client']} onToggle={tog}>
-        <div className="pol-icon-grid">
-          {CLIENT_ITEMS.map(({ Icon, label }) => (
-            <div className="pol-icon-card" key={label}>
-              <Icon size={22} />
-              <span className="pol-icon-card__label">{label}</span>
-            </div>
-          ))}
-        </div>
+      <Section id="usage-protection" num="02" title="Information Usage & Protection" expanded={exp['usage-protection']} onToggle={tog}>
+        <p className="pol-sub-hd">How We Use Information</p>
+        <p className="pol-section__text">We may use the information provided to:</p>
+        <ul className="pol-bullets">
+          <li>Respond to inquiries and service requests</li>
+          <li>Deliver products and services</li>
+          <li>Improve website performance and functionality</li>
+          <li>Communicate relevant business information</li>
+          <li>Maintain security and prevent unauthorized access</li>
+          <li>Comply with legal and regulatory obligations</li>
+        </ul>
+        <p className="pol-sub-hd">How We Protect Information</p>
+        <p className="pol-section__text">
+          We implement appropriate administrative, technical, and organizational safeguards to protect
+          information entrusted to us, including:
+        </p>
+        <ul className="pol-bullets">
+          <li>Project documentation</li>
+          <li>Financial information</li>
+          <li>Business strategies</li>
+          <li>Stakeholder information</li>
+          <li>Proprietary intellectual property</li>
+        </ul>
         <div className="pol-info-box">
           <ShieldCheck size={15} />
-          Access to client information is granted strictly on a need-to-know basis and only to authorized personnel involved in delivering services.
+          Access to information is restricted to authorized personnel on a need-to-know basis and protected through industry-standard security practices.
         </div>
       </Section>
 
-      <Section id="sharing" num="04" title="Information Sharing" expanded={exp['sharing']} onToggle={tog}>
-        <p className="pol-sub-hd">Service Providers</p>
-        <ul className="pol-bullets">
-          <li>Website hosting and IT support</li>
-          <li>Analytics and performance monitoring</li>
-          <li>Business operations and communication services</li>
-        </ul>
-        <p className="pol-sub-hd">Legal Requirements</p>
-        <ul className="pol-bullets">
-          <li>Comply with applicable laws and regulations</li>
-          <li>Respond to lawful requests from government authorities</li>
-          <li>Protect legal rights and prevent fraud or unlawful activity</li>
-        </ul>
-      </Section>
-
-      <Section id="security" num="05" title="Information Security" expanded={exp['security']} onToggle={tog}>
+      <Section id="security" num="03" title="Information Security" expanded={exp['security']} onToggle={tog}>
         <ul className="pol-bullets">
           <li>Access management and authentication controls</li>
           <li>Secure storage and handling of information</li>
@@ -201,21 +163,7 @@ function PrivacyContent({ exp, tog }) {
         </div>
       </Section>
 
-      <Section id="rights" num="06" title="Your Rights" expanded={exp['rights']} onToggle={tog}>
-        <ul className="pol-bullets">
-          <li>Access the personal information we hold about you</li>
-          <li>Request correction of inaccurate or incomplete information</li>
-          <li>Request deletion of your personal information, subject to legal obligations</li>
-          <li>Withdraw consent where processing is based on your consent</li>
-          <li>Lodge a complaint with a relevant data protection authority</li>
-        </ul>
-        <p className="pol-section__text">
-          To exercise any of these rights, contact us at{' '}
-          <a href="mailto:info@reneonix.com" style={{ color: 'var(--lime-deep)' }}>info@reneonix.com</a>.
-        </p>
-      </Section>
-
-      <Section id="contact" num="07" title="Contact Us" expanded={exp['contact']} onToggle={tog}>
+      <Section id="contact" num="04" title="Contact Us" expanded={exp['contact']} onToggle={tog}>
         <div className="pol-contact-block">
           <strong>Reneonix Pvt Ltd</strong><br />
           Email: <a href="mailto:info@reneonix.com">info@reneonix.com</a><br /><br />
@@ -237,22 +185,7 @@ function SecurityContent({ exp, tog }) {
         and availability of all information assets entrusted to us.
       </p>
 
-      <Section id="framework" num="01" title="Security Framework" expanded={exp['framework']} onToggle={tog}>
-        <ul className="pol-bullets">
-          <li>Access management and authentication controls</li>
-          <li>Secure storage and handling of information</li>
-          <li>Data backup and recovery procedures</li>
-          <li>Endpoint and network security measures</li>
-          <li>Monitoring and risk assessment processes</li>
-          <li>Employee awareness and confidentiality obligations</li>
-        </ul>
-        <div className="pol-info-box">
-          <ShieldCheck size={15} />
-          While no digital environment can guarantee absolute security, we continuously strive to implement industry-recognized security practices.
-        </div>
-      </Section>
-
-      <Section id="website-sec" num="02" title="Website Security & Visitor Protection" expanded={exp['website-sec']} onToggle={tog}>
+      <Section id="website-sec" num="01" title="Website Security & Visitor Protection" expanded={exp['website-sec']} onToggle={tog}>
         <ul className="pol-bullets">
           <li>Secure HTTPS encryption</li>
           <li>Protection against unauthorized access attempts</li>
@@ -262,7 +195,7 @@ function SecurityContent({ exp, tog }) {
         </ul>
       </Section>
 
-      <Section id="confidentiality" num="03" title="Confidentiality & Non-Disclosure" expanded={exp['confidentiality']} onToggle={tog}>
+      <Section id="confidentiality" num="02" title="Confidentiality & Non-Disclosure" expanded={exp['confidentiality']} onToggle={tog}>
         <p className="pol-section__text">
           Unless required by law, court order, or regulatory authority, we will not disclose
           confidential client or personally identifiable visitor information without authorization.
@@ -490,25 +423,22 @@ export default function PolicyPage() {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const tabsBarRef                = useRef(null);
   const tabRefs                   = useRef({});
-  const isMounted                 = useRef(false);
 
   useEffect(() => {
     const secs = TAB_SECTIONS[activeTab] || [];
     const init = {};
     secs.forEach((s) => { init[s.id] = false; });
     setExpanded(init);
+  }, [activeTab]);
 
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
-
+  const selectTab = (id) => {
+    setActiveTab(id);
     requestAnimationFrame(() => {
       if (!tabsBarRef.current) return;
       const top = tabsBarRef.current.offsetTop - 76;
       window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
     });
-  }, [activeTab]);
+  };
 
   useEffect(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > 320);
@@ -532,7 +462,7 @@ export default function PolicyPage() {
     else if (e.key === 'End')       next = ids[ids.length - 1];
     if (next) {
       e.preventDefault();
-      setActiveTab(next);
+      selectTab(next);
       requestAnimationFrame(() => tabRefs.current[next]?.focus());
     }
   };
@@ -592,7 +522,7 @@ export default function PolicyPage() {
               aria-controls={`pol-panel-${t.id}`}
               tabIndex={activeTab === t.id ? 0 : -1}
               className={`pol-tab${activeTab === t.id ? ' pol-tab--active' : ''}`}
-              onClick={() => setActiveTab(t.id)}
+              onClick={() => selectTab(t.id)}
               onKeyDown={(e) => handleTabKeyDown(e, t.id)}
             >
               {t.label}

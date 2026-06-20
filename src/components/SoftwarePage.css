@@ -21,10 +21,22 @@
 .sw-hero {
   position: relative;
   min-height: calc(100vh - 72px);
-  background: url('/software-bg.png') center center / cover no-repeat;
+  background: #07080A;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* Responsive background image — swapped via <picture> on mobile */
+.sw-hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  z-index: 0;
 }
 
 /* Dark gradient overlay — improves text contrast over the image */
@@ -308,9 +320,6 @@
 
 @media (max-width: 768px) {
   .sw-hero {
-    background-image: url('/software-bg-mobile.png');
-    background-position: center center;
-    background-size: cover;
     min-height: 100svh;
   }
   .sw-hero::before {
@@ -331,6 +340,14 @@
   }
   .sw-hero__body {
     max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .sw-hero {
+    height: auto;
+    min-height: unset;
+    aspect-ratio: 3 / 4;
   }
 }
 
@@ -1226,6 +1243,7 @@
 }
 
 
+
 /* ══ PLATFORM PREVIEW ══════════════════════════════════════════ */
 
 .sw-plat {
@@ -1291,7 +1309,7 @@
   display: grid;
   grid-template-columns: 8fr 9fr;
   gap: 20px;
-  align-items: start;
+  align-items: stretch; /* both cards match the taller (dashboard) height */
 }
 
 .sw-plat__card {
@@ -1300,11 +1318,16 @@
   overflow: hidden;
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05), 0 8px 32px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
 }
 
 .sw-plat__card-img {
   width: 100%;
-  height: auto;
+  flex: 1;          /* fill the card's full stretched height */
+  min-height: 0;
+  object-fit: cover;
+  object-position: top center;
   display: block;
 }
 

@@ -41,9 +41,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center center;
+  object-position: center 30%;
   display: block;
-  filter: brightness(1.18) contrast(0.95);
+  filter: brightness(1.08) contrast(1.0);
   animation: hw2-bg-fade 1.0s ease both;
 }
 @keyframes hw2-bg-fade {
@@ -56,34 +56,34 @@
   position: absolute;
   inset: 0;
   background:
-    /* 1 – white radial glow centred on the machine (right-centre) */
+    /* 1 – subtle glow centred on the exploded machine spread */
     radial-gradient(
-      ellipse 55% 65% at 68% 58%,
-      rgba(255, 255, 255, 0.18) 0%,
-      rgba(255, 255, 255, 0.07) 45%,
-      transparent 72%
+      ellipse 70% 60% at 62% 50%,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.04) 50%,
+      transparent 75%
     ),
-    /* 2 – left column: light charcoal ramp for text */
+    /* 2 – left column: charcoal ramp for text legibility */
     linear-gradient(
       to right,
-      rgba(30, 32, 34, 0.62) 0%,
-      rgba(30, 32, 34, 0.42) 32%,
-      rgba(30, 32, 34, 0.10) 58%,
-      transparent 72%
+      rgba(20, 22, 24, 0.72) 0%,
+      rgba(20, 22, 24, 0.48) 28%,
+      rgba(20, 22, 24, 0.12) 52%,
+      transparent 68%
     ),
     /* 3 – bottom vignette */
     linear-gradient(
       to top,
-      rgba(20, 22, 24, 0.55) 0%,
-      rgba(20, 22, 24, 0.18) 18%,
-      transparent 36%
+      rgba(14, 16, 18, 0.60) 0%,
+      rgba(14, 16, 18, 0.20) 20%,
+      transparent 38%
     ),
     /* 4 – top shadow under navbar */
     linear-gradient(
       to bottom,
-      rgba(20, 22, 24, 0.35) 0%,
-      rgba(20, 22, 24, 0.08) 12%,
-      transparent 26%
+      rgba(14, 16, 18, 0.40) 0%,
+      rgba(14, 16, 18, 0.10) 14%,
+      transparent 28%
     );
   z-index: 1;
 }
@@ -659,6 +659,10 @@
   .hw-sorter__img     { object-position: center; }
   .hw-sorter__metrics { grid-template-columns: 1fr; }
   .hw-sorter__caps    { grid-template-columns: repeat(3, 1fr); }
+
+  /* Hide annotation callouts — layout is single-column at this width and
+     absolutely-positioned cards no longer map correctly to the stacked image */
+  .hw-sorter__ann     { display: none; }
 }
 
 @media (max-width: 600px) {
@@ -1777,39 +1781,47 @@
     padding-right: 0;
   }
 
-  /* ── Hero — mobile background image ── */
+  /* ── Hero — 3:4 ratio mobile layout ── */
+  .hw2-hero {
+    height: auto;
+    min-height: unset;
+    aspect-ratio: 3 / 4;
+  }
   .hw2-hero__bg {
-    object-position: center 42%;
+    object-position: center center;
     filter: brightness(1.05) contrast(0.95);
   }
-  /* Lighter overlay since the mobile image already has dark concrete walls */
+  /* Mobile overlay — heavier dark fade so text stays legible over the image */
   .hw2-hero__overlay {
     background:
+      /* left-to-right dark ramp covers the text column */
       linear-gradient(
         to right,
-        rgba(10,11,12,.70) 0%,
-        rgba(10,11,12,.35) 42%,
-        rgba(10,11,12,.08) 68%,
-        transparent 82%
+        rgba(10,11,12,.85) 0%,
+        rgba(10,11,12,.60) 45%,
+        rgba(10,11,12,.20) 72%,
+        transparent 88%
       ),
+      /* top vignette under nav */
       linear-gradient(
         to bottom,
-        rgba(10,11,12,.45) 0%,
-        rgba(10,11,12,.10) 18%,
-        transparent 35%
+        rgba(10,11,12,.60) 0%,
+        rgba(10,11,12,.20) 22%,
+        transparent 42%
       ),
+      /* bottom fade into next section */
       linear-gradient(
         to top,
-        rgba(10,11,12,.55) 0%,
-        rgba(10,11,12,.15) 20%,
-        transparent 40%
+        rgba(10,11,12,.70) 0%,
+        rgba(10,11,12,.25) 22%,
+        transparent 44%
       );
   }
-  .hw2-hero__container { padding-top: 88px; }
-  .hw2-hero__copy      { max-width: 100%; }
+  .hw2-hero__container { padding-top: 88px; padding-bottom: 28px; }
+  .hw2-hero__copy      { max-width: 100%; padding-top: 12px; }
   /* Hero title — slightly tighter on phones; 2.2rem = 35px which is fine at 320px,
      but give lead text more breathing room */
-  .hw2-hero__lead      { max-width: 100%; font-size: 0.93rem; }
+  .hw2-hero__lead      { max-width: 100%; font-size: 0.93rem; color: rgba(255,255,255,0.88); }
 
   /* ── VisionBox ── */
   .hw-vb-section { padding-top: 88px; padding-bottom: 48px; }
@@ -1836,15 +1848,14 @@
     height: auto;
     min-height: unset;
     overflow: visible;
-    /* Section itself carries no vertical padding; container handles it */
-    padding-top: 0;
-    padding-bottom: 0;
+    padding-top: 88px;    /* match .hw-sorter-section mobile top */
+    padding-bottom: 88px; /* match .hw-sorter-section mobile bottom */
   }
 
   .hw-mrm__container {
     flex: unset;
-    padding: 32px 16px 40px;   /* top | sides | bottom */
-    gap: 20px;                  /* uniform gap between all sub-sections */
+    padding: 0 16px;   /* vertical handled by section; only horizontal gutter here */
+    gap: 20px;         /* uniform gap between all sub-sections */
   }
 
   /* ─────────────────────────────────────────────────────────

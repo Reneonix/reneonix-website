@@ -37,7 +37,10 @@ export default function Preloader({ minDisplayMs = 1600 }) {
     }
 
     return () => {
-      window.__preloaderShown = false; // allow StrictMode 2nd run
+      // Do NOT reset __preloaderShown here. In React StrictMode (dev) the
+      // effect runs twice; resetting would restart the preloader on the
+      // second invocation, doubling the minimum display time. The flag is
+      // intentionally permanent once set.
       window.clearTimeout(hideTimer);
       window.clearTimeout(fallbackTimer);
       window.removeEventListener('load', dismiss);

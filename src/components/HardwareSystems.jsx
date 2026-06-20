@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Cpu, Zap, Shield, ChevronRight, Eye, Recycle, ClipboardList, CheckCircle2, Wine, ShoppingBag, Target, Gauge, Layers, ScanLine, Wind, TrendingUp, Leaf, Settings } from 'lucide-react';
+import { Cpu, Zap, Shield, ChevronRight, Eye, Recycle, ClipboardList, CheckCircle2, Milk, ShoppingBag, Target, Gauge, Layers, ScanLine, Wind, TrendingUp, Leaf, Settings } from 'lucide-react';
 import './HardwareSystems.css';
 
 export default function HardwareSystems() {
@@ -23,12 +23,15 @@ export default function HardwareSystems() {
       {/* ── HERO ── */}
       <section className="hw2-hero">
         <picture>
-          <source media="(max-width: 600px)" srcSet="/hardware-hero-mobile.jpeg" />
+          <source media="(max-width: 768px)" srcSet="/hardware-hero-mobile.jpeg" />
           <img
             className="hw2-hero__bg"
             src="/hardware-hero.png"
             alt="Reneonix industrial material recovery system"
             draggable="false"
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
           />
         </picture>
         <div className="hw2-hero__overlay" aria-hidden="true" />
@@ -52,7 +55,7 @@ export default function HardwareSystems() {
       </section>
 
       {/* ── MRM ── */}
-      <section className="hw-mrm-section">
+      <section className="hw-mrm-section" id="hw-mrm">
         <div className="container hw-mrm__container">
 
           {/* ── Top: two-column (annotations + image | content) ── */}
@@ -60,7 +63,7 @@ export default function HardwareSystems() {
 
             {/* LEFT — machine image */}
             <div className="hw-mrm__visual">
-              <img src="/hardware-MRM.jpeg" alt="MRM AI Material Recovery Machine" className="hw-mrm__img" />
+              <img src="/hardware-MRM.jpeg" alt="MRM AI Material Recovery Machine" className="hw-mrm__img" loading="lazy" decoding="async" />
             </div>
 
             {/* RIGHT — eyebrow, title, subtitle, body, capability tiles */}
@@ -96,7 +99,7 @@ export default function HardwareSystems() {
             <div className="hw-mrm__perf-badge">System Performance</div>
             <div className="hw-mrm__perf-box">
               {[
-                { Icon: Wine,   value: '450–500+',        label: 'Bottle Capacity',     sub: 'Per Hour' },
+                { Icon: Milk,   value: '450–500+',        label: 'Bottle Capacity',     sub: 'Per Hour' },
                 { Icon: Gauge,  value: '250 KG',          label: 'Processing Capacity', sub: 'Per Cycle' },
                 { Icon: Cpu,    value: 'HD + Edge AI',    label: 'Vision System',       sub: 'High-Precision Detection' },
                 { Icon: Layers, value: 'Glass · PET · Cans', label: 'Supported Materials', sub: 'Multiple Material Types' },
@@ -119,12 +122,17 @@ export default function HardwareSystems() {
       {/* ── VISIONBOX — AI Inspection ── */}
       <section className="hw-vb-section">
         {/* Full-width background image */}
-        <img
-          className="hw-vb__bg"
-          src="/hardware-inspection-box.png"
-          alt="VisionBox AI Inspection System"
-          draggable="false"
-        />
+        <picture>
+          <source media="(max-width: 768px)" srcSet="/hardware-inspection-mobile.png" />
+          <img
+            className="hw-vb__bg"
+            src="/hardware-inspection-box.png"
+            alt="VisionBox AI Inspection System"
+            draggable="false"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
         {/* Overlay — dark gradient left for text readability */}
         <div className="hw-vb__overlay" aria-hidden="true" />
         {/* Content — left-aligned over the image */}
@@ -161,7 +169,7 @@ export default function HardwareSystems() {
       </section>
 
       {/* ── AI SORTING MODULE ── */}
-      <section className="hw-sorter-section">
+      <section className="hw-sorter-section" id="hw-sorter">
         <div className="container hw-sorter__container">
 
           {/* ── Top: two-column (image + stats | content) ── */}
@@ -169,7 +177,7 @@ export default function HardwareSystems() {
 
             {/* LEFT — clean machine image */}
             <div className="hw-sorter__visual">
-              <img src="/hardware-Sorter.png" alt="AI Sorting Module" className="hw-sorter__img" />
+              <img src="/hardware-Sorter.png" alt="AI Sorting Module" className="hw-sorter__img" loading="lazy" decoding="async" />
             </div>
 
             {/* RIGHT — eyebrow, heading, body, metrics */}
@@ -184,7 +192,7 @@ export default function HardwareSystems() {
               <div className="hw-sorter__metrics">
                 {[
                   { Icon: Target, value: '98%',   label: 'Colour Detection',  desc: 'Separates flint, amber, green, and mixed glass with near-perfect precision.' },
-                  { Icon: Wine,   value: '95%',   label: 'Brand Recognition', desc: 'Identifies brand by label, bottle shape & embossing.' },
+                  { Icon: Milk, value: '95%', label: 'Brand Recognition', desc: 'Identifies brand by label, bottle shape & embossing.' },
                   { Icon: Gauge,  value: '1200+', label: 'Bottles / Hour',    desc: 'Industrial throughput with <300ms response time.' },
                 ].map(({ Icon, value, label, desc }) => (
                   <div className="hw-sorter__metric-card" key={label}>

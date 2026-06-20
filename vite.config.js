@@ -8,14 +8,26 @@ export default defineConfig({
     host: true,
   },
   build: {
-    // Vite empties this folder on each build; default is `dist`.
     outDir: 'dist',
     emptyOutDir: true,
+    // Warn only when a single chunk exceeds 800 kB (after splitting, none should)
+    chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React runtime — tiny, always cached after first visit
+          'vendor-react': ['react', 'react-dom'],
+          // THREE.js is large; isolate it so the other chunks stay small
+          'vendor-three': ['three'],
+          // Lucide icon tree — needed on every page but separate from app logic
+          'vendor-icons': ['lucide-react'],
+        },
+      },
+    },
   },
   css: {
     modules: {
-      // Preserve original kebab-case class names so existing CSS rules
-      // (e.g. .zz-row__copy) survive the move into *.module.css files.
+      // Preserve original kebab-case class names so existing CSS rules survive
       localsConvention: 'dashes',
     },
   },

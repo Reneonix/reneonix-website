@@ -3,6 +3,7 @@ const PAGE_ROUTES = new Set([
   '#solutions', '#careers', '#hardware', '#software', '#material-science',
 ]);
 
+
 // Hashes that are anchored sections on the home page
 const HOME_SECTIONS = new Set([
   '#about', '#investors', '#contact', '#highlights',
@@ -40,6 +41,25 @@ function handleSectionNav(e, href) {
   }
 }
 
+/**
+ * Click handler for Technology links that navigate to a sub-page
+ * and optionally scroll to a specific section within that page.
+ */
+function handlePageNav(e, page, section) {
+  e.preventDefault();
+  const currentHash = window.location.hash.split('?')[0];
+  if (section) {
+    if (currentHash === page) {
+      scrollToSection(section);
+    } else {
+      sessionStorage.setItem('sw_scroll_target', section);
+      window.location.hash = page;
+    }
+  } else {
+    window.location.hash = page;
+  }
+}
+
 const COLUMNS = [
   {
     title: 'Solutions',
@@ -47,16 +67,16 @@ const COLUMNS = [
       ['Hardware', '#hardware'],
       ['Software', '#software'],
       ['Material Science', '#material-science'],
-      ['Integrated Stack', '#solutions'],
     ],
   },
   {
     title: 'Technology',
+    // 3-tuple: [label, pageHash, sectionId|null]
     items: [
-      ['AI Vision & Sorting', '#'],
-      ['Sensor Networks', '#'],
-      ['Trace OS Platform', '#'],
-      ['R&D Labs', '#'],
+      ['AI Vision & Sorting', '#hardware',         'hw-sorter'],
+      ['Sensor Networks',     '#hardware',         'hw-mrm'],
+      ['TraceOS Platform',    '#software',         null],
+      ['R&D Labs',            '#material-science', null],
     ],
   },
   {
@@ -135,12 +155,14 @@ export default function Footer() {
             <div className="footer__col" key={col.title}>
               <h4>{col.title}</h4>
               <ul>
-                {col.items.map(([label, href]) => (
+                {col.items.map(([label, href, section]) => (
                   <li key={label}>
                     {href === null || href === undefined ? (
                       <span className="footer__link--inactive">{label}</span>
                     ) : HOME_SECTIONS.has(href) ? (
                       <a href={href} onClick={(e) => handleSectionNav(e, href)}>{label}</a>
+                    ) : PAGE_ROUTES.has(href) ? (
+                      <a href={href} onClick={(e) => handlePageNav(e, href, section ?? null)}>{label}</a>
                     ) : (
                       <a href={href}>{label}</a>
                     )}
