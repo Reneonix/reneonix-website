@@ -21,12 +21,12 @@ const RESEARCH_STEPS = [
   {
     Icon: Recycle,
     num: '01',
-    title: 'Collection & Sorting',
-    body: 'We collect various industrial waste streams and sort them based on material type, condition, and quality to ensure optimal processing.',
+    title: 'Sample Collection',
+    body: 'We source and collect representative samples from post-consumer and industrial waste streams, ensuring a diverse and comprehensive dataset for material research and analysis.',
     img: '/step1.png',
     outputs: [
-      { Icon: MapPin,      label: 'Waste Stream Mapping' },
-      { Icon: Layers,      label: 'Material Classification' },
+      { Icon: MapPin,      label: 'Waste Stream Sourcing' },
+      { Icon: Layers,      label: 'Sample Classification' },
       { Icon: ShieldCheck, label: 'Quality Assessment' },
     ],
   },
@@ -35,7 +35,7 @@ const RESEARCH_STEPS = [
     num: '02',
     title: 'Material Characterization',
     body: 'Physical, chemical, and thermal analysis of collected waste materials to evaluate their composition and performance potential.',
-    img: '/step2.png',
+    img: '/step2.jpg',
     outputs: [
       { Icon: FlaskConical, label: 'Composition Analysis' },
       { Icon: Zap,          label: 'Particle Size Distribution' },
@@ -47,7 +47,7 @@ const RESEARCH_STEPS = [
     num: '03',
     title: 'Material Formulation & Engineering',
     body: 'Designing and developing precise material compositions for targeted mechanical, thermal, and functional performance.',
-    img: '/step3.png',
+    img: '/step3.jpg',
     outputs: [
       { Icon: Layers,      label: 'Formula Development' },
       { Icon: Microscope,  label: 'Property Optimisation' },
@@ -59,7 +59,7 @@ const RESEARCH_STEPS = [
     num: '04',
     title: 'Prototype Development',
     body: 'Transforming engineered formulations into lab-scale prototypes and physical specimens for evaluation.',
-    img: '/step4.png',
+    img: '/step4.jpg',
     outputs: [
       { Icon: Package,      label: 'Lab Samples' },
       { Icon: TestTube,     label: 'Test Specimens' },
@@ -71,7 +71,7 @@ const RESEARCH_STEPS = [
     num: '05',
     title: 'Performance Validation',
     body: 'Rigorous testing for strength, durability, thermal stability, and environmental compliance against industry benchmarks.',
-    img: '/step5.jpeg',
+    img: '/step5.jpg',
     outputs: [
       { Icon: ShieldCheck, label: 'Strength Testing' },
       { Icon: BarChart2,   label: 'Durability Report' },
@@ -83,7 +83,7 @@ const RESEARCH_STEPS = [
     num: '06',
     title: 'Industrial Application',
     body: 'Scaling validated materials into full production and deploying them across real-world industrial applications.',
-    img: '/step6.png',
+    img: '/step6.jpg',
     outputs: [
       { Icon: Factory,   label: 'Scale-up Plan' },
       { Icon: Truck,     label: 'Distribution Setup' },
@@ -117,8 +117,8 @@ const WASTE_TYPES = [
       sub: 'Advanced recycling. Innovative material science. A cleaner built environment.',
     },
     products: [
-      { name: 'Decorative Glass Aggregate', img: '/Decorative glass aggregrate.jpg', Icon: Sparkles  },
-      { name: 'Glass Foam',                 img: '/Glass foam.png',                  Icon: Layers    },
+      { name: 'Sand Blasting Abrasive',     img: '/Sand blasting abrasive.jpeg',    Icon: Sparkles  },
+      { name: 'Glass Foam',                 img: '/Foam Glass.jpg',                  Icon: Layers    },
       { name: 'Light Weight Aggregate',     img: '/Light weight aggregrate.png',     Icon: Package   },
       { name: 'Tiles',                      img: '/Tiles.avif',                      Icon: Factory   },
     ],
@@ -239,7 +239,7 @@ const WASTE_TYPES = [
     products: [
       { name: 'Concrete Roof Tiles',  img: '/Concrete roof tiles.jpg', Icon: Factory  },
       { name: 'Countertops',          img: '/Countertops.jpg',          Icon: Layers   },
-      { name: 'Insulation Block',     img: '/Insulation block.png',     Icon: Package  },
+      { name: 'Insulation Block',     img: '/Insulation block.webp',    Icon: Package  },
       { name: 'Recovered Aluminium',  img: '/Recovered aluminium.jpg',  Icon: Zap      },
     ],
   },
@@ -447,7 +447,8 @@ export default function MaterialSciencePage() {
                 alt={active.title}
                 className="ms-ra__visual-img"
                 draggable="false"
-                loading="lazy"
+                loading="eager"
+                fetchPriority="high"
                 decoding="async"
               />
               <div className="ms-ra__visual-overlay" aria-hidden="true" />

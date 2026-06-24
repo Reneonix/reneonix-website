@@ -24,7 +24,7 @@ const SOLUTIONS_CARDS = [
   {
     title: 'Hardware System',
     body: 'AI-powered hardware systems for smarter machines and industrial infrastructure.',
-    img: '/hardware-main.webp',
+    img: '/hardware-main.jpeg',
     Icon: Wrench,
     href: '#hardware',
     active: true,

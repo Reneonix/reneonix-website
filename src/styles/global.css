@@ -293,8 +293,8 @@
   .hero {
     position: relative;
     width: 100%;
-    /* Cinematic stage — sized to fit content with breathing room */
-    min-height: clamp(560px, 78vh, 780px);
+    /* Sized to hug the copy (h1 + lead + CTA) without leaving dead space */
+    min-height: clamp(480px, 56vh, 600px);
     padding: 0;
     overflow: hidden;
     isolation: isolate;
@@ -376,7 +376,7 @@
     min-height: inherit;
     display: flex; align-items: center;
     padding-top: clamp(80px, 12vh, 140px);
-    padding-bottom: clamp(80px, 12vh, 140px);
+    padding-bottom: clamp(48px, 6vh, 80px);
   }
   .hero__inner {
     width: 100%;
@@ -440,7 +440,7 @@
     50%      { opacity: 1;  transform: translate(-50%, 4px); }
   }
   @media (max-width: 720px) {
-    .hero { min-height: 86vh; }
+    .hero { min-height: clamp(400px, 60vh, 540px); }
     .hero__stats { grid-template-columns: 1fr 1fr; gap: 18px; }
     .hero__scroll { display: none; }
   }

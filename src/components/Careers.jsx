@@ -27,6 +27,8 @@ const DEPARTMENT_ROLES = {
     'Manufacturing Engineer',
     'Quality Engineer',
     'Manufacturing Technician',
+    'Embedded System Engineer',
+    'Embedded Firmware Engineer',
   ],
   Software: [
     'AI Research Trainee',
