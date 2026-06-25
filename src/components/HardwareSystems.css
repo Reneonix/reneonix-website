@@ -182,7 +182,7 @@
 }
 
 .hw-sorter-section {
-  background: #F5F5F3;
+  background: #ffffff;
   border-top: 1px solid rgba(0,0,0,.06);
   overflow: hidden;
   display: flex;
@@ -656,7 +656,7 @@
     -webkit-mask-image: none;
     mask-image: none;
   }
-  .hw-sorter__img     { object-position: top center; }
+  .hw-sorter__img     { object-fit: contain; object-position: center center; }
   .hw-sorter__metrics { grid-template-columns: 1fr; }
   .hw-sorter__caps    { grid-template-columns: repeat(3, 1fr); }
 
@@ -2065,23 +2065,18 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  height: auto;
-  max-height: none;
-  min-height: unset;
+  justify-content: center;
+  min-height: calc(100vh - 76px);
   overflow: visible;
 }
 
 /* Top 2-column row: left content + right image */
 .hw-mrm__top {
   display: grid;
-  grid-template-columns: 1fr 1.65fr;
-  align-items: start;
-  gap: clamp(16px, 2vw, 28px);
-  padding-top: clamp(40px, 5vh, 64px);
-  padding-bottom: 0;
-  /* Override global .container gutter — stretch closer to edges */
-  padding-left: clamp(16px, 2.5vw, 40px);
-  padding-right: 0;
+  grid-template-columns: 1fr 1.2fr;
+  align-items: center;
+  gap: clamp(16px, 2.5vw, 40px);
+  padding: clamp(40px, 5.5vh, 72px) clamp(16px, 3.5vw, 72px);
   max-width: 100%;
 }
 
@@ -2114,7 +2109,7 @@
 .hw-mrm__title {
   font-family: 'Arimo', sans-serif;
   font-weight: 800;
-  font-size: clamp(2.2rem, 3.6vw, 4.0rem);
+  font-size: clamp(1.9rem, 3.0vw, 3.4rem);
   line-height: 1.06;
   letter-spacing: -0.02em;
   color: #0A0B0C;
@@ -2134,7 +2129,7 @@
 /* Body */
 .hw-mrm__body {
   font-size: clamp(0.90rem, 1.05vw, 1.02rem);
-  color: rgba(0,0,0,.65);
+  color: rgba(0,0,0,.78);
   line-height: 1.72;
   margin: 0;
   display: block;
@@ -2228,12 +2223,13 @@
   line-height: 1.4;
 }
 
-/* RIGHT column — aspect-ratio matches the image (1331×1182) so cover fills perfectly */
+/* RIGHT column — height-capped so image never overflows the viewport */
 .hw-mrm__img-placeholder {
   position: relative;
   overflow: hidden;
   border-radius: 16px;
-  aspect-ratio: 1331 / 1182;
+  aspect-ratio: 1402 / 1122;
+  max-height: calc(100vh - 76px - 64px);
   width: 100%;
   background: #ffffff;
 }
@@ -2276,52 +2272,48 @@
 .hw-mrm__cap-tile {
   background: #ffffff;
   border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 10px;
-  padding: clamp(8px, 1.1vh, 13px) clamp(6px, 0.8vw, 10px);
+  border-radius: 12px;
+  padding: clamp(14px, 1.6vh, 20px) clamp(14px, 1.2vw, 20px);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 4px;
+  align-items: flex-start;
+  text-align: left;
+  gap: 5px;
   cursor: default;
-  transition: background .22s ease, border-color .22s ease, transform .22s ease;
+  transition: background .22s ease, border-color .22s ease, transform .22s ease, box-shadow .22s ease;
 }
 .hw-mrm__cap-tile:hover {
-  background: #eef2e6;
-  border-color: rgba(125,178,0,.30);
+  background: #f8faf2;
+  border-color: rgba(125,178,0,.35);
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(125,178,0,.09);
 }
 
-.hw-mrm__cap-tile-icon {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: rgba(125,178,0,.10);
-  border: 1px solid rgba(125,178,0,.28);
+.hw-mrm__cap-tile-num {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   color: var(--lime-deep, #7DB200);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  margin-bottom: 1px;
-  transition: background .22s ease, transform .22s ease;
-}
-.hw-mrm__cap-tile:hover .hw-mrm__cap-tile-icon {
-  background: rgba(125,178,0,.20);
-  transform: scale(1.08);
+  font-family: 'Arimo', sans-serif;
+  line-height: 1;
+  margin-bottom: 2px;
 }
 
 .hw-mrm__cap-tile-title {
-  font-size: 0.88rem;
-  font-weight: 700;
+  font-size: clamp(1.0rem, 1.1vw, 1.18rem);
+  font-weight: 800;
   color: #0A0B0C;
   margin: 0;
   line-height: 1.2;
+  font-family: 'Arimo', sans-serif;
 }
 
 .hw-mrm__cap-tile-desc {
   display: block;
-  font-size: 0.78rem;
-  color: rgba(0,0,0,.50);
+  font-size: clamp(0.84rem, 0.95vw, 0.95rem);
+  color: rgba(0,0,0,.70);
   margin: 0;
-  line-height: 1.42;
+  line-height: 1.52;
 }
 
 /* Why MRM (AI) Matters */
@@ -2375,15 +2367,19 @@
   margin-top: 2px;
 }
 
-/* Responsive — stack on mobile */
-@media (max-width: 768px) {
-  .hw-mrm__top       { grid-template-columns: 1fr; gap: 20px; padding-top: 32px; padding-bottom: 0; padding-left: clamp(16px, 4vw, 24px); padding-right: clamp(16px, 4vw, 24px); }
-  .hw-mrm__caps-grid { grid-template-columns: repeat(2, 1fr); }
+/* Mid-laptop — tighten further on smaller screens */
+@media (min-width: 769px) and (max-width: 1100px) {
+  .hw-mrm__top        { grid-template-columns: 1fr 1fr; padding: clamp(20px, 2.5vh, 36px) clamp(16px, 3.5vw, 60px); gap: clamp(12px, 2vw, 24px); }
+  .hw-mrm__title      { font-size: clamp(1.7rem, 2.5vw, 2.4rem); }
+  .hw-mrm__img-placeholder { max-height: calc(100vh - 76px - 80px); }
+}
 
-  /* Mobile — same aspect ratio, stacks below content */
-  .hw-mrm__img-placeholder {
-    aspect-ratio: 1331 / 1182;
-  }
+/* Mobile — stack */
+@media (max-width: 768px) {
+  .hw-mrm-section     { min-height: unset; }
+  .hw-mrm__top        { grid-template-columns: 1fr; gap: 20px; padding: 28px clamp(16px, 4vw, 24px); }
+  .hw-mrm__caps-grid  { grid-template-columns: repeat(2, 1fr); }
+  .hw-mrm__img-placeholder { aspect-ratio: 1402 / 1122; max-height: none; }
 }
 
 /* ── System Performance — white bar at the bottom ── */
@@ -2504,7 +2500,7 @@
 
 /* ── Section wrapper ── */
 .hw-sorter-section {
-  background: #F7F7F5;
+  background: #ffffff;
   border-top: 1px solid rgba(0,0,0,.06);
   overflow: hidden;
   position: relative;
@@ -2535,7 +2531,7 @@
   flex-direction: column;
   gap: clamp(1rem, 2vh, 1.5rem);
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .hw-sorter__left-hdr {
@@ -2582,17 +2578,30 @@
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  padding-left: 6px;
 }
 
 /* Thin vertical connector behind pips */
 .hw-sorter__steps-line {
   position: absolute;
-  left: 6px;
+  left: 13px;
   top: 10px;
   bottom: 10px;
-  width: 1px;
-  background: rgba(0,0,0,.10);
-  border-radius: 1px;
+  width: 1.5px;
+  background: rgba(0,0,0,.13);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.hw-sorter__steps-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: var(--sorter-fill, 0%);
+  background: var(--lime-deep, #7DB200);
+  border-radius: 2px;
+  transition: height 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ── Step row ── */
@@ -2600,19 +2609,33 @@
   display: flex;
   align-items: flex-start;
   gap: clamp(10px, 1.3vw, 18px);
-  padding: clamp(0.45rem, 0.8vh, 0.85rem) 0;
+  padding: clamp(0.45rem, 0.8vh, 0.85rem) clamp(6px, 0.7vw, 12px) clamp(0.45rem, 0.8vh, 0.85rem) 0;
   position: relative;
   flex: 1;
   min-height: 0;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+.hw-sorter__step-row--on {
+  background: rgba(125,178,0,.06);
+}
+.hw-sorter__step-row:not(.hw-sorter__step-row--on):hover {
+  background: rgba(0,0,0,.03);
+}
+
+@keyframes sorter-pip-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(125,178,0,.70); }
+  65%  { box-shadow: 0 0 0 9px rgba(125,178,0,.00); }
+  100% { box-shadow: 0 0 0 0   rgba(125,178,0,.00); }
 }
 
 /* Pip on the connector */
 .hw-sorter__step-pip {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: rgba(0,0,0,.06);
-  border: 1.5px solid rgba(0,0,0,.18);
+  background: #ffffff;
+  border: 1.5px solid rgba(0,0,0,.22);
   flex-shrink: 0;
   margin-top: 4px;
   position: relative;
@@ -2620,12 +2643,13 @@
   transition:
     background 0.45s ease,
     border-color 0.45s ease,
-    box-shadow 0.45s ease;
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .hw-sorter__step-row--on .hw-sorter__step-pip {
   background: var(--lime-deep, #7DB200);
   border-color: var(--lime-deep, #7DB200);
-  box-shadow: 0 0 0 4px rgba(125,178,0,.22), 0 0 14px rgba(125,178,0,.38);
+  transform: scale(1.25);
+  animation: sorter-pip-pulse 1.8s ease-out infinite;
 }
 
 /* Step text wrapper */
@@ -2644,10 +2668,10 @@
 }
 
 .hw-sorter__step-n {
-  font-size: 0.60rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: rgba(0,0,0,.46);
+  color: rgba(0,0,0,.55);
   flex-shrink: 0;
   transition: color 0.4s ease;
 }
@@ -2660,7 +2684,7 @@
   font-size: clamp(0.88rem, min(1.2vw, 2.1vh), 1.4rem);
   font-weight: 800;
   letter-spacing: 0.03em;
-  color: rgba(0,0,0,.46);
+  color: rgba(0,0,0,.58);
   transition: color 0.4s ease;
   line-height: 1.15;
 }
@@ -2756,10 +2780,16 @@
   border: 1px solid rgba(255,255,255,.14);
 }
 
-/* Zoom wrapper — GSAP transforms this; frame clip enforces rounding */
+/* Zoom wrapper — GSAP transforms this; frame clip enforces rounding.
+   Inset gives reserve space so the max scale (1.07, detect step) never
+   clips: bottom needs ~8% (oy=0 pushes down), sides need ~5%. */
 .hw-sorter__zoom-wrap {
   position: absolute;
-  inset: 0;
+  inset: 2% 5% 10% 5%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f4f4f2;
+  box-shadow: 0 4px 32px rgba(0,0,0,.10), 0 0 0 1px rgba(0,0,0,.07);
 }
 
 /* Individual step images — fade in/out */
@@ -2768,8 +2798,8 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: top center;
+  object-fit: contain;
+  object-position: center center;
   opacity: 0;
   transition: opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   user-select: none;
@@ -2834,25 +2864,31 @@
 }
 
 /* ── Mid laptops (1281 – 1536px wide) ── */
-/* Base clamp values work well; minor gap reduction at the low end. */
 @media (min-width: 1281px) and (max-width: 1536px) {
   .hw-sorter__inner {
     gap: clamp(1.75rem, 2.8vw, 3.5rem);
-    padding-left: clamp(1.75rem, 3vw, 3.5rem);
-    padding-right: clamp(1.75rem, 3vw, 3.5rem);
+    padding-left: clamp(2rem, 3.5vw, 4rem);
+    padding-right: clamp(2rem, 3.5vw, 4rem);
   }
 }
 
-/* ── Large-screen width cap (> 1800px): prevents content from
-   spanning the full ultrawide / 4K screen. Inner grid is centred
-   within the full-bleed section background. ── */
+/* ── Upper-mid laptops (1537 – 1800px wide) ── */
+@media (min-width: 1537px) and (max-width: 1800px) {
+  .hw-sorter__inner {
+    gap: clamp(2rem, 3vw, 4rem);
+    padding-left: clamp(2.5rem, 3.5vw, 5rem);
+    padding-right: clamp(2.5rem, 3.5vw, 5rem);
+  }
+}
+
+/* ── Large screens (1801px+): centre inner grid within full-bleed section ── */
 @media (min-width: 1801px) {
   .hw-sorter__inner {
-    max-width: 1760px;
+    max-width: 1840px;
     margin-left: auto;
     margin-right: auto;
-    padding-left: clamp(3rem, 4.5vw, 7rem);
-    padding-right: clamp(3rem, 4.5vw, 7rem);
+    padding-left: clamp(3rem, 3.5vw, 5rem);
+    padding-right: clamp(3rem, 3.5vw, 5rem);
   }
 }
 
@@ -2860,8 +2896,8 @@
 @media (min-width: 2401px) {
   .hw-sorter__inner {
     max-width: 1840px;
-    padding-left: 5rem;
-    padding-right: 5rem;
+    padding-left: 4.5rem;
+    padding-right: 4.5rem;
   }
   .hw-sorter__left-title {
     font-size: clamp(2.0rem, min(2.1vw, 3.2vh), 2.6rem);

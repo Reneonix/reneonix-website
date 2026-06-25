@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Cpu, Zap, Shield, ChevronRight, Eye, Recycle, ClipboardList, CheckCircle2, Milk, ShoppingBag, Target, Gauge, Layers, ScanLine, Wind, TrendingUp, Leaf, Settings, Brain, GitBranch, Package, Tag } from 'lucide-react';
+import { Cpu, Zap, Shield, ChevronRight, CheckCircle2 } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './HardwareSystems.css';
@@ -40,10 +40,10 @@ const STEP_DATA = [
 ];
 
 const STEP_IMAGES = [
-  { src: '/scan.jpeg',     alt: 'Scan — cameras capture every bottle entering' },
-  { src: '/detect.jpeg',   alt: 'Detect — multi-spectral AI sensors at work' },
-  { src: '/classify.jpeg', alt: 'Classify — neural models identify material type' },
-  { src: '/sort.jpeg',     alt: 'Sort — pneumatic actuators route each unit' },
+  { src: '/scan.png',      alt: 'Scan — cameras capture every bottle entering' },
+  { src: '/detect.png',    alt: 'Detect — multi-spectral AI sensors at work' },
+  { src: '/classify.png',  alt: 'Classify — neural models identify material type' },
+  { src: '/sort.png',      alt: 'Sort — pneumatic actuators route each unit' },
   { src: '/recover.png',   alt: 'Recover — sorted glass exits at 98% purity' },
 ];
 
@@ -305,137 +305,6 @@ export default function HardwareSystems() {
         </div>
       </section>
 
-      {/* ── MRM ── */}
-      <section className="hw-mrm-section" id="hw-mrm">
-
-        {/* 2-column — left content + right image */}
-        <div className="container hw-mrm__top">
-
-          {/* LEFT — title, subtitle, body, 2×2 feature tiles */}
-          <div className="hw-mrm__left-col">
-            <h2 className="hw-mrm__title">MRM (AI) <em>Material</em><br />Recovery Machine</h2>
-            <p className="hw-mrm__subtitle">Modular Front-End Recovery System</p>
-            <p className="hw-mrm__body">
-              MRM (AI) is a modular front-end recovery system that accepts post-consumer materials
-              at the source. It uses advanced computer vision and sensors to identify, grade, and
-              separate materials in real time – maximising reuse and ensuring high-purity recycling.
-            </p>
-            {/* Why MRM (AI) Matters */}
-            <div className="hw-mrm__why">
-              <h3 className="hw-mrm__why-title">Why MRM (AI) Matters</h3>
-              <ul className="hw-mrm__why-list">
-                {[
-                  'AI-powered material recognition in real time',
-                  'Higher recovery rates with accurate sorting',
-                  'Reduced contamination across material streams',
-                  'Digital tracking for complete transparency',
-                  'Scalable for retail, public spaces, and smart cities',
-                ].map((item) => (
-                  <li className="hw-mrm__why-item" key={item}>
-                    <CheckCircle2 size={17} className="hw-mrm__why-icon" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <p className="hw-mrm__caps-label">What the Machine Does</p>
-            <div className="hw-mrm__caps-grid">
-              {[
-                { Icon: Eye,           title: 'Identify',  desc: 'Real-time material recognition using AI vision.' },
-                { Icon: Recycle,       title: 'Classify',  desc: 'Determines material quality and recovery path.' },
-                { Icon: ShoppingBag,   title: 'Separate',  desc: 'Routes materials into optimized output streams.' },
-                { Icon: ClipboardList, title: 'Track',     desc: 'Logs every deposit and material movement digitally.' },
-              ].map(({ Icon, title, desc }) => (
-                <div className="hw-mrm__cap-tile" key={title}>
-                  <div className="hw-mrm__cap-tile-icon"><Icon size={20} /></div>
-                  <p className="hw-mrm__cap-tile-title">{title}</p>
-                  <p className="hw-mrm__cap-tile-desc">{desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* RIGHT — MRM machine image */}
-          <div className="hw-mrm__img-placeholder">
-            <img src="/hardware-MRM.png" alt="MRM AI Material Recovery Machine" className="hw-mrm__machine-img" loading="lazy" decoding="async" />
-          </div>
-
-        </div>
-
-        {/* System Performance — unchanged */}
-        <div className="hw-mrm__perf-section">
-          <div className="hw-mrm__perf-badge">System Performance</div>
-          <div className="hw-mrm__perf-box">
-            {[
-              { Icon: Milk,   value: '450–500+',           label: 'Bottle Capacity',     sub: 'Per Hour' },
-              { Icon: Gauge,  value: '250 KG',             label: 'Processing Capacity', sub: 'Per Cycle' },
-              { Icon: Cpu,    value: 'HD + Edge AI',       label: 'Vision System',       sub: 'High-Precision Detection' },
-              { Icon: Layers, value: 'Glass · PET · Cans', label: 'Supported Materials', sub: 'Multiple Material Types' },
-            ].map(({ Icon, value, label, sub }) => (
-              <div className="hw-mrm__perf-stat" key={label}>
-                <div className="hw-mrm__perf-stat-icon"><Icon size={22} /></div>
-                <div>
-                  <p className="hw-mrm__perf-stat-value">{value}</p>
-                  <p className="hw-mrm__perf-stat-label">{label}</p>
-                  <p className="hw-mrm__perf-stat-sub">{sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </section>
-
-      {/* ── VISIONBOX — AI Inspection ── */}
-      <section className="hw-vb-section">
-        {/* Full-width background image */}
-        <picture>
-          <source media="(max-width: 768px)" srcSet="/hardware-inspection-mobile.png" />
-          <img
-            className="hw-vb__bg"
-            src="/hardware-inspection-box.png"
-            alt="VisionBox AI Inspection System"
-            draggable="false"
-            loading="lazy"
-            decoding="async"
-          />
-        </picture>
-        {/* Overlay — dark gradient left for text readability */}
-        <div className="hw-vb__overlay" aria-hidden="true" />
-        {/* Content — left-aligned over the image */}
-        <div className="container hw-vb__container">
-          <div className="hw-vb__copy">
-            <h2 className="hw-vb__title">
-              AI-Powered Quality Inspection<br />
-              <em>For Any Material,<br />Any Industry</em>
-            </h2>
-            <p className="hw-vb__body">
-              VisionBox is an advanced AI inspection system designed for real-time defect
-              detection and classification - built for glass, ready for{' '}
-              <span className="hw-vb__body-lime">any material</span>
-            </p>
-            <div className="hw-vb__cols">
-              {[
-                { icon: <Cpu size={22} />,    title: 'Intelligent', body: 'Deep learning models for accurate defect detection' },
-                { icon: <Zap size={22} />,    title: 'Real-Time',   body: 'High-speed inspection with instant results' },
-                { icon: <Shield size={22} />, title: 'Versatile',   body: 'Optimized for glass, adaptable to any material or surface' },
-              ].map(({ icon, title, body }) => (
-                <div className="hw-vb__col" key={title}>
-                  <div className="hw-vb__col-icon">{icon}</div>
-                  <p className="hw-vb__col-title">{title}</p>
-                  <p className="hw-vb__col-body">{body}</p>
-                </div>
-              ))}
-            </div>
-            <p className="hw-vb__built">
-              <span className="hw-vb__built-lime">Built for Glass,</span>{' '}
-              Designed for Every Material
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* ── AI SORTING MODULE — Cinematic Scroll Storytelling ── */}
       <section className="hw-sorter-section" id="hw-sorter" ref={sorterRef}>
         <div className="hw-sorter__inner">
@@ -454,7 +323,10 @@ export default function HardwareSystems() {
               <p className="hw-sorter__left-eyebrow">How It Works</p>
             </div>
 
-            <div className="hw-sorter__steps-nav">
+            <div
+              className="hw-sorter__steps-nav"
+              style={{ '--sorter-fill': `${(activeImg - 1) / (STEP_DATA.length - 1) * 100}%` }}
+            >
               <div className="hw-sorter__steps-line" aria-hidden="true" />
 
               {STEP_DATA.map((s, i) => (
@@ -465,7 +337,6 @@ export default function HardwareSystems() {
                   <span className="hw-sorter__step-pip" aria-hidden="true" />
                   <div className="hw-sorter__step-text">
                     <div className="hw-sorter__step-hdr">
-                      <span className="hw-sorter__step-n">{s.num}</span>
                       <span className="hw-sorter__step-lbl">{s.name}</span>
                     </div>
                     <div className="hw-sorter__step-body">
@@ -562,6 +433,101 @@ export default function HardwareSystems() {
           </div>
 
         </div>
+      </section>
+
+      {/* ── VISIONBOX — AI Inspection ── */}
+      <section className="hw-vb-section">
+        {/* Full-width background image */}
+        <picture>
+          <source media="(max-width: 768px)" srcSet="/hardware-inspection-mobile.png" />
+          <img
+            className="hw-vb__bg"
+            src="/hardware-inspection-box.png"
+            alt="VisionBox AI Inspection System"
+            draggable="false"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+        {/* Overlay — dark gradient left for text readability */}
+        <div className="hw-vb__overlay" aria-hidden="true" />
+        {/* Content — left-aligned over the image */}
+        <div className="container hw-vb__container">
+          <div className="hw-vb__copy">
+            <h2 className="hw-vb__title">
+              AI-Powered Quality Inspection<br />
+              <em>For Any Material,<br />Any Industry</em>
+            </h2>
+            <p className="hw-vb__body">
+              VisionBox is an advanced AI inspection system designed for real-time defect
+              detection and classification - built for glass, ready for{' '}
+              <span className="hw-vb__body-lime">any material</span>
+            </p>
+            <div className="hw-vb__cols">
+              {[
+                { icon: <Cpu size={22} />,    title: 'Intelligent', body: 'Deep learning models for accurate defect detection' },
+                { icon: <Zap size={22} />,    title: 'Real-Time',   body: 'High-speed inspection with instant results' },
+                { icon: <Shield size={22} />, title: 'Versatile',   body: 'Optimized for glass, adaptable to any material or surface' },
+              ].map(({ icon, title, body }) => (
+                <div className="hw-vb__col" key={title}>
+                  <div className="hw-vb__col-icon">{icon}</div>
+                  <p className="hw-vb__col-title">{title}</p>
+                  <p className="hw-vb__col-body">{body}</p>
+                </div>
+              ))}
+            </div>
+            <p className="hw-vb__built">
+              <span className="hw-vb__built-lime">Built for Glass,</span>{' '}
+              Designed for Every Material
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── MRM ── */}
+      <section className="hw-mrm-section" id="hw-mrm">
+
+        {/* 2-column — left content + right image */}
+        <div className="container hw-mrm__top">
+
+          {/* LEFT — title, subtitle, body, 2×2 feature tiles */}
+          <div className="hw-mrm__left-col">
+            <h2 className="hw-mrm__title">MRM (AI) <em>Material</em><br />Recovery Machine</h2>
+            <p className="hw-mrm__subtitle">Modular Front-End Recovery System</p>
+            <p className="hw-mrm__body">
+              MRM (AI) is a modular front-end recovery system that accepts post-consumer materials
+              at the source. It uses advanced computer vision and sensors to identify, grade, and
+              separate materials in real time – maximising reuse and ensuring high-purity recycling.
+            </p>
+            <p className="hw-mrm__caps-label">What the Machine Does</p>
+            <div className="hw-mrm__caps-grid">
+              {[
+                { title: 'Identify',  desc: 'Real-time material recognition using AI vision.' },
+                { title: 'Classify',  desc: 'Determines material quality and recovery path.' },
+                { title: 'Separate',  desc: 'Routes materials into optimized output streams.' },
+                { title: 'Track',     desc: 'Logs every deposit and material movement digitally.' },
+              ].map(({ title, desc }) => (
+                <div className="hw-mrm__cap-tile" key={title}>
+                  <p className="hw-mrm__cap-tile-title">{title}</p>
+                  <p className="hw-mrm__cap-tile-desc">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT — MRM machine image */}
+          <div className="hw-mrm__img-placeholder">
+            <img
+              src="/hardware-MRM.png"
+              alt="MRM AI Material Recovery Machine"
+              className="hw-mrm__machine-img"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+
+        </div>
+
       </section>
 
     </div>

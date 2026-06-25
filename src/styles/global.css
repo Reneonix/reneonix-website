@@ -23,8 +23,8 @@
     --r-xl:32px; --r-lg:24px; --r-md:16px; --r-sm:10px; --r-pill:999px;
     /* Full-bleed: container stretches edge-to-edge with responsive breathing room */
     --maxw: 100%;
-    --gutter: clamp(20px, 4vw, 56px);
-    --content-maxw: 1440px;
+    --gutter: clamp(16px, 3.5vw, 72px);
+    --content-maxw: 1840px;
 
     /* ===== SPACING SCALE — 4px-based grid for site-wide rhythm ===== */
     --space-1:  4px;
@@ -1261,6 +1261,24 @@
   .zz-row--hw .zz-row__media {
     display: flex; align-items: center;
   }
+  /* Hardware frame — portrait ratio, constrained width so height stays in viewport */
+  .zz-row--hw .zz-row__media-inner {
+    aspect-ratio: 1137 / 1383 !important;
+    height: auto !important;
+    max-width: min(100%, 520px) !important;
+    margin: 0 auto !important;
+    background: #f7f8f4 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .zz-row--hw .zz-row__media-inner > img {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
 
   /* Hardware right-column custom image — uses same glass treatment as cards */
   .hw-visual {
@@ -1888,6 +1906,16 @@
     padding-top: var(--space-5) !important;
   }
   .ms-stat__icon { margin-bottom: var(--space-2) !important; }
+
+  /* Software row — tighter spacing so all content fits in one viewport */
+  .zz-row--sw .sw-flist { gap: 7px !important; margin: 0 0 10px !important; }
+  .zz-row--sw .sw-flist li { padding: 10px 14px !important; }
+  .zz-row--sw .ms-stats {
+    gap: 24px !important;
+    margin: 8px 0 10px !important;
+    padding-top: 12px !important;
+  }
+  .zz-row--sw .ms-stat__icon { margin-bottom: 3px !important; }
 
   /* About — single column with consistent stack rhythm */
   .about__head { margin: var(--space-3) 0 var(--space-5) !important; }
