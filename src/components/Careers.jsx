@@ -29,6 +29,7 @@ const DEPARTMENT_ROLES = {
     'Manufacturing Technician',
     'Embedded System Engineer',
     'Embedded Firmware Engineer',
+    'Senior Mechanical Engineer',
   ],
   Software: [
     'AI Research Trainee',
@@ -123,6 +124,43 @@ function handleMailOpen(e, mailtoUrl, gmailUrl) {
  * If this array is empty the Current Openings box shows the empty state.
  */
 const CURRENT_OPENINGS = [
+  {
+    id: 'senior-mechanical-engineer',
+    role: 'Senior Mechanical Engineer',
+    dept: 'Hardware',
+    type: 'Full-time',
+    location: 'Chennai, India',
+    experience: '2–3 years',
+    description:
+      'We are looking for a Senior Mechanical Engineer who can take ownership of the design, development, fabrication, testing, and deployment of Reneonix\'s hardware systems. This is a hands-on role for someone who can move from concept sketches to production-ready machines — working on conveyors, sorting lines, inspection modules, shredders, feeders, and material-handling systems.',
+    responsibilities: [
+      'Lead mechanical design and product development from concept to production',
+      'Design and develop mechanical systems for conveyors, sorting lines, inspection modules, shredders, feeders, and material-handling equipment',
+      'Create rough product designs using sketches, CAD models, and multiple design concepts',
+      'Perform trade-off studies across concepts to identify optimal mechanical solutions',
+      'Prepare prototypes for design feasibility evaluation and testing',
+      'Develop and execute test plans for mechanical systems and product validation',
+      'Oversee fabrication, assembly, and integration of hardware systems',
+      'Create part drawings, assembly drawings, material BOMs, and engineering documentation',
+      'Apply design for manufacturability, design for assembly, and product lifecycle principles',
+      'Work closely with cross-functional teams including AI, electrical, fabrication, operations, and deployment',
+      'Support manufacturing teams during product launch and resolve engineering issues during fabrication, testing, and deployment',
+      'Continuously improve existing machine designs for reliability, cost, serviceability, and performance',
+    ],
+    requirements: [
+      'Bachelor\'s degree in Mechanical Engineering or a related field',
+      'Minimum 2–3 years of experience in mechanical product development, machine design, or industrial equipment development',
+      'Experience working with mechanical systems, industrial machines, automation equipment, or material-handling systems',
+      'Strong problem-solving skills and attention to detail',
+      'Ability to work in a fast-moving, hands-on startup environment',
+      '3D CAD modeling, preferably SolidWorks',
+      'Prototyping, hands-on fabrication support, and BOM preparation',
+      'Design for Manufacturability (DFM) and Design for Assembly (DFA)',
+      'Finite Element Analysis (FEA) and DFMEA / engineering risk analysis',
+      'Knowledge of fabrication processes: sheet metal, machining, welding, bending, and assembly',
+      'Experience with conveyors, sorting machines, inspection systems, or industrial automation is a plus',
+    ],
+  },
   {
     id: 'graphic-designer-fresher',
     role: 'Graphic Designer Fresher',
