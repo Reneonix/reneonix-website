@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import {
   Package,
   Eye,
@@ -41,9 +41,24 @@ function FeatureRow({ Icon, title, body, listClass = 'zz-iconfeats' }) {
 /** Adds .is-in once the row scrolls into view (reuses the original CSS animations). */
 function ZzRow({ className = '', children }) {
   const ref = useRef(null);
+
+  // Synchronous — before first paint. If any part of the row is already in the
+  // viewport (e.g. the Solutions section is visible on initial load), reveal it
+  // immediately so it never flashes invisible on first view.
+  useLayoutEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const { top, bottom } = node.getBoundingClientRect();
+    if (top < window.innerHeight && bottom > 0) {
+      node.classList.add('is-in');
+    }
+  }, []);
+
+  // Async — watches for below-fold rows and reveals them as the user scrolls.
   useEffect(() => {
     const node = ref.current;
-    if (!node || typeof IntersectionObserver === 'undefined') return;
+    if (!node || node.classList.contains('is-in')) return;
+    if (typeof IntersectionObserver === 'undefined') return;
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -53,11 +68,12 @@ function ZzRow({ className = '', children }) {
           }
         });
       },
-      { threshold: 0.18, rootMargin: '0px 0px -10% 0px' }
+      { threshold: 0.05 }
     );
     io.observe(node);
     return () => io.disconnect();
   }, []);
+
   return (
     <article className={`zz-row ${className}`.trim()} data-zz ref={ref}>
       {children}
@@ -70,9 +86,9 @@ export default function Solutions() {
     <section className="section section-paper-grad" id="solutions">
       <div className="container">
         <div className="section-head">
-          <span className="eyebrow eyebrow--lg">Our Solution</span>
+          <span className="eyebrow eyebrow--lg">Our Solutions</span>
           <h2>
-            Three layers,<em>One Circular system</em>
+            Three layers - <em>One Circular system</em>
           </h2>
           <p>
             From the bin on the street to the regenerated material that goes back into a
@@ -83,41 +99,49 @@ export default function Solutions() {
 
         <div className="solutions-zz">
           {/* 1. HARDWARE LAYER */}
-          <ZzRow>
-            <div className="zz-row__copy">
+          <ZzRow className="zz-row--hw">
+            <div className="zz-row__copy-top">
               <span className="zz-row__step">
                 <b>01</b> Hardware Layer
               </span>
-              <h3>
-                Industrial hardware for <em>material recovery</em>
-              </h3>
+              <p className="zz-sol__tagline">Industrial hardware for <em>material recovery</em></p>
               <p className="lead">
                 Reneonix builds modular hardware systems that sort, process, and prepare
                 post-consumer waste into industry-ready raw materials.
               </p>
+            </div>
+            <div className="zz-row__media">
+              <div className="zz-row__media-inner">
+                <img src="/hardware-flow.png" alt="Reneonix hardware processing flow" loading="lazy" decoding="async" />
+              </div>
+            </div>
+            <div className="zz-row__copy-bottom">
               <ul className="zz-iconfeats">
                 <FeatureRow Icon={Package} title="Modular recovery systems" body="Collection, sorting, shredding, sieving, and preprocessing." />
                 <FeatureRow Icon={Eye} title="Vision-based sorting" body="Material identification and separation infrastructure." />
                 <FeatureRow Icon={RadioTower} title="Live process monitoring" body="Sensors for quality control and operational visibility." />
                 <FeatureRow Icon={Layers3} title="Multi-material ready" body="Built for glass, plastics, textiles, paper, and aluminium." />
               </ul>
-              <a href="#" className="zz-row__cta-btn">
+              <a href="#hardware" className="zz-row__cta-btn">
                 Explore hardware <Arrow />
               </a>
-            </div>
-            <div className="zz-row__media">
-              <div className="zz-row__media-inner">
-                <span className="zz-row__media-tag">Hardware · Live</span>
-                <img src="/hardware-flow.png" alt="Reneonix hardware processing flow" loading="lazy" decoding="async" />
-              </div>
             </div>
           </ZzRow>
 
           {/* 2. SOFTWARE LAYER */}
           <ZzRow className="zz-row--reverse zz-row--sw">
+            <div className="zz-row__copy-top">
+              <span className="zz-row__step">
+                <b>02</b> Software Layer
+              </span>
+              <p className="zz-sol__tagline">Software that makes <em>circularity measurable</em></p>
+              <p className="lead">
+                Reneonix connects material movement, traceability, quality, and impact data
+                in one decision-ready system.
+              </p>
+            </div>
             <div className="zz-row__media">
               <div className="zz-row__media-inner">
-                <span className="zz-row__media-tag">Software · Trace OS</span>
                 <img
                   src="/software.png"
                   alt="Reneonix software dashboard for material traceability"
@@ -126,24 +150,13 @@ export default function Solutions() {
                 />
               </div>
             </div>
-            <div className="zz-row__copy">
-              <span className="zz-row__step">
-                <b>02</b> Software Layer
-              </span>
-              <h3>
-                Software that makes <em>circularity measurable</em>
-              </h3>
-              <p className="lead">
-                Reneonix connects material movement, traceability, quality, and impact data
-                in one decision-ready system.
-              </p>
+            <div className="zz-row__copy-bottom">
               <ul className="sw-flist">
                 <FeatureRow Icon={MapPin} title="Material traceability" body="Track source to final dispatch." listClass="sw-flist" />
                 <FeatureRow Icon={BarChart3} title="Live dashboards" body="Quantity, quality, and contamination data." listClass="sw-flist" />
                 <FeatureRow Icon={BrainCircuit} title="AI decision support" body="Sorting, grading, and process insights." listClass="sw-flist" />
                 <FeatureRow Icon={FileBarChart} title="Impact reporting" body="EPR, recycled-content, and carbon data." listClass="sw-flist" />
               </ul>
-
               <div className="ms-stats">
                 <div className="ms-stat">
                   <span className="ms-stat__icon"><MapPin size={32} /></span>
@@ -161,8 +174,7 @@ export default function Solutions() {
                   <span>Data Layer</span>
                 </div>
               </div>
-
-              <a href="#" className="zz-row__cta">
+              <a href="#software" className="zz-row__cta">
                 Explore software <Arrow />
               </a>
             </div>
@@ -170,30 +182,18 @@ export default function Solutions() {
 
           {/* 3. MATERIAL SCIENCE */}
           <ZzRow className="zz-row--ms">
-            <div className="zz-row__copy">
+            <div className="zz-row__copy-top">
               <span className="zz-row__step">
                 <b>03</b> Material Science
               </span>
-              <h3>
-                Material science for <em>higher-value products</em>
-              </h3>
+              <p className="zz-sol__tagline">Material science for <em>higher-value products</em></p>
               <p className="lead">
                 Reneonix tests, validates, and engineers recovered materials into reliable
                 industrial applications.
               </p>
-              <ul className="zz-iconfeats">
-                <FeatureRow Icon={FlaskConical} title="Material testing" body="Composition, contamination, particle size, performance." />
-                <FeatureRow Icon={Layers} title="Product development" body="Cullet, glass sand, foam glass, tiles, panels, and more." />
-                <FeatureRow Icon={ShieldCheck} title="Industrial validation" body="Strength, thermal behaviour, purity, consistency." />
-                <FeatureRow Icon={UsersRound} title="R&D partnerships" body="Labs, industries, pilots, and commercialization." />
-              </ul>
-              <a href="#" className="zz-row__cta-btn">
-                Explore our material lab <Arrow />
-              </a>
             </div>
             <div className="zz-row__media">
               <div className="zz-row__media-inner">
-                <span className="zz-row__media-tag">Material Lab · Live</span>
                 <img
                   src="/material-science.png"
                   alt="Reneonix material science lab — recovered samples engineered into circular products"
@@ -201,6 +201,17 @@ export default function Solutions() {
                   decoding="async"
                 />
               </div>
+            </div>
+            <div className="zz-row__copy-bottom">
+              <ul className="zz-iconfeats">
+                <FeatureRow Icon={FlaskConical} title="Material testing" body="Composition, contamination, particle size, performance." />
+                <FeatureRow Icon={Layers} title="Product development" body="Cullet, glass sand, foam glass, tiles, panels, and more." />
+                <FeatureRow Icon={ShieldCheck} title="Industrial validation" body="Strength, thermal behaviour, purity, consistency." />
+                <FeatureRow Icon={UsersRound} title="R&D partnerships" body="Labs, industries, pilots, and commercialization." />
+              </ul>
+              <a href="#material-science" className="zz-row__cta-btn">
+                Explore our material lab <Arrow />
+              </a>
             </div>
           </ZzRow>
         </div>

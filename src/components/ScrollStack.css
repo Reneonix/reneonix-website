@@ -1,0 +1,112 @@
+.scroll-stack-scroller {
+  position: relative;
+  width: 100%;
+  overflow-x: visible;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+/* When NOT using window scroll, the scroller is its own scroll container. */
+.scroll-stack-scroller:not(.use-window-scroll) {
+  height: 100%;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* When using window scroll, the inner padding still gives the cards
+   enough vertical runway to stack as the page scrolls. */
+.scroll-stack-inner {
+  padding: 10vh 0 40vh;
+  min-height: 100vh;
+}
+
+.scroll-stack-card-wrapper {
+  position: relative;
+}
+
+.scroll-stack-card {
+  transform-origin: top center;
+  will-change: transform, filter;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  width: 100%;
+  margin: 30px 0;
+  border-radius: 28px;
+  box-sizing: border-box;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  position: relative;
+  overflow: hidden;
+  background: var(--panel-2, #14171A);
+  border: 1px solid var(--line-dark, rgba(255,255,255,.08));
+}
+
+.scroll-stack-end {
+  width: 100%;
+  height: 1px;
+}
+
+/* ---------- Image-tile variant used in Life at Reneonix ---------- */
+.life-stack {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.life-stack .scroll-stack-inner {
+  padding: 12vh 0 30vh;
+}
+
+.life-stack-card {
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  border-radius: 28px;
+}
+
+.life-stack-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.life-stack-card__caption {
+  position: absolute;
+  left: 24px;
+  bottom: 22px;
+  z-index: 2;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -.01em;
+  text-shadow: 0 2px 12px rgba(0,0,0,.55);
+}
+
+.life-stack-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.55) 100%);
+  z-index: 1;
+}
+
+@media (max-width: 720px) {
+  .life-stack {
+    max-width: 100%;
+    padding: 0 4vw;
+  }
+  .life-stack-card {
+    aspect-ratio: 4 / 3;
+    border-radius: 20px;
+  }
+  .life-stack-card__caption {
+    font-size: .95rem;
+    left: 18px;
+    bottom: 16px;
+  }
+}

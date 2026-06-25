@@ -38,8 +38,10 @@ export default function Highlights() {
               />
             </div>
             <div className="highlight__body">
-              <img src="/isn.png" alt="Indian Startup News" className="highlight__source-badge" loading="lazy" decoding="async" />
-              <span className="highlight__tag">Funding · In the Press</span>
+              <div className="highlight__src-row">
+                <span className="highlight__tag">Funding · In the Press</span>
+                <img src="/isn.png" alt="Indian Startup News" className="highlight__source-badge" loading="lazy" decoding="async" />
+              </div>
               <h3>Reneonix raises ₹1.7 crore from Inflection Point Ventures</h3>
               <p>
                 Indian Startup News covers our latest funding round backing Reneonix's

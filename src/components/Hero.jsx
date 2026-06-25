@@ -87,9 +87,6 @@ export default function Hero() {
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>
               </a>
-              <a href="#contact" className="btn btn-outline-light">
-                Talk to our team
-              </a>
             </div>
           </div>
         </div>

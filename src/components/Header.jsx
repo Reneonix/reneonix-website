@@ -2,10 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import './Header.css';
 
 const TECH = [
-  ['AI Vision & Sorting',   'Computer vision for material identification',    '#'],
-  ['Sensor Networks',        'Live process monitoring and quality control',    '#'],
-  ['Trace OS Platform',      'End-to-end material traceability software',      '#'],
-  ['R&D Labs',               'Materials testing, formulation, and validation', '#'],
+  ['AI Vision & Sorting',   'Computer vision for material identification',    '#hardware',         'hw-sorter'],
+  ['Sensor Networks',        'Live process monitoring and quality control',    '#hardware',         'hw-mrm'],
+  ['TraceOS Platform',       'End-to-end material traceability software',      '#software',         null],
+  ['R&D Labs',               'Materials testing, formulation, and validation', '#material-science', null],
 ];
 const INDUSTRIES = [
   ['Glass Manufacturers',         null, '#'],
@@ -69,6 +69,30 @@ function Dropdown({ label, items, onItemClick }) {
     onItemClick?.();
   };
 
+  const handleNavItem = (e, href, section) => {
+    e.preventDefault();
+    setOpen(false);
+    onItemClick?.();
+    if (!href || href === '#') return;
+    if (section) {
+      const currentHash = window.location.hash.split('?')[0];
+      if (currentHash === href) {
+        // Already on the target page — just scroll to section
+        const el = document.getElementById(section);
+        if (el) {
+          const navH = document.querySelector('header')?.offsetHeight ?? 80;
+          const y = el.getBoundingClientRect().top + window.pageYOffset - navH - 16;
+          window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+        }
+      } else {
+        sessionStorage.setItem('sw_scroll_target', section);
+        window.location.hash = href;
+      }
+    } else {
+      window.location.hash = href;
+    }
+  };
+
   return (
     <div
       className={`has-dropdown${open ? ' open' : ''}`}
@@ -81,11 +105,18 @@ function Dropdown({ label, items, onItemClick }) {
         <Chevron />
       </button>
       <div className="dropdown">
-        {items.map(([title, sub, href]) => (
-          <a key={title} href={href} onClick={handleItemClick}>
-            <strong>{title}</strong>
-            {sub && <span>{sub}</span>}
-          </a>
+        {items.map(([title, sub, href, section]) => (
+          href && href !== '#' ? (
+            <a key={title} href={href} onClick={(e) => handleNavItem(e, href, section)}>
+              <strong>{title}</strong>
+              {sub && <span>{sub}</span>}
+            </a>
+          ) : (
+            <a key={title} href="#" onClick={(e) => { e.preventDefault(); handleItemClick(); }}>
+              <strong>{title}</strong>
+              {sub && <span>{sub}</span>}
+            </a>
+          )
         ))}
       </div>
     </div>

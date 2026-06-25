@@ -6,26 +6,25 @@ import {
   Truck,
   Factory,
   Package,
-  Leaf,
   HardHat,
   ClipboardCheck,
-  Sparkles,
-  Recycle,
   Zap,
+  Database,
+  BarChart2,
+  FileText,
+  AlertTriangle,
+  Clock,
+  Gauge,
+  Rocket,
+  Shield,
 } from 'lucide-react';
 import './SolutionsPage.css';
-
-const HERO_PILLS = [
-  { Icon: Recycle,  title: 'Integrated Ecosystem', sub: 'End-to-end synergy' },
-  { Icon: Sparkles, title: 'AI-Powered',           sub: 'Intelligence at every layer' },
-  { Icon: Leaf,     title: 'Sustainable Impact',   sub: 'Recover. Reuse. Reimagine.' },
-];
 
 const SOLUTIONS_CARDS = [
   {
     title: 'Hardware System',
     body: 'AI-powered hardware systems for smarter machines and industrial infrastructure.',
-    img: '/hardware-hero.png',
+    img: '/hardware-main.jpeg',
     Icon: Wrench,
     href: '#hardware',
     active: true,
@@ -33,42 +32,46 @@ const SOLUTIONS_CARDS = [
   {
     title: 'Software',
     body: 'AI & technology platform for traceability, transparency and compliance.',
-    img: '/software.png',
+    img: '/software-main.jpeg',
     Icon: Cpu,
-    href: null,
-    active: false,
+    href: '#software',
+    active: true,
   },
   {
     title: 'Material Science',
     body: 'AI-driven material science to re-engineer waste into advanced sustainable materials.',
-    img: '/solutions-material.png',
+    img: '/ms-main.webp',
     Icon: FlaskConical,
-    href: null,
-    active: false,
+    href: '#material-science',
+    active: true,
   },
 ];
 
-const COMPARISON_TRAD = [
-  { label: 'Data Collection & Processing', value: 'Hours to Days' },
-  { label: 'Analysis & Decision Making',   value: 'Days to Weeks' },
-  { label: 'Manual Reporting',             value: 'Days' },
-  { label: 'Issue Detection',              value: 'Late / After Impact' },
-  { label: 'Overall Turnaround Time',      value: 'Weeks' },
+const TRAD_STEPS = [
+  { Icon: Database,      label: 'Data Collection',            time: 'Hours to Days' },
+  { Icon: BarChart2,     label: 'Analysis & Decision Making', time: 'Days to Weeks' },
+  { Icon: FileText,      label: 'Reporting',                  time: 'Days' },
+  { Icon: AlertTriangle, label: 'Issue Detection & Action',   time: 'Late / After Impact' },
 ];
 
-const COMPARISON_REN = [
-  { label: 'Data Collection & Processing', value: 'Real-time' },
-  { label: 'Analysis & Decision Making',   value: 'Minutes' },
-  { label: 'Smart Reporting',              value: 'Instant' },
-  { label: 'Issue Detection',              value: 'Proactive & Predictive' },
-  { label: 'Overall Turnaround Time',      value: 'Minutes to Hours' },
+const REN_STEPS = [
+  { Icon: Database,  label: 'Data Collection',               time: 'Real-time' },
+  { Icon: Cpu,       label: 'AI Analysis & Decision Making', time: 'Minutes' },
+  { Icon: Zap,       label: 'Smart Reporting',               time: 'Instant' },
+  { Icon: Shield,    label: 'Issue Detection & Action',      time: 'Proactive & Predictive' },
+];
+
+const COMPARE_STATS = [
+  { Icon: Gauge,    value: '92%',     label: 'Time Saved',            desc: 'Reduce manual effort and process time.' },
+  { Icon: Rocket,   value: '15x',     label: 'Faster Decisions',      desc: 'AI-powered insights for quick, confident actions.' },
+  { Icon: FileText, value: 'Instant', label: 'Smart Reporting',       desc: 'Automated reports, generated in real-time.' },
+  { Icon: Shield,   value: '24/7',    label: 'Continuous Monitoring', desc: 'Always-on intelligence with predictive issue detection.' },
 ];
 
 const INDUSTRIES = [
   { Icon: Truck,          label: 'Waste Management',     img: '/industry-waste-management.png' },
   { Icon: Factory,        label: 'Manufacturing',        img: '/industry-manufacturing.png' },
   { Icon: Package,        label: 'FMCG & Packaging',     img: '/industry-fmcg-packaging.png' },
-  { Icon: Leaf,           label: 'Ethanol & Biofuels',   img: '/industry-ethanol-biofuels.png' },
   { Icon: HardHat,        label: 'Cement & Construction',img: '/industry-cement-construction.png' },
   { Icon: ClipboardCheck, label: 'EPR & Compliance',     img: '/industry-epr-compliance.png' },
 ];
@@ -167,17 +170,6 @@ export default function SolutionsPage() {
                 />
               </div>
 
-              <div className="sol-hero__pills">
-                {HERO_PILLS.map(({ Icon, title, sub }) => (
-                  <div className="sol-pill" key={title}>
-                    <span className="sol-pill__icon"><Icon size={22} /></span>
-                    <div className="sol-pill__text">
-                      <strong>{title}</strong>
-                      <span>{sub}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -194,23 +186,29 @@ export default function SolutionsPage() {
 
           <div className="sol-grid">
             {SOLUTIONS_CARDS.map(({ title, body, img, Icon, href, active }) => (
-              <article className="sol-card" key={title}>
-                <div className="sol-card__media">
-                  <img src={img} alt={title} loading="lazy" decoding="async" />
-                  <span className="sol-card__badge"><Icon size={22} /></span>
-                </div>
-                <h3 className="sol-card__title">{title}</h3>
-                <p className="sol-card__body">{body}</p>
-                {active ? (
-                  <a className="sol-card__more" href={href}>
+              active ? (
+                <a className="sol-card" href={href} key={title}>
+                  <div className="sol-card__media">
+                    <img src={img} alt={title} loading="lazy" decoding="async" />
+                  </div>
+                  <h3 className="sol-card__title">{title}</h3>
+                  <p className="sol-card__body">{body}</p>
+                  <span className="sol-card__more">
                     Explore More <span style={{ fontSize: '1.3em', lineHeight: 1 }}>→</span>
-                  </a>
-                ) : (
+                  </span>
+                </a>
+              ) : (
+                <article className="sol-card sol-card--inactive" key={title}>
+                  <div className="sol-card__media">
+                    <img src={img} alt={title} loading="lazy" decoding="async" />
+                  </div>
+                  <h3 className="sol-card__title">{title}</h3>
+                  <p className="sol-card__body">{body}</p>
                   <span className="sol-card__more sol-card__more--inactive">
                     Explore More <span style={{ fontSize: '1.3em', lineHeight: 1 }}>→</span>
                   </span>
-                )}
-              </article>
+                </article>
+              )
             ))}
           </div>
         </div>
@@ -220,40 +218,89 @@ export default function SolutionsPage() {
       <div className="section section-dark sol-compare-section">
         <div className="container">
           <div className="section-head">
-            <h2>
-              How Much Time <em>AI Saves</em>
-            </h2>
+            <h2>How Much Time <em>AI Saves</em></h2>
+            <p>From slow, manual processes to real-time intelligence.</p>
           </div>
 
           <div className="sol-compare">
+            {/* Traditional card */}
             <div className="sol-compare__col sol-compare__col--trad">
-              <h3 className="sol-compare__title">Traditional <span>(Without AI)</span></h3>
-              {COMPARISON_TRAD.map(({ label, value }) => (
-                <div className="sol-compare__row" key={label}>
-                  <span className="sol-compare__label">{label}</span>
-                  <span className="sol-compare__value sol-compare__value--trad">{value}</span>
+              <div className="sol-cmp-tag sol-cmp-tag--trad">Traditional (Without AI)</div>
+              <p className="sol-cmp-tagline">Manual steps. Delayed insights. Lost time.</p>
+              <div className="sol-flow">
+                {TRAD_STEPS.flatMap(({ Icon, label, time }, i) => {
+                  const items = [
+                    <div key={`ts-${i}`} className="sol-flow__step">
+                      <div className="sol-flow__node sol-flow__node--trad"><Icon size={20} /></div>
+                      <p className="sol-flow__label">{label}</p>
+                      <p className="sol-flow__time sol-flow__time--trad">{time}</p>
+                    </div>,
+                  ];
+                  if (i < TRAD_STEPS.length - 1)
+                    items.push(<div key={`ta-${i}`} className="sol-flow__arrow sol-flow__arrow--trad" />);
+                  return items;
+                })}
+              </div>
+              <div className="sol-cmp-summary sol-cmp-summary--trad">
+                <div className="sol-cmp-summary__icon"><Clock size={16} /></div>
+                <div>
+                  <p className="sol-cmp-summary__label">Overall Turnaround Time</p>
+                  <p className="sol-cmp-summary__val">Weeks</p>
                 </div>
-              ))}
+              </div>
             </div>
 
+            {/* AI chip */}
             <div className="sol-compare__center" aria-hidden="true">
-              <div className="sol-compare__chip"><Zap size={20} /> AI</div>
+              <div className="sol-compare__chip">
+                <Zap size={22} />
+                <span>AI</span>
+              </div>
             </div>
 
+            {/* Reneonix card */}
             <div className="sol-compare__col sol-compare__col--ren">
-              <h3 className="sol-compare__title">Reneonix AI-Powered</h3>
-              {COMPARISON_REN.map(({ label, value }) => (
-                <div className="sol-compare__row" key={label}>
-                  <span className="sol-compare__label">{label}</span>
-                  <span className="sol-compare__value sol-compare__value--ren">{value}</span>
+              <div className="sol-cmp-tag sol-cmp-tag--ren">Reneonix AI-Powered</div>
+              <p className="sol-cmp-tagline sol-cmp-tagline--ren">Automated steps. Instant insights. Real impact.</p>
+              <div className="sol-flow">
+                {REN_STEPS.flatMap(({ Icon, label, time }, i) => {
+                  const items = [
+                    <div key={`rs-${i}`} className="sol-flow__step">
+                      <div className="sol-flow__node sol-flow__node--ren"><Icon size={20} /></div>
+                      <p className="sol-flow__label sol-flow__label--ren">{label}</p>
+                      <p className="sol-flow__time sol-flow__time--ren">{time}</p>
+                    </div>,
+                  ];
+                  if (i < REN_STEPS.length - 1)
+                    items.push(<div key={`ra-${i}`} className="sol-flow__arrow sol-flow__arrow--ren" />);
+                  return items;
+                })}
+              </div>
+              <div className="sol-cmp-summary sol-cmp-summary--ren">
+                <div className="sol-cmp-summary__icon sol-cmp-summary__icon--ren"><Clock size={16} /></div>
+                <div>
+                  <p className="sol-cmp-summary__label sol-cmp-summary__label--ren">Overall Turnaround Time</p>
+                  <p className="sol-cmp-summary__val sol-cmp-summary__val--ren">Minutes to Hours</p>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
 
+          {/* Stats row */}
+          <div className="sol-cmp-stats">
+            {COMPARE_STATS.map(({ Icon, value, label, desc }) => (
+              <div className="sol-cmp-stat" key={label}>
+                <div className="sol-cmp-stat__icon"><Icon size={20} /></div>
+                <p className="sol-cmp-stat__value">{value}</p>
+                <p className="sol-cmp-stat__label">{label}</p>
+                <p className="sol-cmp-stat__desc">{desc}</p>
+              </div>
+            ))}
+          </div>
+
           <div className="sol-compare__banner">
-            <Zap size={16} aria-hidden="true" />
-            From Weeks of Manual Effort to Minutes of AI Intelligence.
+            <Zap size={18} aria-hidden="true" />
+            <span>From Weeks of Manual Effort to <em>Minutes of AI Intelligence.</em></span>
           </div>
         </div>
       </div>
