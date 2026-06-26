@@ -58,9 +58,7 @@ export default function Hero() {
         aria-hidden="true"
         data-parallax="0.18"
       >
-        {/* media attr prevents the browser from downloading the video on mobile —
-            the link-preload in index.html is also gated to min-width: 769px */}
-        <source src="/reneonix-hero.mp4" type="video/mp4" media="(min-width: 769px)" />
+        <source src="/reneonix-hero.mp4" type="video/mp4" />
       </video>
 
       {/* Decorative overlays — kept so the headline still has the same depth treatment */}

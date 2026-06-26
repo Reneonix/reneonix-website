@@ -478,6 +478,7 @@ export default function MaterialSciencePage() {
                     <div className="ms-ra__acc-content">
                       <button
                         className="ms-ra__acc-header"
+                        onClick={() => setActiveIdx(i)}
                         onMouseEnter={() => setActiveIdx(i)}
                       >
                         <span className="ms-ra__acc-title">{title}</span>

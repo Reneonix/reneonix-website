@@ -42,18 +42,22 @@ function Dropdown({ label, items, onItemClick }) {
   const wrapRef  = useRef(null);
   const closeTimer = useRef(null);
 
+  // On touch devices iOS/Android fire synthetic mouseenter BEFORE the click
+  // event. Without the guard: mouseenter opens the dropdown, then the click
+  // handler toggles it closed — first tap does nothing, second tap works.
+  // Guarding both show/hide to no-ops on coarse-pointer (touch) devices means
+  // only the onClick toggle and the touchstart outside-click control state.
+  const isFinePointer = () => window.matchMedia('(pointer: fine)').matches;
+
   const show = () => {
+    if (!isFinePointer()) return;
     clearTimeout(closeTimer.current);
     setOpen(true);
   };
 
-  // Only trigger hover-close on fine pointer (mouse). On touch devices the
-  // browser fires synthetic mouseleave after a tap which would immediately
-  // re-close a dropdown the user just opened.
   const hide = () => {
-    if (window.matchMedia('(pointer: fine)').matches) {
-      closeTimer.current = setTimeout(() => setOpen(false), 120);
-    }
+    if (!isFinePointer()) return;
+    closeTimer.current = setTimeout(() => setOpen(false), 120);
   };
 
   // Close when clicking/tapping outside on desktop and mobile
