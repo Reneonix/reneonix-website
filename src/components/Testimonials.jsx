@@ -27,7 +27,10 @@ const QUOTES = [
 export default function Testimonials() {
   return (
     <section className="section section-dark" id="testimonials" style={{ position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+      {/* mix-blend-mode:screen makes the solid-black canvas invisible so the dark
+          section background always shows through, while bright lime rings remain
+          fully visible. This fixes white-background on Android/low-end GPUs. */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', mixBlendMode: 'screen' }}>
         <MagicRings
           color="#B2DE3A"
           colorTwo="#9CC130"
