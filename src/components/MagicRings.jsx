@@ -105,7 +105,15 @@ export default function MagicRings({
 
     let renderer;
     try {
-      renderer = new THREE.WebGLRenderer({ alpha: true });
+      // alpha: false → solid black canvas; avoids WebGL alpha-compositing bugs
+      // on Android Chrome / Xiaomi / low-end GPUs where alpha:true produces a
+      // white canvas instead of transparent, breaking dark-section backgrounds.
+      // The parent wrapper uses mix-blend-mode:screen so black → invisible.
+      renderer = new THREE.WebGLRenderer({
+        alpha: false,
+        antialias: false,
+        powerPreference: 'low-power',
+      });
     } catch {
       return;
     }
@@ -115,7 +123,7 @@ export default function MagicRings({
       return;
     }
 
-    renderer.setClearColor(0x000000, 0);
+    renderer.setClearColor(0x000000, 1); // solid black — screen blend makes it invisible
     mount.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './Header.css';
 
 const TECH = [
@@ -46,11 +47,16 @@ function Dropdown({ label, items, onItemClick }) {
     setOpen(true);
   };
 
+  // Only trigger hover-close on fine pointer (mouse). On touch devices the
+  // browser fires synthetic mouseleave after a tap which would immediately
+  // re-close a dropdown the user just opened.
   const hide = () => {
-    closeTimer.current = setTimeout(() => setOpen(false), 120);
+    if (window.matchMedia('(pointer: fine)').matches) {
+      closeTimer.current = setTimeout(() => setOpen(false), 120);
+    }
   };
 
-  // Close when clicking outside (fallback for touch / keyboard)
+  // Close when clicking/tapping outside on desktop and mobile
   useEffect(() => {
     const handler = (e) => {
       if (wrapRef.current && !wrapRef.current.contains(e.target)) {
@@ -58,8 +64,10 @@ function Dropdown({ label, items, onItemClick }) {
       }
     };
     document.addEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler, { passive: true });
     return () => {
       document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
       clearTimeout(closeTimer.current);
     };
   }, []);
@@ -165,12 +173,8 @@ export default function Header({ route = 'home', animate = true }) {
   const { left, right } = getEdgeLinks(route);
 
   return (
+    <>
     <header className={`nav ${animate ? '' : 'nav--no-entrance'}`.trim()}>
-      {/* Tap-outside overlay — only visible/clickable on mobile when menu is open */}
-      {mobileOpen && (
-        <div className="nav__backdrop" onClick={closeNav} aria-hidden="true" />
-      )}
-
       <div className="container nav__inner">
 
         {/* Brand — always goes home */}
@@ -213,5 +217,13 @@ export default function Header({ route = 'home', animate = true }) {
 
       </div>
     </header>
+    {/* Backdrop via Portal — outside the header's z-100 stacking context.
+        At document z-index 99, the header (z-100) sits above it, so the
+        mobile nav menu (inside the header) receives taps correctly. */}
+    {mobileOpen && createPortal(
+      <div className="nav__backdrop" onClick={closeNav} aria-hidden="true" />,
+      document.body
+    )}
+    </>
   );
 }
