@@ -371,6 +371,7 @@ export default function HardwareSystems() {
                     className={`hw-sorter__img${activeImg === i + 1 ? ' hw-sorter__img--on' : ''}`}
                     loading="eager"
                     decoding="async"
+                    fetchPriority={i === 0 ? 'high' : 'low'}
                     draggable="false"
                   />
                 ))}

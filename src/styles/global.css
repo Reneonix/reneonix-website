@@ -254,6 +254,12 @@
   .nav__cta .btn { padding: 10px 20px; font-size: .88rem; }
   .nav__toggle { display: none; background: transparent; border: 0; cursor: pointer; padding: 6px; }
   .nav__toggle span { display: block; width: 22px; height: 2px; background: var(--white); margin: 5px 0; border-radius: 2px; transition: transform .2s; }
+  /* Tap-outside backdrop for the mobile menu */
+  .nav__backdrop {
+    display: none; position: fixed; inset: 0; z-index: 99;
+    background: rgba(0,0,0,.35); cursor: pointer;
+  }
+  @media (max-width: 720px) { .nav__backdrop { display: block; } }
 
   /* ---------- Reveal on scroll ---------- */
   .reveal { opacity: 0; filter: blur(12px); transform: translateY(28px); transition: opacity .8s ease, filter .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
@@ -849,17 +855,21 @@
     from { transform: rotate(0); }
     to   { transform: rotate(360deg); }
   }
-  /* About — full backdrop photo with content on the left half */
+  /* About — gradient always; photo deferred until JS adds .about--bg-loaded */
   #about {
     position: relative;
     padding: 96px 0 !important;
     background-image:
-      linear-gradient(90deg, rgba(7,8,10,.78) 0%, rgba(7,8,10,.55) 45%, rgba(7,8,10,.10) 75%, rgba(7,8,10,.20) 100%),
-      url('/about-us.png');
+      linear-gradient(90deg, rgba(7,8,10,.78) 0%, rgba(7,8,10,.55) 45%, rgba(7,8,10,.10) 75%, rgba(7,8,10,.20) 100%);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     isolation: isolate;
+  }
+  #about.about--bg-loaded {
+    background-image:
+      linear-gradient(90deg, rgba(7,8,10,.78) 0%, rgba(7,8,10,.55) 45%, rgba(7,8,10,.10) 75%, rgba(7,8,10,.20) 100%),
+      url('/about-us.png');
   }
   #about .container { position: relative; z-index: 2; }
 
@@ -884,6 +894,10 @@
     .about__wrap { max-width: 100%; }
     #about {
       background-image:
+        linear-gradient(180deg, rgba(7,8,10,.78) 0%, rgba(7,8,10,.55) 100%);
+    }
+    #about.about--bg-loaded {
+      background-image:
         linear-gradient(180deg, rgba(7,8,10,.78) 0%, rgba(7,8,10,.55) 100%),
         url('/about-us.png');
     }
@@ -898,6 +912,17 @@
      while the headline up top still has enough contrast to read. */
   @media (max-width: 720px) {
     #about {
+      background-image:
+        linear-gradient(180deg,
+          rgba(7,8,10,.78) 0%,
+          rgba(7,8,10,.55) 22%,
+          rgba(7,8,10,.05) 45%,
+          rgba(7,8,10,.05) 65%,
+          rgba(7,8,10,.35) 100%) !important;
+      background-position: center center !important;
+      background-size: cover !important;
+    }
+    #about.about--bg-loaded {
       background-image:
         linear-gradient(180deg,
           rgba(7,8,10,.78) 0%,
@@ -1173,13 +1198,13 @@
     .section { padding: 80px 0; }
     .hero__stats { grid-template-columns: 1fr 1fr; gap: 20px; }
     .nav__menu {
-      display: none; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column;
+      display: none; position: absolute; top: 76px; left: 0; right: 0; flex-direction: column;
       align-items: stretch; background: rgba(13,14,12,.98); backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--line-dark); padding: 16px; gap: 4px;
     }
     .nav__menu.open { display: flex; }
     .nav__menu .has-dropdown { width: 100%; }
-    .nav__menu > .has-dropdown > button, .nav__menu .nav-link { width: 100%; text-align: left; justify-content: space-between; }
+    .nav__menu > .has-dropdown > button, .nav__menu .nav-link, .nav__menu .nav__link { width: 100%; text-align: left; justify-content: space-between; }
     .dropdown { position: static; opacity: 1; visibility: visible; transform: none; box-shadow: none; border: 0; padding: 4px 12px 8px; min-width: 0; display: none; background: transparent; }
     .has-dropdown.open .dropdown { display: block; }
     .nav__cta .btn-outline-light { display: none; }
@@ -2045,6 +2070,10 @@
     /* About backdrop — switch to vertical gradient so content reads on stacked layout */
     #about {
       background-image:
+        linear-gradient(180deg, rgba(7,8,10,.78) 0%, rgba(7,8,10,.55) 50%, rgba(7,8,10,.78) 100%) !important;
+    }
+    #about.about--bg-loaded {
+      background-image:
         linear-gradient(180deg, rgba(7,8,10,.78) 0%, rgba(7,8,10,.55) 50%, rgba(7,8,10,.78) 100%),
         url('/about-us.png') !important;
     }
@@ -2096,6 +2125,17 @@
 
     /* About — swap backdrop to portrait photo + readable gradient */
     #about {
+      background-image:
+        linear-gradient(180deg,
+          rgba(7,8,10,.78) 0%,
+          rgba(7,8,10,.55) 22%,
+          rgba(7,8,10,.05) 45%,
+          rgba(7,8,10,.05) 65%,
+          rgba(7,8,10,.35) 100%) !important;
+      background-position: center center !important;
+      background-size: cover !important;
+    }
+    #about.about--bg-loaded {
       background-image:
         linear-gradient(180deg,
           rgba(7,8,10,.78) 0%,
