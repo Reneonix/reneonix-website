@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Settings2, BrainCircuit, UsersRound, Recycle } from 'lucide-react';
 
 const VALUES = [
@@ -8,8 +9,27 @@ const VALUES = [
 ];
 
 export default function About() {
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    // Trigger background image load ~200px before the section enters the viewport
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('about--bg-loaded');
+          io.disconnect();
+        }
+      },
+      { rootMargin: '200px 0px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <section className="section section-dark" id="about">
+    <section className="section section-dark" id="about" ref={sectionRef}>
       <div className="container">
         <div className="about__wrap">
           <span className="eyebrow on-dark">About Us</span>

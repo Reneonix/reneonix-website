@@ -125,9 +125,10 @@ function Dropdown({ label, items, onItemClick }) {
 
 /**
  * Dynamic left/right nav links based on current route:
- *   home     → Solutions | … | Careers
- *   careers  → Home      | … | Solutions
- *   solutions → Home     | … | Careers
+ *   home                               → Solutions | … | Careers
+ *   careers                            → Home      | … | Solutions
+ *   solutions                          → Home      | … | Careers
+ *   hardware / software / material-science / policy → Home | … | Solutions
  */
 function getEdgeLinks(route) {
   if (route === 'careers') {
@@ -140,6 +141,12 @@ function getEdgeLinks(route) {
     return {
       left:  { label: 'Home',    href: '#home' },
       right: { label: 'Careers', href: '#careers' },
+    };
+  }
+  if (route === 'hardware' || route === 'software' || route === 'material-science' || route === 'policy') {
+    return {
+      left:  { label: 'Home',      href: '#home' },
+      right: { label: 'Solutions', href: '#solutions' },
     };
   }
   // home (default)
@@ -159,6 +166,11 @@ export default function Header({ route = 'home', animate = true }) {
 
   return (
     <header className={`nav ${animate ? '' : 'nav--no-entrance'}`.trim()}>
+      {/* Tap-outside overlay — only visible/clickable on mobile when menu is open */}
+      {mobileOpen && (
+        <div className="nav__backdrop" onClick={closeNav} aria-hidden="true" />
+      )}
+
       <div className="container nav__inner">
 
         {/* Brand — always goes home */}
