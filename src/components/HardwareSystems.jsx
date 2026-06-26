@@ -55,8 +55,8 @@ export default function HardwareSystems() {
   const zoomRef     = useRef(null);
   /* ── Mobile sorter: step tracking + scroll navigation ── */
   const [activeMobileStep, setActiveMobileStep] = useState(1);
+  const [hintVisible, setHintVisible] = useState(false);
   const mobileStepRefs = useRef([]);
-  const stepNavRef     = useRef(null);
 
   /* ── Pre-init (useLayoutEffect — fires BEFORE the browser's first paint) ──
      Establishes a clean baseline before any GSAP effect runs:
@@ -76,13 +76,6 @@ export default function HardwareSystems() {
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
-
-  const scrollToMobileStep = (idx) => {
-    const section = sorterRef.current;
-    if (!section) return;
-    const sectionTop = section.getBoundingClientRect().top + window.scrollY - 76;
-    window.scrollTo({ top: sectionTop + idx * window.innerHeight, behavior: 'smooth' });
-  };
 
   useEffect(() => {
     const section = sorterRef.current;
@@ -175,7 +168,7 @@ export default function HardwareSystems() {
     return () => io.disconnect();
   }, []);
 
-  /* ── Mobile: GSAP pinned horizontal slide storytelling ── */
+  /* ── Mobile: pinned section + horizontal swipe step navigation ── */
   useEffect(() => {
     if (!window.matchMedia('(max-width: 900px)').matches) return;
     const section = sorterRef.current;
@@ -185,9 +178,22 @@ export default function HardwareSystems() {
     const panels = mobileStepRefs.current.filter(Boolean);
     if (panels.length < STEPS) return;
 
-    // Initial state: panel 0 at 0%, rest parked to the right
+    let stepIdx = 0;
+    const hintShown = { shown: false };
+    let hintTimer = null;
+
     gsap.set(panels[0], { xPercent: 0 });
     panels.slice(1).forEach(p => gsap.set(p, { xPercent: 100 }));
+
+    const goToStep = (n, animate = true) => {
+      n = Math.max(0, Math.min(STEPS - 1, n));
+      stepIdx = n;
+      setActiveMobileStep(n + 1);
+      panels.forEach((panel, i) => {
+        if (animate) gsap.to(panel, { xPercent: (i - n) * 100, duration: 0.42, ease: 'power2.inOut' });
+        else gsap.set(panel, { xPercent: (i - n) * 100 });
+      });
+    };
 
     const st = ScrollTrigger.create({
       trigger: section,
@@ -197,38 +203,86 @@ export default function HardwareSystems() {
       pinSpacing: true,
       anticipatePin: 1,
       invalidateOnRefresh: true,
-      snap: {
-        snapTo: 1 / (STEPS - 1),
-        duration: { min: 0.35, max: 0.6 },
-        ease: 'power2.inOut',
-        delay: 0.08,
+      onEnter: () => {
+        goToStep(0, false);
+        if (!hintShown.shown) {
+          hintShown.shown = true;
+          setHintVisible(true);
+          hintTimer = setTimeout(() => setHintVisible(false), 2400);
+        }
       },
-      onEnter:     () => { setActiveMobileStep(1); },
-      onLeaveBack: () => { setActiveMobileStep(1); },
-      onUpdate(self) {
-        const pos = self.progress * (STEPS - 1); // 0 → 4
-        panels.forEach((panel, i) => {
-          gsap.set(panel, {
-            xPercent: Math.max(-100, Math.min(100, (i - pos) * 100)),
-          });
-        });
-        setActiveMobileStep(Math.min(Math.round(pos) + 1, STEPS));
-      },
+      onEnterBack: () => { goToStep(STEPS - 1, false); },
+      onLeaveBack: () => { goToStep(0, false); },
     });
+
+    // Swipe state
+    let touchX0 = 0, touchY0 = 0, swipeDir = null;
+
+    const onTouchStart = (e) => {
+      touchX0 = e.touches[0].clientX;
+      touchY0 = e.touches[0].clientY;
+      swipeDir = null;
+    };
+
+    const onTouchMove = (e) => {
+      const dx = e.touches[0].clientX - touchX0;
+      const dy = e.touches[0].clientY - touchY0;
+      if (!swipeDir) {
+        if (Math.abs(dx) > Math.abs(dy) + 4) swipeDir = 'h';
+        else if (Math.abs(dy) > Math.abs(dx) + 4) swipeDir = 'v';
+      }
+      if (swipeDir === 'h') {
+        e.preventDefault(); // block page scroll during horizontal swipe
+      } else if (swipeDir === 'v') {
+        // Block vertical scroll unless we're at an exit boundary
+        if (dy < 0 && stepIdx < STEPS - 1) e.preventDefault();
+        if (dy > 0 && stepIdx > 0) e.preventDefault();
+      }
+    };
+
+    const onTouchEnd = (e) => {
+      if (swipeDir !== 'h') return;
+      const dx = e.changedTouches[0].clientX - touchX0;
+      const THRESHOLD = 44;
+      if (dx < -THRESHOLD) {
+        if (stepIdx < STEPS - 1) {
+          goToStep(stepIdx + 1);
+        } else {
+          // Exit forward: brief panel nudge then release the pin
+          gsap.to(panels[stepIdx], { xPercent: -25, duration: 0.22, ease: 'power1.in',
+            onComplete: () => window.scrollTo({ top: st.end + 1, behavior: 'auto' }),
+          });
+        }
+      } else if (dx > THRESHOLD) {
+        if (stepIdx > 0) {
+          goToStep(stepIdx - 1);
+        } else {
+          // Exit backward
+          gsap.to(panels[0], { xPercent: 25, duration: 0.22, ease: 'power1.in',
+            onComplete: () => window.scrollTo({ top: Math.max(0, st.start - 1), behavior: 'auto' }),
+          });
+        }
+      }
+    };
+
+    // Also block wheel/trackpad scroll while pinned (for tablet+keyboard users)
+    const onWheel = (e) => { e.preventDefault(); };
+
+    section.addEventListener('touchstart', onTouchStart, { passive: true });
+    section.addEventListener('touchmove',  onTouchMove,  { passive: false });
+    section.addEventListener('touchend',   onTouchEnd,   { passive: true });
+    section.addEventListener('wheel',      onWheel,      { passive: false });
 
     return () => {
       st.kill();
+      clearTimeout(hintTimer);
+      section.removeEventListener('touchstart', onTouchStart);
+      section.removeEventListener('touchmove',  onTouchMove);
+      section.removeEventListener('touchend',   onTouchEnd);
+      section.removeEventListener('wheel',      onWheel);
       panels.forEach((p, i) => gsap.set(p, { xPercent: i === 0 ? 0 : 100 }));
     };
   }, []);
-
-  /* ── Mobile: scroll the sticky nav so the active button stays visible ── */
-  useEffect(() => {
-    const nav = stepNavRef.current;
-    if (!nav) return;
-    nav.querySelector('.hw-sorter__mobile-nav-btn--on')
-      ?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-  }, [activeMobileStep]);
 
   /* ── Post-init refresh (image-aware) ─────────────────────────────────
      ScrollTrigger pin positions depend on section heights, which depend
@@ -430,6 +484,27 @@ export default function HardwareSystems() {
                 </div>
 
               </div>
+            ))}
+
+            {/* One-time swipe onboarding hint */}
+            <div
+              className={`hw-sorter__swipe-hint${hintVisible ? ' hw-sorter__swipe-hint--on' : ''}`}
+              aria-hidden="true"
+            >
+              <div className="hw-sorter__swipe-hint-track">
+                <div className="hw-sorter__swipe-hint-thumb" />
+              </div>
+              <span className="hw-sorter__swipe-hint-label">Swipe to explore</span>
+            </div>
+          </div>
+
+          {/* Step progress dots */}
+          <div className="hw-sorter__mobile-dots" aria-hidden="true">
+            {STEP_DATA.map((_, i) => (
+              <span
+                key={i}
+                className={`hw-sorter__mobile-dot${activeMobileStep === i + 1 ? ' hw-sorter__mobile-dot--on' : ''}`}
+              />
             ))}
           </div>
 
