@@ -49,34 +49,25 @@ const STEP_IMAGES = [
 
 export default function HardwareSystems() {
 
-  /* ── Sorter: GSAP ScrollTrigger pin + cinematic scroll camera ── */
+  /* ── Desktop: GSAP ScrollTrigger pin + cinematic scroll camera ── */
   const [activeImg, setActiveImg] = useState(1);
-  const sorterRef   = useRef(null);
-  const zoomRef     = useRef(null);
-  /* ── Mobile sorter: step tracking + scroll navigation ── */
-  const [activeMobileStep, setActiveMobileStep] = useState(1);
-  const [hintVisible, setHintVisible] = useState(false);
-  const mobileStepRefs = useRef([]);
+  const sorterRef = useRef(null);
+  const zoomRef   = useRef(null);
+
+  /* ── Mobile: CSS scroll-snap track ── */
+  const [activeStep, setActiveStep] = useState(0);
+  const trackRef = useRef(null);
 
   /* ── Pre-init (useLayoutEffect — fires BEFORE the browser's first paint) ──
-     Establishes a clean baseline before any GSAP effect runs:
-     • Kills ScrollTriggers that survived SPA navigation or Vite HMR
-     • Resets scroll to 0 so every pin calculation is measured from the top
-     Using useLayoutEffect rather than useEffect is critical: effects fire
-     after paint, but layout effects fire synchronously before paint, so
-     GSAP never sees a stale scroll offset on any navigation path.        ── */
+     Kills any ScrollTriggers that survived SPA nav or HMR and resets scroll
+     to 0 so every pin calculation is measured from the top.              ── */
   useLayoutEffect(() => {
-    // Kill every ScrollTrigger that may have survived from a previous visit
     ScrollTrigger.getAll().forEach(t => t.kill());
-    // Reset scroll position before GSAP measures anything
     window.scrollTo(0, 0);
-
-    return () => {
-      // Full teardown when leaving the page
-      ScrollTrigger.getAll().forEach(t => t.kill());
-    };
+    return () => { ScrollTrigger.getAll().forEach(t => t.kill()); };
   }, []);
 
+  /* ── Desktop: GSAP ScrollTrigger pin + camera interpolation ── */
   useEffect(() => {
     const section = sorterRef.current;
     const zoomEl  = zoomRef.current;
@@ -84,27 +75,6 @@ export default function HardwareSystems() {
 
     const STEPS = 5;
 
-    // ── Cinematic camera path ─────────────────────────────────────────────
-    // 6 keyframes mapped to scroll boundaries (t=0 entry … t=5 exit).
-    // Between each boundary the eased interpolator produces one continuous
-    // pan + focus shift — no cuts, no abrupt jumps.
-    //
-    //   scale : 1.00 = full-frame; max 1.09 keeps safe-zone clipping < 5%
-    //   ox/oy : transform-origin in %; clamped 38–62% so edges never clip
-    //
-    // Narrative arc:
-    //   t0 SCAN     – close focus on scanner housing (left-center)
-    //   t1 DETECT   – ease back, pan right to detection sensors
-    //   t2 CLASSIFY – widest view, machine centered for classification
-    //   t3 SORT     – tighten in, track right to sorting mechanism
-    //   t4 RECOVER  – close focus on recovery / output bins (right)
-    //   t5          – hold on Recover
-    // oy must be 0 for ALL keyframes.  Math.ceil switches the active image at the
-    // very first scroll pixel of a new step — at that instant the camera is still
-    // interpolating from the PREVIOUS keyframe's oy.  If any preceding oy > 0,
-    // clip_top = prev_oy × scale_delta × H fires on the newly-shown image.
-    // With oy = 0 everywhere, every interpolated oy is also 0 → zero top clip
-    // at every scroll position, regardless of when the image switch fires.
     const CAM = [
       { scale: 1.03, ox: 38, oy: 0 }, // t=0  SCAN
       { scale: 1.07, ox: 44, oy: 0 }, // t=1  DETECT
@@ -114,13 +84,12 @@ export default function HardwareSystems() {
       { scale: 1.02, ox: 60, oy: 0 }, // t=5  hold
     ];
 
-    // Smooth cubic ease-in-out so camera decelerates gently between keyframes
     const ease = t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 
     const applyCam = (progress) => {
-      const sf  = progress * STEPS;                           // 0 → 5
-      const i   = Math.min(Math.floor(sf), CAM.length - 2);  // segment index 0-4
-      const t   = ease(sf - i);                              // eased 0→1 within segment
+      const sf  = progress * STEPS;
+      const i   = Math.min(Math.floor(sf), CAM.length - 2);
+      const t   = ease(sf - i);
       const a   = CAM[i];
       const b   = CAM[i + 1];
       gsap.set(zoomEl, {
@@ -129,7 +98,6 @@ export default function HardwareSystems() {
       });
     };
 
-    // Place camera at SCAN position before user reaches the section
     applyCam(0);
 
     const st = ScrollTrigger.create({
@@ -168,145 +136,16 @@ export default function HardwareSystems() {
     return () => io.disconnect();
   }, []);
 
-  /* ── Mobile: pinned section + horizontal swipe step navigation ── */
-  useEffect(() => {
-    if (!window.matchMedia('(max-width: 900px)').matches) return;
-    const section = sorterRef.current;
-    if (!section) return;
-
-    const STEPS = 5;
-    const panels = mobileStepRefs.current.filter(Boolean);
-    if (panels.length < STEPS) return;
-
-    let stepIdx = 0;
-    const hintShown = { shown: false };
-    let hintTimer = null;
-
-    gsap.set(panels[0], { xPercent: 0 });
-    panels.slice(1).forEach(p => gsap.set(p, { xPercent: 100 }));
-
-    const goToStep = (n, animate = true) => {
-      n = Math.max(0, Math.min(STEPS - 1, n));
-      stepIdx = n;
-      setActiveMobileStep(n + 1);
-      panels.forEach((panel, i) => {
-        if (animate) gsap.to(panel, { xPercent: (i - n) * 100, duration: 0.42, ease: 'power2.inOut' });
-        else gsap.set(panel, { xPercent: (i - n) * 100 });
-      });
-    };
-
-    const st = ScrollTrigger.create({
-      trigger: section,
-      start: 'top 76px',
-      end: () => `+=${(STEPS - 1) * window.innerHeight}`,
-      pin: true,
-      pinSpacing: true,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onEnter: () => {
-        goToStep(0, false);
-        if (!hintShown.shown) {
-          hintShown.shown = true;
-          setHintVisible(true);
-          hintTimer = setTimeout(() => setHintVisible(false), 2400);
-        }
-      },
-      onEnterBack: () => { goToStep(STEPS - 1, false); },
-      onLeaveBack: () => { goToStep(0, false); },
-    });
-
-    // Swipe state
-    let touchX0 = 0, touchY0 = 0, swipeDir = null;
-
-    const onTouchStart = (e) => {
-      touchX0 = e.touches[0].clientX;
-      touchY0 = e.touches[0].clientY;
-      swipeDir = null;
-    };
-
-    const onTouchMove = (e) => {
-      const dx = e.touches[0].clientX - touchX0;
-      const dy = e.touches[0].clientY - touchY0;
-      if (!swipeDir) {
-        if (Math.abs(dx) > Math.abs(dy) + 4) swipeDir = 'h';
-        else if (Math.abs(dy) > Math.abs(dx) + 4) swipeDir = 'v';
-      }
-      if (swipeDir === 'h') {
-        e.preventDefault(); // block page scroll during horizontal swipe
-      } else if (swipeDir === 'v') {
-        // Block vertical scroll unless we're at an exit boundary
-        if (dy < 0 && stepIdx < STEPS - 1) e.preventDefault();
-        if (dy > 0 && stepIdx > 0) e.preventDefault();
-      }
-    };
-
-    const onTouchEnd = (e) => {
-      if (swipeDir !== 'h') return;
-      const dx = e.changedTouches[0].clientX - touchX0;
-      const THRESHOLD = 44;
-      if (dx < -THRESHOLD) {
-        if (stepIdx < STEPS - 1) {
-          goToStep(stepIdx + 1);
-        } else {
-          // Exit forward: brief panel nudge then release the pin
-          gsap.to(panels[stepIdx], { xPercent: -25, duration: 0.22, ease: 'power1.in',
-            onComplete: () => window.scrollTo({ top: st.end + 1, behavior: 'auto' }),
-          });
-        }
-      } else if (dx > THRESHOLD) {
-        if (stepIdx > 0) {
-          goToStep(stepIdx - 1);
-        } else {
-          // Exit backward
-          gsap.to(panels[0], { xPercent: 25, duration: 0.22, ease: 'power1.in',
-            onComplete: () => window.scrollTo({ top: Math.max(0, st.start - 1), behavior: 'auto' }),
-          });
-        }
-      }
-    };
-
-    // Also block wheel/trackpad scroll while pinned (for tablet+keyboard users)
-    const onWheel = (e) => { e.preventDefault(); };
-
-    section.addEventListener('touchstart', onTouchStart, { passive: true });
-    section.addEventListener('touchmove',  onTouchMove,  { passive: false });
-    section.addEventListener('touchend',   onTouchEnd,   { passive: true });
-    section.addEventListener('wheel',      onWheel,      { passive: false });
-
-    return () => {
-      st.kill();
-      clearTimeout(hintTimer);
-      section.removeEventListener('touchstart', onTouchStart);
-      section.removeEventListener('touchmove',  onTouchMove);
-      section.removeEventListener('touchend',   onTouchEnd);
-      section.removeEventListener('wheel',      onWheel);
-      panels.forEach((p, i) => gsap.set(p, { xPercent: i === 0 ? 0 : 100 }));
-    };
-  }, []);
-
-  /* ── Post-init refresh (image-aware) ─────────────────────────────────
-     ScrollTrigger pin positions depend on section heights, which depend
-     on image dimensions. On a cached (normal) refresh, images load
-     synchronously and immediately change layout — GSAP must re-read all
-     positions AFTER that reflow, not before.
-
-     Strategy:
-     1. If all eager images are already complete (cached), refresh right away.
-     2. Otherwise wait for every pending image's load/error event then refresh.
-     3. Two safety-net timeouts (300ms, 650ms) catch any edge cases.       ── */
+  /* ── Post-init refresh so GSAP re-reads heights after images load ── */
   useEffect(() => {
     let t1, t2;
-
     const doRefresh = () =>
       requestAnimationFrame(() =>
         requestAnimationFrame(() => ScrollTrigger.refresh())
       );
-
     const imgs = Array.from(document.querySelectorAll('.hw2-page img'));
     const pending = imgs.filter(img => !img.complete);
-
     if (pending.length === 0) {
-      // All images already loaded from cache — refresh now
       doRefresh();
     } else {
       let resolved = 0;
@@ -316,11 +155,24 @@ export default function HardwareSystems() {
         img.addEventListener('error', cb, { once: true });
       });
     }
-
     t1 = setTimeout(doRefresh, 300);
     t2 = setTimeout(doRefresh, 650);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
+
+  /* ── Mobile slider helpers (CSS scroll snap — no GSAP) ── */
+  const handleTrackScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const idx = Math.round(track.scrollLeft / track.offsetWidth);
+    setActiveStep(Math.min(Math.max(idx, 0), STEP_DATA.length - 1));
+  };
+
+  const scrollToStep = (idx) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollTo({ left: idx * track.offsetWidth, behavior: 'smooth' });
+  };
 
   return (
     <div className="hw2-page">
@@ -359,13 +211,13 @@ export default function HardwareSystems() {
         </div>
       </section>
 
-      {/* ── AI SORTING MODULE — Cinematic Scroll Storytelling ── */}
+      {/* ── AI SORTING MODULE ── */}
       <section className="hw-sorter-section" id="hw-sorter" ref={sorterRef}>
+
+        {/* ── DESKTOP: cinematic two-column scroll storytelling (>900px) ── */}
         <div className="hw-sorter__inner">
 
-          {/* ── LEFT: section intro + vertical step navigator ── */}
           <aside className="hw-sorter__left">
-
             <div className="hw-sorter__left-hdr">
               <h2 className="hw-sorter__left-title">
                 First Commercial Grade,<br /><em>Glass</em> Sorting System
@@ -382,7 +234,6 @@ export default function HardwareSystems() {
               style={{ '--sorter-fill': `${(activeImg - 1) / (STEP_DATA.length - 1) * 100}%` }}
             >
               <div className="hw-sorter__steps-line" aria-hidden="true" />
-
               {STEP_DATA.map((s, i) => (
                 <div
                   key={i}
@@ -407,10 +258,8 @@ export default function HardwareSystems() {
                 </div>
               ))}
             </div>
-
           </aside>
 
-          {/* ── RIGHT: machine image with GSAP cinematic camera ── */}
           <div className="hw-sorter__right">
             <div className="hw-sorter__img-frame">
               <span className="hw-sorter__counter" aria-live="polite">
@@ -435,31 +284,30 @@ export default function HardwareSystems() {
 
         </div>
 
-        {/* ── MOBILE SORTER — Pinned horizontal slide storytelling ── */}
+        {/* ── MOBILE: horizontal CSS scroll-snap card slider (≤900px) ── */}
         <div className="hw-sorter__mobile">
 
-          {/* Section header */}
           <div className="hw-sorter__mobile-hdr">
+            <p className="hw-sorter__mobile-eyebrow">How It Works</p>
             <h2 className="hw-sorter__mobile-title">
               First Commercial Grade,<br /><em>Glass</em> Sorting System
             </h2>
             <p className="hw-sorter__mobile-sub">
-              Vision-based, non-destructive sorting with real-time classification and brand recognition — built for industrial environments.
+              Vision-based, non-destructive sorting with real-time classification
+              and brand recognition — built for industrial environments.
             </p>
-            <p className="hw-sorter__mobile-eyebrow">How It Works</p>
           </div>
 
-          {/* Panels — absolutely positioned, translated by GSAP */}
-          <div className="hw-sorter__mobile-panels">
+          {/* Horizontal scroll track — native swipe, no JS touch handling */}
+          <div
+            className="hw-sorter__mobile-track"
+            ref={trackRef}
+            onScroll={handleTrackScroll}
+          >
             {STEP_DATA.map((s, i) => (
-              <div
-                key={i}
-                className="hw-sorter__mobile-panel"
-                ref={el => { mobileStepRefs.current[i] = el; }}
-              >
-                {/* Content */}
-                <div className="hw-sorter__mobile-step-content">
-                  <p className="hw-sorter__mobile-step-eyebrow">STEP {s.num}</p>
+              <div className="hw-sorter__mobile-slide" key={i}>
+                <div className="hw-sorter__mobile-slide-content">
+                  <p className="hw-sorter__mobile-step-eyebrow">Step {s.num}</p>
                   <h3 className="hw-sorter__mobile-step-name">{s.name}</h3>
                   <p className="hw-sorter__mobile-step-desc">{s.desc}</p>
                   <ul className="hw-sorter__mobile-highlights">
@@ -471,8 +319,6 @@ export default function HardwareSystems() {
                     ))}
                   </ul>
                 </div>
-
-                {/* Image */}
                 <div className="hw-sorter__mobile-img-wrap">
                   <img
                     src={STEP_IMAGES[i].src}
@@ -482,38 +328,28 @@ export default function HardwareSystems() {
                     draggable="false"
                   />
                 </div>
-
               </div>
             ))}
-
-            {/* One-time swipe onboarding hint */}
-            <div
-              className={`hw-sorter__swipe-hint${hintVisible ? ' hw-sorter__swipe-hint--on' : ''}`}
-              aria-hidden="true"
-            >
-              <div className="hw-sorter__swipe-hint-track">
-                <div className="hw-sorter__swipe-hint-thumb" />
-              </div>
-              <span className="hw-sorter__swipe-hint-label">Swipe to explore</span>
-            </div>
           </div>
 
-          {/* Step progress dots */}
-          <div className="hw-sorter__mobile-dots" aria-hidden="true">
+          {/* Pill-style progress dots — always visible, tappable */}
+          <div className="hw-sorter__mobile-dots" aria-label="Step indicators">
             {STEP_DATA.map((_, i) => (
-              <span
+              <button
                 key={i}
-                className={`hw-sorter__mobile-dot${activeMobileStep === i + 1 ? ' hw-sorter__mobile-dot--on' : ''}`}
+                className={`hw-sorter__mobile-dot${activeStep === i ? ' hw-sorter__mobile-dot--on' : ''}`}
+                onClick={() => scrollToStep(i)}
+                aria-label={`Go to step ${i + 1}`}
               />
             ))}
           </div>
 
         </div>
+
       </section>
 
       {/* ── VISIONBOX — AI Inspection ── */}
       <section className="hw-vb-section">
-        {/* Full-width background image */}
         <picture>
           <source media="(max-width: 768px)" srcSet="/hardware-inspection-mobile.png" />
           <img
@@ -525,9 +361,7 @@ export default function HardwareSystems() {
             decoding="async"
           />
         </picture>
-        {/* Overlay — dark gradient left for text readability */}
         <div className="hw-vb__overlay" aria-hidden="true" />
-        {/* Content — left-aligned over the image */}
         <div className="container hw-vb__container">
           <div className="hw-vb__copy">
             <h2 className="hw-vb__title">
@@ -562,11 +396,7 @@ export default function HardwareSystems() {
 
       {/* ── MRM ── */}
       <section className="hw-mrm-section" id="hw-mrm">
-
-        {/* 2-column — left content + right image */}
         <div className="container hw-mrm__top">
-
-          {/* LEFT — title, subtitle, body, 2×2 feature tiles */}
           <div className="hw-mrm__left-col">
             <h2 className="hw-mrm__title">MRM (AI) <em>Material</em><br />Recovery Machine</h2>
             <p className="hw-mrm__subtitle">Modular Front-End Recovery System</p>
@@ -590,8 +420,6 @@ export default function HardwareSystems() {
               ))}
             </div>
           </div>
-
-          {/* RIGHT — MRM machine image */}
           <div className="hw-mrm__img-placeholder">
             <img
               src="/hardware-MRM.png"
@@ -601,9 +429,7 @@ export default function HardwareSystems() {
               decoding="async"
             />
           </div>
-
         </div>
-
       </section>
 
     </div>
