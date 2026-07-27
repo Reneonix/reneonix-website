@@ -1,12 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import SiteSearch from './SiteSearch.jsx';
+import { navigate, navClick } from '../utils/nav.js';
 import './Header.css';
 
 const TECH = [
-  ['AI Vision & Sorting',   'Computer vision for material identification',    '#hardware',         'hw-sorter'],
-  ['Sensor Networks',        'Live process monitoring and quality control',    '#hardware',         'hw-mrm'],
-  ['TraceOS Platform',       'End-to-end material traceability software',      '#software',         null],
-  ['R&D Labs',               'Materials testing, formulation, and validation', '#material-science', null],
+  ['AI Vision & Sorting',   'Computer vision for material identification',    '/solutions/hardware',         'hw-sorter'],
+  ['Sensor Networks',        'Live process monitoring and quality control',    '/solutions/hardware',         'hw-mrm'],
+  ['TraceOS Platform',       'End-to-end material traceability software',      '/solutions/software',         null],
+  ['R&D Labs',               'Materials testing, formulation, and validation', '/solutions/material-science', null],
 ];
 const INDUSTRIES = [
   ['Glass Manufacturers',         null, '#'],
@@ -16,11 +18,12 @@ const INDUSTRIES = [
   ['Recycling Operators',         null, '#'],
 ];
 const RESOURCES = [
-  ['Blog',                   null, '#'],
+  ['Blog',                   null, '/blog'],
   ['Case Studies',           null, '#'],
   ['Sustainability Reports', null, '#'],
   ['Whitepapers',            null, '#'],
-  ['Press & Media',          null, '#highlights'],
+  ['Press & Media',          null, '#'],
+  ['Investors Relations',    null, '/investors-page'],
   ['FAQ',                    null, '#'],
 ];
 
@@ -87,8 +90,8 @@ function Dropdown({ label, items, onItemClick }) {
     onItemClick?.();
     if (!href || href === '#') return;
     if (section) {
-      const currentHash = window.location.hash.split('?')[0];
-      if (currentHash === href) {
+      const currentPath = window.location.pathname;
+      if (currentPath === href) {
         // Already on the target page — just scroll to section
         const el = document.getElementById(section);
         if (el) {
@@ -98,10 +101,10 @@ function Dropdown({ label, items, onItemClick }) {
         }
       } else {
         sessionStorage.setItem('sw_scroll_target', section);
-        window.location.hash = href;
+        navigate(href);
       }
     } else {
-      window.location.hash = href;
+      navigate(href);
     }
   };
 
@@ -145,26 +148,32 @@ function Dropdown({ label, items, onItemClick }) {
 function getEdgeLinks(route) {
   if (route === 'careers') {
     return {
-      left:  { label: 'Home',      href: '#home' },
-      right: { label: 'Solutions', href: '#solutions' },
+      left:  { label: 'Home',      href: '/' },
+      right: { label: 'Solutions', href: '/solutions' },
     };
   }
   if (route === 'solutions') {
     return {
-      left:  { label: 'Home',    href: '#home' },
-      right: { label: 'Careers', href: '#careers' },
+      left:  { label: 'Home',    href: '/' },
+      right: { label: 'Careers', href: '/careers' },
     };
   }
-  if (route === 'hardware' || route === 'software' || route === 'material-science' || route === 'policy') {
+  if (route === 'hardware' || route === 'software' || route === 'material-science' || route === 'policy' || route === 'blog' || route === 'blog-article-mrm' || route === 'blog-article-vision-sorting') {
     return {
-      left:  { label: 'Home',      href: '#home' },
-      right: { label: 'Solutions', href: '#solutions' },
+      left:  { label: 'Home',      href: '/' },
+      right: { label: 'Solutions', href: '/solutions' },
+    };
+  }
+  if (route === 'investors-page') {
+    return {
+      left:  { label: 'Home',    href: '/' },
+      right: { label: 'Careers', href: '/careers' },
     };
   }
   // home (default)
   return {
-    left:  { label: 'Solutions', href: '#solutions' },
-    right: { label: 'Careers',   href: '#careers' },
+    left:  { label: 'Solutions', href: '/solutions' },
+    right: { label: 'Careers',   href: '/careers' },
   };
 }
 
@@ -174,6 +183,10 @@ export default function Header({ route = 'home', animate = true }) {
   const closeNav = () => setMobileOpen(false);
   const toggleNav = () => setMobileOpen((o) => !o);
 
+  // Navigates client-side (no full-page reload) and closes the mobile
+  // menu in the same click — every plain nav link below needs both.
+  const withNav = (path) => (e) => { navClick(path)(e); closeNav(); };
+
   const { left, right } = getEdgeLinks(route);
 
   return (
@@ -182,7 +195,7 @@ export default function Header({ route = 'home', animate = true }) {
       <div className="container nav__inner">
 
         {/* Brand — always goes home */}
-        <a href="#home" className="brand" aria-label="Reneonix home" onClick={closeNav}>
+        <a href="/" className="brand" aria-label="Reneonix home" onClick={withNav('/')}>
           <img src="/reneonix-logo.svg" alt="Reneonix" className="brand__img" />
         </a>
 
@@ -190,7 +203,7 @@ export default function Header({ route = 'home', animate = true }) {
         <nav className={`nav__menu${mobileOpen ? ' open' : ''}`} id="navMenu">
 
           {/* 1st item — changes per page */}
-          <a className="nav__link" href={left.href} onClick={closeNav}>
+          <a className="nav__link" href={left.href} onClick={withNav(left.href)}>
             {left.label}
           </a>
 
@@ -200,14 +213,23 @@ export default function Header({ route = 'home', animate = true }) {
           <Dropdown label="Resources"  items={RESOURCES}  onItemClick={closeNav} />
 
           {/* 5th item — changes per page */}
-          <a className="nav__link" href={right.href} onClick={closeNav}>
+          <a className="nav__link" href={right.href} onClick={withNav(right.href)}>
             {right.label}
+          </a>
+
+          {/* Mobile only — sits below all dropdown links, like a footer CTA */}
+          <a className="nav__menu-contact" href="/contact-us" onClick={withNav('/contact-us')}>
+            Contact Us
           </a>
 
         </nav>
 
-        {/* Mobile toggle */}
+        {/* Search + Contact Us + mobile toggle */}
         <div className="nav__cta">
+          <SiteSearch />
+          <a href="/contact-us" className="btn btn-primary nav__contact-btn" onClick={withNav('/contact-us')}>
+            Contact Us
+          </a>
           <button
             className={`nav__toggle${mobileOpen ? ' is-open' : ''}`}
             id="navToggle"

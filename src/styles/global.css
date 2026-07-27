@@ -100,8 +100,8 @@
 
   .eyebrow {
     display: inline-flex; align-items: center; gap: 10px;
-    font-family: 'Inter', sans-serif; font-weight: 600;
-    font-size: .8rem; letter-spacing: .14em; text-transform: uppercase;
+    font-family: 'Inter', sans-serif; font-weight: 800;
+    font-size: clamp(.92rem, 2.4vmin, 1.05rem); letter-spacing: .22em; text-transform: uppercase;
     color: var(--lime-deep); margin-bottom: 16px;
   }
   .eyebrow::before { display: none; }
@@ -156,8 +156,13 @@
   main { padding-top: 76px; }
   .nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: #0A0A0A;
+    background: rgba(10,10,10,.6);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
     border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .nav { background: #0A0A0A; -webkit-backdrop-filter: none; backdrop-filter: none; }
   }
   .nav__inner { position: relative; z-index: 1; }
   .nav__inner { display: flex; align-items: center; justify-content: space-between; height: 76px; }
@@ -793,7 +798,28 @@
     .zz-row--reverse .zz-row__copy-top    { order: 1; }
     .zz-row--reverse .zz-row__media       { order: 2; }
     .zz-row--reverse .zz-row__copy-bottom { order: 3; }
-    .zz-row__media-inner { position: relative; top: auto; }
+    .zz-row__media-inner {
+      position: relative; top: auto;
+      /* backdrop-filter + a permanently-promoted (will-change) compositor
+         layer on every media card is expensive to keep live on mobile GPUs;
+         desktop-class hardware (incl. Chrome's mobile device-emulation, which
+         still renders on the desktop GPU) hides the cost, but on real
+         mid/low-tier phones this is heavy enough to stall the main thread
+         mid-scroll — surfacing as scrolling that "sticks" for a moment,
+         worst right as the next glassmorphism card scrolls into view and a
+         new layer has to be composited. None of this is needed on mobile:
+         the sticky effect it was built for is already off at this width. */
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: 0 10px 24px -8px rgba(13,14,12,.18);
+      will-change: auto;
+    }
+    /* mix-blend-mode forces per-frame software-composited blending on many
+       Android GPU drivers (Mali in particular — common on mid-range
+       MediaTek/Dimensity phones), unlike opacity/transform which stay on the
+       cheap GPU-only path. Kept purely for a cosmetic "dissolve into the
+       white section bg" trick, so it's safe to drop on mobile. */
+    .zz-row--sw .zz-row__media-inner > img { mix-blend-mode: normal; }
   }
   @media (prefers-reduced-motion: reduce) {
     .zz-row__media-inner,
@@ -1597,6 +1623,13 @@
     opacity: .035;
     mix-blend-mode: overlay;
   }
+  /* Being `position: fixed` + `mix-blend-mode`, this forces the browser to
+     recomposite a blended full-viewport layer on every scroll frame,
+     site-wide — a real, constant cost on weaker mobile GPUs for a 3.5%-
+     opacity texture nobody will consciously miss. Mobile doesn't get it. */
+  @media (max-width: 960px) {
+    body::after { content: none; }
+  }
 
   /* Dropdowns inherit the same glass formula as the nav */
   .dropdown {
@@ -2034,6 +2067,7 @@
   @media (max-width: 1024px) {
     .container { padding: 0 28px; }
     .nav__inner { height: 68px; }
+    main { padding-top: 68px; }
     .footer__grid { grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr; gap: 24px; }
   }
 
@@ -2192,9 +2226,8 @@
     /* Hide the cursor glow on touch (already covered, but enforce) */
     .cursor-glow { display: none !important; }
 
-    /* Nav CTAs — Sign in hidden, Contact us shorter */
+    /* Nav CTAs — Sign in hidden (Contact Us moved into the mobile menu) */
     .nav__cta .btn-outline-light { display: none; }
-    .nav__cta .btn-primary { padding: 8px 14px; font-size: .82rem; }
   }
 
   /* ====== Small phones (320–480px) ====== */
@@ -2205,6 +2238,7 @@
     .nav__inner { height: 60px; }
     .nav__menu { top: 60px; }
     .brand__img { height: 26px !important; }
+    main { padding-top: 60px; }
 
     /* Hero */
     .hero { padding: 64px 0 48px !important; min-height: auto !important; }
@@ -2703,9 +2737,32 @@
     border-radius: 2px;
   }
 
+  /* Mobile-only Contact Us bar — hidden on desktop, shown below the
+     dropdown links inside the mobile nav__menu panel (see 720px block). */
+  .nav__menu-contact { display: none; }
+
   @media (max-width: 720px) {
     .nav__menu .nav__link { width: 100%; text-align: left; }
     .nav__link--active::after { left: 0; right: auto; width: 24px; }
+
+    .nav__menu-contact {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: var(--r-pill);
+      background: var(--lime);
+      color: var(--black);
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .2s ease;
+    }
+    .nav__menu-contact:hover { background: var(--lime-bright); }
+
+    /* Header's own Contact Us button is replaced by the one above on mobile */
+    .nav__cta .nav__contact-btn { display: none; }
   }
 
   /* =========================================================

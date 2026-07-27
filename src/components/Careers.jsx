@@ -492,7 +492,7 @@ export default function Careers() {
                   alt="Reneonix team on the factory floor — material recovery operations"
                   loading="eager"
                   decoding="async"
-                  fetchPriority="high"
+                  fetchpriority="high"
                 />
               </div>
             </div>

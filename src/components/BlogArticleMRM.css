@@ -1,0 +1,808 @@
+/* ==========================================================
+   BlogArticleMRM — "one bottle's journey" narrative article
+   ========================================================== */
+
+/* ── Breadcrumb (inside hero) ─────────────────────────────── */
+.ba-breadcrumb {
+  position: absolute; z-index: 1; top: 96px; left: 0; right: 0;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 6px;
+  font-size: .88rem; font-weight: 600; color: var(--on-dark-mut);
+  padding: 0 var(--gutter); text-align: left;
+}
+.ba-breadcrumb a { color: var(--on-dark-mut); text-decoration: none; transition: color .18s ease; }
+.ba-breadcrumb a:hover { color: var(--lime); }
+.ba-breadcrumb svg { color: rgba(255,255,255,.3); flex-shrink: 0; }
+.ba-breadcrumb .is-current {
+  color: var(--on-dark); max-width: 360px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.ba-hero {
+  position: relative; overflow: hidden;
+  min-height: calc(100vh - 76px);
+  display: flex; align-items: center; justify-content: flex-start;
+  padding: clamp(140px, 16vw, 180px) 0 clamp(48px, 6vw, 72px);
+  background: var(--bg) url('/article background.png') center / cover no-repeat;
+}
+@media (max-width: 1024px) { .ba-hero { min-height: calc(100vh - 68px); } }
+@media (max-width: 480px) { .ba-hero { min-height: calc(100vh - 60px); } }
+.ba-hero__bg-veil {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(100deg, rgba(4,8,4,.68) 0%, rgba(4,8,4,.52) 28%, rgba(4,8,4,.26) 52%, rgba(4,8,4,.08) 74%, rgba(4,8,4,.02) 100%),
+    linear-gradient(180deg, rgba(4,8,4,.22) 0%, transparent 20%, transparent 70%, rgba(4,8,4,.3) 100%),
+    radial-gradient(900px 480px at 8% -10%, rgba(178,222,58,.14), transparent 60%);
+}.ba-hero__inner {
+  position: relative; z-index: 1; max-width: 860px;
+  padding: 0 var(--gutter); text-align: left;
+}
+.ba-hero__chip {
+  display: inline-block;
+  font-size: .8rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--lime); background: rgba(178,222,58,.14);
+  border: 1px solid rgba(178,222,58,.35);
+  padding: 7px 14px; border-radius: 999px; margin: 0 0 18px;
+}
+.ba-hero h1 {
+  color: var(--white); font-size: clamp(2.1rem, 4.6vw, 3.4rem); line-height: 1.16;
+  margin: 0 0 24px;
+}
+/* Scoped under .ba-hero (not just .ba-hero__lead alone) so this can't be
+   silently overridden by any shared article-wide `p` rule elsewhere in
+   this file — that class+element pattern has higher specificity than a
+   single class alone. */
+.ba-hero .ba-hero__lead {
+  color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.45);
+  font-size: clamp(1rem, 1.7vw, 1.15rem); line-height: 1.6;
+  max-width: 620px; margin: 0 0 28px;
+}
+.ba-hero__meta {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px;
+  color: var(--on-dark-mut); font-size: .96rem; font-weight: 500;
+}
+.ba-hero__meta span { display: inline-flex; align-items: center; gap: 6px; }
+.ba-hero__meta svg { color: var(--lime); }
+.ba-hero__meta-author { color: var(--lime); font-weight: 700; }
+.ba-hero__dot { opacity: .5; }
+
+.ba-hero__scroll-cue {
+  position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%);
+  z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  color: rgba(255,255,255,.5); text-decoration: none;
+  font-size: .72rem; font-weight: 600;
+  animation: ba-scroll-bounce 1.8s ease-in-out infinite;
+}
+@keyframes ba-scroll-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+/* ── Shared: heading accents ──────────────────────────────── */
+.ba-article h2 em { font-style: normal; font-weight: 900; color: var(--lime-deep); }
+
+/* ── Rethinking recovery at the source (Ch.02) — full-bleed photo + panel ─── */
+.ba-recovery {
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center; scroll-margin-top: 76px;
+  background: var(--paper);
+}
+.ba-recovery__text {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(40px, 10.8vmin, 72px);
+}
+.ba-recovery__text h2 { font-size: clamp(1.94rem, 6.53vmin, 2.66rem); color: var(--ink); margin: 0 0 20px; line-height: 1.2; }
+/* This column isn't wrapped in .container (it's a full-bleed text+photo
+   split so the photo can run edge-to-edge), so on ultrawide/4K viewports
+   the column itself — not just the page — gets very wide. Cap the prose
+   line length directly rather than letting it stretch to the column, same
+   ch-based approach already used by .ba-pull below and .ba-industrial__lead
+   / .ba-future__body further down this file. */
+.ba-recovery__text p { font-size: clamp(.96rem, 2.32vmin, 1.17rem); line-height: 1.75; color: var(--on-light-mut); margin: 0 0 18px; max-width: 62ch; }
+.ba-recovery__text p:last-child { margin-bottom: 0; }
+.ba-recovery__accent { color: var(--lime-deep); font-weight: 700; }
+.ba-pull {
+  border-left: 3px solid var(--lime-deep); padding: 2px 0 2px 18px; margin: 6px 0 0;
+  font-size: clamp(1.09rem, 2.66vmin, 1.33rem); font-weight: 700; line-height: 1.5; color: var(--ink); max-width: 34ch;
+}
+
+.ba-recovery__media { padding: clamp(28px, 7.2vmin, 56px); }
+/* Mobile shows a second copy of the photo positioned right before the pull
+   quote (matching the desktop column order isn't possible here since it's
+   mid-way through the text flow, not a reorderable sibling) — hidden on
+   desktop, where the original media column already shows it. */
+.ba-recovery__media--inline { display: none; }
+.ba-recovery__media img {
+  display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover;
+  border-radius: var(--r-lg, 24px); border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 24px 48px rgba(10,15,5,.12);
+}
+
+@media (max-width: 780px) {
+  .ba-recovery { grid-template-columns: 1fr; }
+  .ba-recovery > .ba-recovery__media { display: none; }
+  .ba-recovery__media--inline { display: block; padding: 4px 0 24px; }
+}
+
+/* ── Where the bottle starts (Ch.01) — full-bleed photo + light panel ── */
+.ba-challenge {
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center; scroll-margin-top: 76px;
+  background: var(--paper);
+}
+.ba-challenge__media { padding: clamp(20px, 4.5vmin, 36px); }
+/* Mobile shows a second copy of the photo positioned right before the
+   problems list (matching the desktop column order isn't possible here
+   since it's mid-way through the text flow, not a reorderable sibling) —
+   hidden on desktop, where the original media column already shows it. */
+.ba-challenge__media--inline { display: none; }
+.ba-challenge__media img {
+  display: block; width: 100%; max-width: 560px; margin: 0 auto; aspect-ratio: 1 / 1; object-fit: cover;
+  border-radius: var(--r-lg, 24px); border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 24px 48px rgba(10,15,5,.12);
+}
+.ba-challenge__text {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(24px, 7.2vmin, 48px);
+}
+.ba-challenge__text h2 { font-size: clamp(1.94rem, 6.53vmin, 2.66rem); color: var(--ink); margin: 0 0 20px; line-height: 1.2; }
+/* Same full-bleed-column issue as .ba-recovery__text above — cap the prose
+   and the problem-chip row so they don't stretch into unreadably long
+   lines / half-empty pills on ultrawide and 4K viewports. */
+.ba-challenge__text p { font-size: clamp(.96rem, 2.32vmin, 1.17rem); line-height: 1.75; color: var(--on-light-mut); margin: 0 0 18px; max-width: 62ch; }
+.ba-challenge__text p:last-child { margin-bottom: 0; }
+.ba-challenge__text strong { color: var(--ink); }
+.ba-challenge__lead-in { display: block; font-size: clamp(1.02rem, 2.48vmin, 1.24rem); font-weight: 700; color: var(--ink); margin: 0 0 12px; max-width: 62ch; }
+.ba-challenge__problems { display: flex; gap: 20px; margin-bottom: 12px; max-width: 62ch; }
+.ba-challenge__problems-col { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ba-challenge__problem {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 12px; border-radius: 8px;
+  background: rgba(178,222,58,.08); border-left: 2.5px solid var(--lime-deep);
+  transition: background-color .2s ease;
+}
+.ba-challenge__problem:hover { background: rgba(178,222,58,.16); }
+.ba-challenge__problem span { font-size: clamp(.89rem, 2.16vmin, 1.08rem); line-height: 1.35; color: var(--on-light-mut); }
+.ba-challenge__problem-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--lime-deep); flex-shrink: 0; margin-top: 6px;
+}
+
+@media (max-width: 780px) {
+  .ba-challenge { grid-template-columns: 1fr; }
+  .ba-challenge > .ba-challenge__media { display: none; }
+  .ba-challenge__media--inline { display: block; padding: 4px 0 20px; }
+}
+@media (max-width: 560px) {
+  .ba-challenge__problems { flex-direction: column; gap: 12px; }
+}
+
+/* ── Traditional vs MRM comparison (part of Ch.02) ────────── */
+.ba-compare { background: var(--paper); padding: clamp(56px, 12.6vmin, 88px) 0; scroll-margin-top: 100px; }
+.ba-compare__head { text-align: center; max-width: 680px; margin: 0 auto clamp(36px, 8.1vmin, 52px); }
+.ba-compare__eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: clamp(.92rem, 2.4vmin, 1.15rem); font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--lime-deep); margin: 0 0 14px;
+}
+.ba-compare__head h2 { font-size: clamp(1.94rem, 6.53vmin, 2.66rem); color: var(--ink); margin: 0 0 14px; line-height: 1.25; }
+.ba-compare__accent { color: var(--lime-deep); }
+.ba-compare__sub { font-size: clamp(.96rem, 2.32vmin, 1.17rem); color: var(--on-light-mut); line-height: 1.65; margin: 0; }
+
+.ba-compare__grid {
+  position: relative;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  align-items: stretch;
+}
+.ba-compare__grid::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 50%;
+  border-left: 1.5px dashed rgba(0,0,0,.14); z-index: 0;
+}
+.ba-compare__card {
+  position: relative; z-index: 1;
+  background: var(--white); border: 1px solid rgba(0,0,0,.08); border-radius: var(--r-lg, 16px);
+  padding: clamp(14px, 2.75vmin, 22px) clamp(16px, 3vmin, 24px) clamp(16px, 3vmin, 24px);
+  display: flex; flex-direction: column; gap: clamp(11px, 2.5vmin, 20px);
+  box-shadow: 0 12px 32px rgba(10,15,5,.05);
+  transition: background-color .4s ease, box-shadow .4s ease;
+}
+.ba-compare__card--new { border-color: rgba(178,222,58,.5); }
+.ba-compare__card--old:hover { background: #14170F; box-shadow: 0 20px 44px rgba(10,15,5,.28); }
+.ba-compare__card--new:hover { background: #0F2410; box-shadow: 0 20px 44px rgba(10,15,5,.28); }
+
+.ba-compare__label {
+  align-self: flex-start;
+  font-size: clamp(.74rem, 1.79vmin, .89rem); font-weight: 800; letter-spacing: .03em;
+  padding: 7px 14px; border-radius: 999px;
+  transition: background-color .35s ease, color .35s ease;
+}
+.ba-compare__label--old { background: #14170F; color: var(--white); }
+.ba-compare__label--new { background: var(--lime-deep); color: var(--white); }
+.ba-compare__card--old:hover .ba-compare__label--old { background: var(--lime); color: #14170F; }
+.ba-compare__card--new:hover .ba-compare__label--new { background: var(--white); color: var(--lime-deep); }
+
+.ba-compare__flow {
+  display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: auto;
+  column-gap: 4px; row-gap: 12px;
+}
+
+.ba-compare__step {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  min-width: 0; text-align: center;
+}
+.ba-compare__step strong { font-size: clamp(.84rem, 2.04vmin, 1.01rem); color: var(--ink); transition: color .35s ease; }
+.ba-compare__card--old:hover .ba-compare__step strong { color: var(--white); }
+.ba-compare__card--new:hover .ba-compare__step strong { color: var(--white); }
+.ba-compare__icon {
+  width: clamp(56px, 10vmin, 80px); height: clamp(56px, 10vmin, 80px); border-radius: 18px; flex-shrink: 0;
+  display: grid; place-items: center;
+  background: #14170F; color: var(--white);
+  border: none; cursor: pointer; padding: 0;
+  transition: background-color .25s ease, color .25s ease, transform .2s ease, box-shadow .25s ease;
+}
+.ba-compare__icon:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(10,15,5,.14); }
+.ba-compare__icon:active { transform: scale(.92); }
+.ba-compare__icon.is-active {
+  background: var(--lime); color: #14170F;
+  animation: ba-icon-pop .45s cubic-bezier(.2,.8,.3,1.3);
+}
+.ba-compare__icon--new { background: var(--lime-deep); color: var(--white); }
+.ba-compare__icon--new.is-active {
+  background: var(--white); color: var(--lime-deep);
+  animation: ba-icon-pop .45s cubic-bezier(.2,.8,.3,1.3);
+}
+.ba-compare__card--old:hover .ba-compare__icon { background: var(--lime); color: #14170F; }
+.ba-compare__card--new:hover .ba-compare__icon--new { background: var(--white); color: var(--lime-deep); }
+@keyframes ba-icon-pop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.18) rotate(-4deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ba-compare__icon, .ba-compare__icon.is-active, .ba-compare__icon--new.is-active { animation: none; transition: background-color .2s ease, color .2s ease; }
+}
+.ba-compare__step .ba-compare__arrow {
+  display: flex; position: absolute; top: 40px; left: 100%; transform: translate(-50%, -50%);
+  z-index: 1; color: var(--on-light-mut); background: var(--paper); border-radius: 50%;
+  transition: color .35s ease, background-color .35s ease;
+}
+.ba-compare__step .ba-compare__arrow--new { color: var(--lime-deep); }
+.ba-compare__card--old:hover .ba-compare__arrow { color: rgba(255,255,255,.6); background: #14170F; }
+.ba-compare__card--new:hover .ba-compare__arrow--new { color: rgba(255,255,255,.75); background: #0F2410; }
+
+.ba-compare__list {
+  display: flex; flex-direction: column; gap: clamp(8px, 1.75vmin, 14px);
+  border-radius: var(--r-md); padding: clamp(11px, 2.25vmin, 18px); margin-top: auto;
+  transition: background-color .35s ease;
+}
+.ba-compare__list--bad { background: #F3F4F1; }
+.ba-compare__list--good { background: #EEF5E2; }
+.ba-compare__card--old:hover .ba-compare__list--bad { background: rgba(255,255,255,.08); }
+.ba-compare__card--new:hover .ba-compare__list--good { background: rgba(255,255,255,.1); }
+.ba-compare__point { display: flex; align-items: center; gap: 12px; }
+.ba-compare__point span:last-child { font-size: clamp(.87rem, 2.13vmin, 1.07rem); line-height: 1.4; color: var(--ink); transition: color .35s ease; }
+.ba-compare__card--old:hover .ba-compare__point span:last-child { color: var(--on-dark); }
+.ba-compare__card--new:hover .ba-compare__point span:last-child { color: var(--white); }
+.ba-compare__point-icon {
+  display: grid; place-items: center; flex-shrink: 0;
+  width: 24px; height: 24px; border-radius: 50%; color: var(--white);
+  transition: background-color .35s ease, color .35s ease;
+}
+.ba-compare__list--bad .ba-compare__point-icon { background: #6B7268; }
+.ba-compare__list--good .ba-compare__point-icon { background: var(--lime-deep); }
+
+.ba-compare__vs {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 2; width: 46px; height: 46px; border-radius: 50%;
+  background: var(--white); border: 1px solid rgba(0,0,0,.1);
+  display: grid; place-items: center;
+  font-size: clamp(.77rem, 1.89vmin, .95rem); font-weight: 800; color: var(--on-light-mut);
+  box-shadow: 0 6px 16px rgba(10,15,5,.08);
+}
+
+@media (max-width: 860px) {
+  .ba-compare__grid { grid-template-columns: 1fr; gap: 20px; }
+  .ba-compare__grid::before { display: none; }
+  /* Static instead of absolute: as the middle of the 3 grid children (card,
+     vs, card), it now falls naturally into its own row between the two
+     stacked cards instead of being positioned relative to the whole grid's
+     box — which put it at the bottom of the second card, not the seam
+     between them. */
+  /* transform:none clears the desktop rule's translate(-50%,-50%) — left
+     in place, it was still shifting the badge up by half its own height,
+     overlapping the top card instead of sitting centered in the gap. */
+  .ba-compare__vs { position: static; margin: 0 auto; transform: none; }
+}
+@media (max-width: 560px) {
+  .ba-compare__flow { grid-template-columns: repeat(2, 1fr); row-gap: 24px; }
+  .ba-compare__step .ba-compare__arrow { display: none; }
+}
+
+/* ── Chapter 03 — one bottle's journey (scroll-synced sticky visual) ── */
+.ba-journey { background: var(--paper); scroll-margin-top: 76px; }
+.ba-journey__grid {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(32px, 4vw, 56px);
+}
+.ba-journey__col { padding: clamp(56px, 7vw, 88px) 0; }
+.ba-journey__head { font-size: clamp(1.94rem, 6.53vmin, 2.66rem); color: var(--ink); margin: 0 0 clamp(28px, 3.5vw, 40px); line-height: 1.25; }
+
+.ba-journey__list { display: flex; flex-direction: column; }
+.ba-journey__leg {
+  --node: clamp(24px, 6vw, 32px);
+  position: relative; padding: 22px 0 22px calc(var(--node) - 2px);
+  border-left: 2px solid rgba(0,0,0,.1);
+  opacity: .5; transition: opacity .3s ease, background-color .3s ease;
+}
+.ba-journey__leg.is-active { opacity: 1; background: rgba(178,222,58,.06); border-left-color: var(--lime-deep); }
+.ba-journey__rail { position: absolute; left: calc(var(--node) / -2 - 1px); top: 22px; }
+.ba-journey__node {
+  width: var(--node); height: var(--node); border-radius: 50%;
+  background: #14170F; color: var(--lime);
+  display: grid; place-items: center; font-size: clamp(.72rem, 1.6vw, .89rem); font-weight: 800;
+  transition: background-color .3s ease, color .3s ease;
+}
+.ba-journey__leg.is-active .ba-journey__node { background: var(--lime-deep); color: var(--white); }
+.ba-journey__role {
+  font-size: clamp(.69rem, 1.69vmin, .85rem); font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--lime-deep); margin: 0 0 6px;
+}
+.ba-journey__body h3 { font-size: clamp(1.13rem, 2.78vmin, 1.39rem); font-weight: 800; color: var(--ink); margin: 0 0 8px; line-height: 1.3; }
+.ba-journey__body p { font-size: clamp(.96rem, 2.32vmin, 1.17rem); line-height: 1.6; color: var(--on-light-mut); margin: 0; max-width: 46ch; }
+
+.ba-journey__visual { position: relative; }
+/* The box's height is driven by its own content (flex column), not by the
+   width via aspect-ratio: the overlay cards' text has a font-size floor, so
+   their content height barely shrinks even as the column gets narrow. A
+   width-derived aspect-ratio made the box shorter than that content at
+   narrow widths and the cards overlapped the progress bar. min-height is
+   just a floor so the box still looks tall/proportioned on wide screens
+   where the content is shorter than the available space. */
+.ba-journey__sticky {
+  /* Height is bounded by viewport height (vh), not width (vw): a sticky
+     element taller than the visible viewport can never be fully seen while
+     "stuck" — its top or bottom just scrolls out of frame depending on
+     scroll position, which is what was cropping the cards/progress bar.
+     max-height is the hard guarantee; the card/progress content below is
+     sized to actually fit inside it, down to a 720px-tall viewport.
+
+     top centers the box in the viewport on generously tall screens (~650px
+     content against a 325px half-height) instead of pinning it high against
+     the nav, so it settles level with whichever leg is active on the left.
+     The 88px floor is load-bearing, not decorative: the fixed nav is 76px
+     tall, so anything less leaves the box with zero (or negative) visible
+     gap under it — 88px clears the nav plus a real 12px of breathing room.
+     On short screens true centering would put half the box's height above
+     the viewport (or under the nav) since the box itself is nearly as tall
+     as the viewport there, so max() falls back to this floor instead. */
+  position: sticky; top: max(88px, calc(50vh - 325px));
+  min-height: clamp(380px, 56vh, 620px);
+  max-height: calc(100vh - 104px);
+  border-radius: 20px; overflow: hidden;
+  background: radial-gradient(ellipse 80% 70% at 50% 45%, #16210F 0%, #0A0D08 70%);
+  display: flex; flex-direction: column; justify-content: space-between; gap: clamp(8px, 1.2vh, 16px);
+}
+.ba-journey__sticky > img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 42% center;
+}
+
+/* Cards stack via flex gap instead of hand-tuned pixel offsets, so they
+   never overlap regardless of how tall their content renders at a given
+   viewport — the failure mode with individually absolute-positioned cards. */
+.ba-journey__cards {
+  position: relative; z-index: 1; align-self: flex-end;
+  margin: 2% 4% 0 0;
+  display: flex; flex-direction: column; gap: clamp(8px, 1.3vh, 16px);
+  /* % of the sticky box itself (not vw) so the machine:panels split stays
+     ~67:33 self-consistently — including across the site-wide 1840px
+     container cap, where a vw-based value would drift off-ratio. */
+  width: clamp(200px, 33%, 300px);
+  max-width: 92%;
+}
+.ba-journey__card {
+  background: rgba(8,12,7,.88); backdrop-filter: blur(6px);
+  border-radius: 14px;
+  padding: clamp(6px, 1.15vh, 16px) clamp(12px, 2.2vw, 20px);
+  color: var(--on-dark); font-size: clamp(.68rem, 1.6vw, .95rem);
+}
+.ba-journey__card-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-size: clamp(.62rem, 1.4vw, .83rem); font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--on-dark-mut); margin-bottom: clamp(4px, 1vh, 10px);
+}
+.ba-journey__live { display: inline-flex; align-items: center; gap: 5px; color: var(--lime); text-transform: none; letter-spacing: 0; }
+.ba-journey__live i { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
+.ba-journey__ok { color: var(--lime); font-weight: 700; text-transform: none; letter-spacing: 0; font-size: clamp(.6rem, 1.35vw, .8rem); }
+.ba-journey__row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: clamp(2px, .6vh, 5px) 0; border-bottom: 1px dashed rgba(255,255,255,.08); }
+.ba-journey__row:last-of-type { border-bottom: 0; }
+.ba-journey__row > span:first-child { color: var(--on-dark-mut); }
+.ba-journey__row strong { color: var(--white); font-weight: 700; }
+.ba-journey__row strong.is-good { color: var(--lime); }
+.ba-journey__row svg { color: var(--lime); flex-shrink: 0; }
+.ba-journey__confidence { margin-top: 2px; }
+.ba-journey__confidence > span { font-size: clamp(.6rem, 1.35vw, .85rem); color: var(--on-dark-mut); }
+.ba-journey__confidence strong { display: block; font-size: clamp(1rem, 2.2vh, 1.35rem); font-weight: 800; color: var(--white); margin: 2px 0 5px; }
+.ba-journey__bar { height: 5px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; }
+.ba-journey__bar i { display: block; height: 100%; background: var(--lime); border-radius: 3px; }
+.ba-journey__throughput { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 2px 8px; margin-top: 3px; }
+.ba-journey__throughput span { font-size: clamp(.6rem, 1.35vw, .85rem); color: var(--on-dark-mut); }
+.ba-journey__throughput strong { font-size: clamp(.92rem, 2vw, 1.28rem); font-weight: 800; color: var(--white); }
+.ba-journey__throughput small { font-size: clamp(.54rem, 1.2vw, .75rem); font-weight: 500; color: var(--on-dark-mut); }
+
+/* Below 760px there isn't enough width to split into two columns without
+   either the heading text or the visual card's own text wrapping into an
+   unreadable mess that overlapped the other column — stack them instead:
+   text first, then the visual as a normal (non-sticky) full-width block.
+   activeLeg highlighting on the left still works unchanged (its
+   IntersectionObserver watches the leg elements themselves, not the
+   sticky box), it just no longer has a pinned visual to sync against. */
+@media (max-width: 760px) {
+  .ba-journey__grid { grid-template-columns: 1fr; gap: clamp(28px, 7vw, 40px); }
+  .ba-journey__col { padding: clamp(40px, 8vw, 56px) 0 0; }
+  .ba-journey__sticky {
+    position: static;
+    /* A fixed aspect-ratio clipped the bottom card's content (its overflow
+       is hidden) once the two overlay cards needed more height than the
+       ratio allowed — same failure mode the desktop min-height comment
+       above already warned about. min-height is a floor only; real height
+       follows the cards' own content, same as desktop. */
+    aspect-ratio: auto;
+    min-height: 360px;
+    max-height: none;
+  }
+  /* The 200px floor ate over half the box's width on phones under ~400px,
+     leaving only a sliver of the machine photo visible — scale the floor
+     down with the viewport instead of holding it fixed. */
+  .ba-journey__cards { width: min(200px, 48vw); }
+}
+
+/* Under ~480px, even a scaled-down overlay leaves two dark, blurred cards
+   pressed almost edge-to-edge against each other and against the machine
+   photo behind them — technically not clipped or overlapping, but visually
+   unreadable as two separate things. Stop overlaying entirely: the photo
+   becomes a normal (shorter) block up top, then both cards flow full-width
+   underneath it, each with real room to breathe. */
+@media (max-width: 480px) {
+  .ba-journey__sticky {
+    display: block;
+    min-height: 0;
+  }
+  /* contain (not cover) + an aspect-ratio close to the source photo's own
+     (1399x1124 ≈ 5:4) — cover was cropping the machine's feet off the
+     bottom while still showing the photo's own dead space on the right;
+     contain guarantees the whole machine is always visible, and matching
+     the ratio keeps any leftover letterbox sliver to a minimum. */
+  .ba-journey__sticky > img {
+    position: static;
+    width: 100%; height: auto; aspect-ratio: 5 / 4;
+    object-fit: contain; object-position: center center;
+    background: var(--paper, #F5F5F5);
+  }
+  .ba-journey__cards {
+    align-self: auto; width: auto; max-width: none;
+    margin: 12px 14px 0;
+  }
+}
+
+/* ── Chapter 04 — one machine, two intelligent pathways ───── */
+.ba-pathways {
+  background: var(--paper);
+  padding: clamp(56px, 12.6vmin, 88px) 0; scroll-margin-top: 100px;
+}
+.ba-pathways__head { text-align: center; max-width: 720px; margin: 0 auto clamp(32px, 7.2vmin, 48px); }
+.ba-pathways__eyebrow {
+  font-size: clamp(.92rem, 2.4vmin, 1.15rem); font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--lime-deep); margin: 0 0 10px;
+}
+.ba-pathways__title-row { display: flex; align-items: center; gap: 20px; margin-bottom: 12px; }
+.ba-pathways__title-line { flex: 1 1 auto; height: 1px; background: linear-gradient(90deg, transparent, rgba(178,222,58,.5)); }
+.ba-pathways__title-row .ba-pathways__title-line:last-child { background: linear-gradient(90deg, rgba(178,222,58,.5), transparent); }
+.ba-pathways__head h2 { font-size: clamp(1.94rem, 6.53vmin, 2.66rem); color: var(--ink); margin: 0; line-height: 1.25; flex-shrink: 0; }
+.ba-pathways__sub { font-size: clamp(.96rem, 2.32vmin, 1.17rem); line-height: 1.6; color: var(--on-light-mut); margin: 0; }
+.ba-pathways__sub strong { color: var(--lime-deep); font-weight: 800; }
+
+.ba-pathways__grid {
+  /* Wide enough to hold the Reuse/Recycle pill entirely within the gap
+     (see .ba-pathways__pill below) — narrower and the pill has nowhere to
+     sit but on top of the center card's own text. */
+  --pw-gap: clamp(84px, 6.5vw, 116px);
+  position: relative;
+  display: grid; grid-template-columns: 1fr .9fr 1fr; column-gap: var(--pw-gap); row-gap: clamp(20px, 3vmin, 32px); align-items: stretch;
+}
+
+.ba-pathways__card {
+  border-radius: var(--r-lg, 16px); padding: clamp(18px, 3.6vmin, 22px);
+  display: flex; flex-direction: column; gap: clamp(7px, 1.6vmin, 12px);
+}
+.ba-pathways__card--reuse { background: rgba(178,222,58,.08); border: 1px solid rgba(178,222,58,.3); }
+.ba-pathways__card--recycle { background: var(--white); border: 1px solid rgba(0,0,0,.08); }
+
+.ba-pathways__card-head { display: flex; align-items: flex-start; gap: 12px; }
+.ba-pathways__tag {
+  margin-left: auto; flex-shrink: 0;
+  font-size: clamp(.65rem, 1.6vmin, .8rem); font-weight: 800; letter-spacing: .03em;
+  color: var(--lime-deep); background: rgba(178,222,58,.16);
+  border: 1px solid rgba(178,222,58,.4); border-radius: 999px;
+  padding: 5px 10px; white-space: nowrap;
+}
+.ba-pathways__role {
+  display: block; font-size: clamp(.69rem, 1.69vmin, .85rem); font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+}
+.ba-pathways__role--reuse { color: var(--lime-deep); }
+.ba-pathways__role--recycle { color: #45525C; }
+.ba-pathways__card-head h3 { font-size: clamp(1.13rem, 2.78vmin, 1.39rem); font-weight: 800; color: var(--ink); margin: 2px 0 0; }
+.ba-pathways__card > p { font-size: clamp(.87rem, 2.13vmin, 1.07rem); line-height: 1.5; color: var(--on-light-mut); margin: 0; }
+
+.ba-pathways__list { display: flex; flex-direction: column; gap: clamp(9px, 1.8vmin, 15px); }
+.ba-pathways__item { display: flex; align-items: flex-start; gap: 10px; }
+.ba-pathways__item strong { display: block; font-size: clamp(.89rem, 2.1vmin, 1.05rem); font-weight: 700; color: var(--ink); }
+.ba-pathways__item div span { font-size: clamp(.78rem, 1.8vmin, .92rem); color: var(--on-light-mut); line-height: 1.4; }
+.ba-pathways__item-num {
+  display: grid; place-items: center; flex-shrink: 0; margin-top: 1px;
+  width: 22px; height: 22px; border-radius: 50%;
+  font-size: clamp(.6rem, 1.4vmin, .72rem); font-weight: 800; color: var(--white);
+}
+.ba-pathways__item-num--reuse { background: var(--lime-deep); }
+.ba-pathways__item-num--recycle { background: #45525C; }
+.ba-pathways__outcome {
+  display: flex; align-items: center; gap: 12px; margin-top: auto;
+  border-radius: var(--r-md); padding: 10px 14px;
+}
+.ba-pathways__outcome--reuse { background: rgba(178,222,58,.14); color: var(--lime-deep); }
+.ba-pathways__outcome--recycle { background: rgba(0,0,0,.04); color: #45525C; }
+.ba-pathways__outcome-label {
+  display: block; font-size: clamp(.63rem, 1.55vmin, .77rem); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 2px;
+}
+.ba-pathways__outcome div span:last-child { font-size: clamp(.8rem, 1.94vmin, .97rem); font-weight: 700; color: var(--ink); }
+
+/* aspect-ratio matches the uploaded photos' native 1536x1024 (3:2) exactly,
+   so object-fit: cover shows the full photo with zero cropping instead of
+   a fixed short "strip" height slicing off the top of the bottles. */
+.ba-pathways__center {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+}
+/* Floated above the card on its own (position:absolute takes it out of
+   flow) instead of stacked in front of it — that way .ba-pathways__center
+   has only .ba-pathways__scanner as an in-flow child, so its top lines up
+   evenly with the Pathway A/B cards' tops instead of starting lower by
+   the badge's own height. */
+.ba-pathways__engine {
+  position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #14170F; color: var(--white);
+  font-size: clamp(.74rem, 1.79vmin, .89rem); font-weight: 800; letter-spacing: .04em;
+  padding: 8px 16px; border-radius: 999px; white-space: nowrap;
+}
+.ba-pathways__engine i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); flex-shrink: 0; }
+
+/* flex:1 lets this fill whatever extra height the grid's align-items:stretch
+   gives .ba-pathways__center (to match the taller of the two side cards),
+   instead of leaving dead space below a fixed-height card. */
+.ba-pathways__scanner { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; flex: 1; }
+
+/* ── AI Decision Engine read-out card ─────────────────────── */
+.ba-pathways__verify-card {
+  width: 100%; height: 100%; text-align: left;
+  display: flex; flex-direction: column;
+  background: #0B0F0A; border: 1px solid rgba(178,222,58,.25); border-radius: var(--r-lg, 20px);
+  padding: clamp(16px, 3vmin, 22px); box-shadow: 0 16px 36px rgba(10,15,5,.16);
+}
+.ba-pathways__verify-head { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.ba-pathways__verify-check {
+  flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(178,222,58,.16); color: var(--lime);
+}
+.ba-pathways__verify-head strong { display: block; font-size: clamp(.97rem, 2.38vmin, 1.13rem); font-weight: 800; color: var(--lime); }
+.ba-pathways__verify-head span { font-size: clamp(.74rem, 1.79vmin, .87rem); color: var(--on-dark-mut); }
+
+.ba-pathways__verify-rows { display: flex; flex-direction: column; }
+.ba-pathways__verify-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 0; border-bottom: 1px dashed rgba(255,255,255,.08);
+  font-size: clamp(.85rem, 2.07vmin, 1.01rem);
+}
+.ba-pathways__verify-row:last-child { border-bottom: none; }
+.ba-pathways__verify-label { display: inline-flex; align-items: center; gap: 8px; color: var(--on-dark-mut); }
+.ba-pathways__verify-label svg { color: var(--lime); flex-shrink: 0; }
+.ba-pathways__verify-row strong { font-weight: 700; color: var(--lime); }
+
+.ba-pathways__verify-decision { margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.08); }
+.ba-pathways__verify-decision-label {
+  display: block; font-size: clamp(.62rem, 1.5vmin, .75rem); font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--on-dark-mut); margin-bottom: 10px;
+}
+.ba-pathways__verify-decision-box {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(178,222,58,.1); border: 1px solid rgba(178,222,58,.35); border-radius: var(--r-md);
+  padding: 12px 14px; color: var(--lime);
+}
+.ba-pathways__verify-decision-box strong { display: block; font-size: clamp(.97rem, 2.38vmin, 1.13rem); font-weight: 800; color: var(--lime); text-transform: uppercase; }
+.ba-pathways__verify-decision-box span { font-size: clamp(.74rem, 1.79vmin, .87rem); color: var(--on-dark-mut); }
+
+/* Sized to exactly the gap (width: var(--pw-gap), same property that
+   drives the grid's own column-gap) and centered inside it via flex,
+   rather than an auto-width pill nudged sideways by a transform — that
+   way the pill's own box can never extend past the gap boundary onto
+   either neighboring card, regardless of viewport width. */
+.ba-pathways__pill {
+  position: absolute; top: 38%; transform: translateY(-50%);
+  width: var(--pw-gap);
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+  white-space: nowrap;
+  font-size: clamp(.6rem, 1.35vmin, .72rem); font-weight: 800; letter-spacing: .02em;
+  padding: 6px 6px; border-radius: 999px; border: none; cursor: default;
+}
+.ba-pathways__pill--reuse { left: calc(-1 * var(--pw-gap)); background: var(--lime-deep); color: var(--white); }
+.ba-pathways__pill--recycle { right: calc(-1 * var(--pw-gap)); background: #3A4750; color: var(--white); }
+
+/* ── Bottom "Live Analysis" stat bar ──────────────────────────────────
+   A separate grid row (col 2 only) rather than a flex child stacked inside
+   .ba-pathways__center — that way align-items:stretch on the grid only
+   equalizes the three CARDS' row, and this bar's own height never gets
+   pulled into that stretch comparison (which previously made the side
+   cards balloon to match center-column-plus-this-bar's combined height). */
+.ba-pathways__analysis {
+  grid-column: 2; grid-row: 2;
+  width: 100%; text-align: left;
+  background: #0B0F0A; border-radius: var(--r-md); padding: 16px 18px;
+  color: var(--on-dark);
+}
+.ba-pathways__analysis-title {
+  display: block; font-size: clamp(.66rem, 1.6vmin, .8rem); font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--on-dark-mut); margin-bottom: 10px;
+}
+.ba-pathways__live-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.ba-pathways__live-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.ba-pathways__live-cell svg { color: var(--lime); }
+.ba-pathways__live-cell span { font-size: clamp(.62rem, 1.5vmin, .75rem); color: var(--on-dark-mut); }
+.ba-pathways__live-cell strong { font-size: clamp(.87rem, 2.14vmin, 1.02rem); font-weight: 800; color: var(--white); }
+
+/* ── Mobile: one pathway at a time behind a tab switch ──────
+   The 3-column grid above reads fine stacked down to ~900px, but below
+   that it's two full-length cards back to back — a lot of scrolling to
+   compare "reuse vs recycle" when only one is usually relevant at a time.
+   This swaps to a single card whose content (scan photo, AI analysis,
+   steps, outcome) changes with the active tab. Desktop untouched. */
+.ba-pathways__mobile { display: none; }
+
+@media (max-width: 900px) {
+  .ba-pathways__grid { display: none; }
+  .ba-pathways__mobile {
+    display: block;
+    background: var(--white); border: 1px solid rgba(178,222,58,.35); border-radius: var(--r-lg, 20px);
+    padding: 20px; box-shadow: 0 12px 32px rgba(10,15,5,.06);
+  }
+
+  .ba-pathways__tabs { display: flex; border-bottom: 1px solid rgba(0,0,0,.08); margin-bottom: 20px; }
+  .ba-pathways__tab {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-bottom: -1px; padding: 12px 10px 13px; border: none; border-bottom: 3px solid transparent;
+    border-radius: 10px 10px 0 0; background: transparent;
+    font-size: .95rem; font-weight: 700; color: var(--on-light-mut); cursor: pointer;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .ba-pathways__tab.is-active { background: rgba(178,222,58,.12); color: var(--lime-deep); border-bottom-color: var(--lime-deep); }
+
+  .ba-pathways__mobile-common { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 20px; }
+
+  .ba-pathways__mobile-strip {
+    width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+    background: rgba(178,222,58,.12); border-radius: var(--r-md); padding: 14px 10px;
+  }
+  .ba-pathways__mobile-strip-cell { text-align: center; }
+  .ba-pathways__mobile-strip-cell span { display: block; font-size: .74rem; color: var(--on-light-mut); margin-bottom: 4px; }
+  .ba-pathways__mobile-strip-cell strong {
+    display: inline-flex; align-items: center; gap: 4px; font-size: .9rem; font-weight: 700; color: var(--ink);
+  }
+  .ba-pathways__mobile-strip-cell strong svg { color: var(--lime-deep); flex-shrink: 0; }
+  .ba-pathways__mobile-strip-cell strong.is-lime { color: var(--lime-deep); font-size: 1.05rem; font-weight: 800; }
+
+  .ba-pathways__mobile-livescan { width: 100%; display: flex; align-items: center; gap: 10px; color: var(--on-light-mut); }
+  .ba-pathways__mobile-livescan > span:first-child { font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; flex-shrink: 0; }
+  .ba-pathways__mobile-livescan-track { position: relative; flex: 1; height: 3px; border-radius: 2px; background: rgba(0,0,0,.08); }
+  .ba-pathways__mobile-livescan-track i { position: absolute; inset: 0; width: 55%; border-radius: 2px; background: var(--lime-deep); }
+  .ba-pathways__mobile-livescan-track b { position: absolute; left: 55%; top: 50%; width: 9px; height: 9px; border-radius: 50%; background: var(--lime-deep); transform: translate(-50%, -50%); box-shadow: 0 0 0 3px rgba(178,222,58,.25); }
+  .ba-pathways__mobile-livescan svg { flex-shrink: 0; color: var(--lime-deep); }
+
+  .ba-pathways__mobile-panel {
+    border-radius: var(--r-md); padding: 16px; margin-bottom: 8px;
+    background: rgba(178,222,58,.08); border: 1px solid rgba(178,222,58,.3);
+  }
+  .ba-pathways__mobile-panel--recycle { background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.08); }
+  .ba-pathways__mobile-panel-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+  .ba-pathways__mobile-panel-head strong { display: block; font-size: 1.05rem; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+  .ba-pathways__mobile-panel-head span { font-size: .85rem; line-height: 1.4; color: var(--on-light-mut); }
+
+  .ba-pathways__mobile-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .ba-pathways__mobile-step {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--white); border-radius: 12px; padding: 12px 14px;
+  }
+  .ba-pathways__mobile-step-num {
+    display: grid; place-items: center; flex-shrink: 0; margin-top: 1px;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--lime-deep); color: var(--white); font-size: .7rem; font-weight: 800;
+  }
+  .ba-pathways__mobile-step--recycle .ba-pathways__mobile-step-num { background: #45525C; }
+  .ba-pathways__mobile-step > div { flex: 1; min-width: 0; }
+  .ba-pathways__mobile-step strong { display: block; font-size: .93rem; font-weight: 700; color: var(--ink); }
+  /* Scoped to the description's wrapper div (not a bare "span" selector) so
+     it can't accidentally win over .ba-pathways__mobile-step-num — same
+     specificity trap as the desktop item-num bug earlier this session: a
+     generic descendant selector matching a badge span it wasn't meant for. */
+  .ba-pathways__mobile-step > div > span { font-size: .8rem; line-height: 1.4; color: var(--on-light-mut); }
+
+  .ba-pathways__mobile-panel > .ba-pathways__outcome { margin-top: 0; margin-bottom: 16px; }
+}
+@media (max-width: 640px) {
+  .ba-pathways__title-line { display: none; }
+  .ba-pathways__title-row { display: block; }
+}
+@media (max-width: 480px) {
+  .ba-pathways__live-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Chapter 05 — built for industrial recovery ───────────── */
+.ba-industrial { background: var(--paper); padding: clamp(56px, 12.6vmin, 88px) 0; scroll-margin-top: 100px; }
+.ba-industrial__head { font-size: clamp(1.94rem, 6.53vmin, 2.66rem); color: var(--ink); margin: 0 0 16px; max-width: 46ch; line-height: 1.25; }
+.ba-industrial__lead { font-size: clamp(.96rem, 2.32vmin, 1.17rem); line-height: 1.75; color: var(--on-light-mut); max-width: 66ch; margin: 0 0 clamp(32px, 7.2vmin, 44px); }
+
+.ba-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.ba-stat {
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-radius: var(--r-lg, 16px);
+  padding: clamp(22px, 5.4vmin, 28px);
+}
+.ba-stat__num { font-size: clamp(2.1rem, 7.2vmin, 2.7rem); font-weight: 800; letter-spacing: -.02em; color: var(--lime-deep); line-height: 1; font-variant-numeric: tabular-nums; }
+.ba-stat__label { margin-top: 10px; font-weight: 700; color: var(--ink); font-size: clamp(.95rem, 2.3vmin, 1.16rem); }
+.ba-stat__note { font-size: clamp(.74rem, 1.79vmin, .89rem); color: var(--on-light-mut); margin-top: 4px; }
+
+.ba-caps { display: flex; flex-wrap: wrap; gap: 10px; margin-top: clamp(24px, 5.4vmin, 32px); }
+.ba-cap {
+  flex: 1 1 0;
+  min-width: 200px;
+  text-align: center;
+  font-size: clamp(.77rem, 1.89vmin, .95rem); font-weight: 600; letter-spacing: .02em;
+  border: 1px solid rgba(0,0,0,.1); background: var(--white);
+  border-radius: 999px; padding: 8px 16px; color: var(--on-light-mut);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, color .25s ease;
+  cursor: default;
+}
+.ba-cap:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0,0,0,.1);
+  border-color: var(--lime-deep);
+  color: var(--ink);
+}
+
+@media (max-width: 780px) { .ba-stats { grid-template-columns: 1fr; } }
+
+/* ── Chapter 06 — building the future (white/light close) ─── */
+.ba-future { background: var(--paper); padding: clamp(56px, 12.6vmin, 88px) 0; scroll-margin-top: 100px; }
+.ba-future__head { font-size: clamp(1.94rem, 6.53vmin, 2.66rem); color: var(--ink); margin: 0 0 18px; max-width: 44ch; line-height: 1.25; }
+.ba-future__body { font-size: clamp(.96rem, 2.32vmin, 1.17rem); line-height: 1.75; color: var(--on-light-mut); max-width: 68ch; margin: 0 0 18px; }
+.ba-future__body:last-of-type { margin-bottom: clamp(32px, 7.2vmin, 44px); }
+
+.ba-future__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.ba-future__cell {
+  background: var(--white); border: 1px solid rgba(0,0,0,.08); border-radius: var(--r-md);
+  padding: 22px 18px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.ba-future__cell svg { color: var(--lime-deep); margin-bottom: 6px; }
+.ba-future__cell strong { font-size: clamp(.87rem, 2.13vmin, 1.07rem); letter-spacing: .02em; color: var(--ink); }
+.ba-future__cell span { font-size: clamp(.74rem, 1.79vmin, .89rem); color: var(--on-light-mut); line-height: 1.4; }
+.ba-future__cell.is-core { border-color: var(--lime-deep); background: rgba(178,222,58,.08); }
+
+@media (max-width: 900px) { .ba-future__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .ba-future__grid { grid-template-columns: 1fr; } }
+
+/* ── Go to Blog (end of article, above footer) ────────────── */
+.ba-goto-blog {
+  background: var(--paper); border-top: 1px solid rgba(0,0,0,.06);
+  padding: clamp(20px, 4vmin, 28px) var(--gutter);
+  display: flex; justify-content: flex-end;
+  gap: 12px; flex-wrap: wrap;
+}

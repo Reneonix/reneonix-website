@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
+import { navClick } from '../utils/nav.js';
 import {
   Package,
   Eye,
@@ -112,7 +113,7 @@ export default function Solutions() {
             </div>
             <div className="zz-row__media">
               <div className="zz-row__media-inner">
-                <img src="/hardware-flow.png" alt="Reneonix hardware processing flow" loading="lazy" decoding="async" />
+                <img src="/hardware-flow.png" alt="Reneonix hardware processing flow" width="1137" height="1383" loading="lazy" decoding="async" />
               </div>
             </div>
             <div className="zz-row__copy-bottom">
@@ -122,7 +123,7 @@ export default function Solutions() {
                 <FeatureRow Icon={RadioTower} title="Live process monitoring" body="Sensors for quality control and operational visibility." />
                 <FeatureRow Icon={Layers3} title="Multi-material ready" body="Built for glass, plastics, textiles, paper, and aluminium." />
               </ul>
-              <a href="#hardware" className="zz-row__cta-btn">
+              <a href="/solutions/hardware" className="zz-row__cta-btn" onClick={navClick('/solutions/hardware')}>
                 Explore hardware <Arrow />
               </a>
             </div>
@@ -145,6 +146,8 @@ export default function Solutions() {
                 <img
                   src="/software.png"
                   alt="Reneonix software dashboard for material traceability"
+                  width="1536"
+                  height="1024"
                   loading="lazy"
                   decoding="async"
                 />
@@ -174,7 +177,7 @@ export default function Solutions() {
                   <span>Data Layer</span>
                 </div>
               </div>
-              <a href="#software" className="zz-row__cta">
+              <a href="/solutions/software" className="zz-row__cta" onClick={navClick('/solutions/software')}>
                 Explore software <Arrow />
               </a>
             </div>
@@ -197,6 +200,8 @@ export default function Solutions() {
                 <img
                   src="/material-science.png"
                   alt="Reneonix material science lab — recovered samples engineered into circular products"
+                  width="1329"
+                  height="1183"
                   loading="lazy"
                   decoding="async"
                 />
@@ -209,7 +214,7 @@ export default function Solutions() {
                 <FeatureRow Icon={ShieldCheck} title="Industrial validation" body="Strength, thermal behaviour, purity, consistency." />
                 <FeatureRow Icon={UsersRound} title="R&D partnerships" body="Labs, industries, pilots, and commercialization." />
               </ul>
-              <a href="#material-science" className="zz-row__cta-btn">
+              <a href="/solutions/material-science" className="zz-row__cta-btn" onClick={navClick('/solutions/material-science')}>
                 Explore our material lab <Arrow />
               </a>
             </div>

@@ -1,0 +1,285 @@
+/* ==========================================================
+   BlogArticleFoamGlass
+   ========================================================== */
+
+/* ── Breadcrumb (inside hero) ─────────────────────────────── */
+.fg-breadcrumb {
+  position: absolute; z-index: 1; top: 96px; left: 0; right: 0;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 6px;
+  font-size: .88rem; font-weight: 600; color: var(--on-dark-mut);
+  padding: 0 var(--gutter); text-align: left;
+}
+.fg-breadcrumb a { color: var(--on-dark-mut); text-decoration: none; transition: color .18s ease; }
+.fg-breadcrumb a:hover { color: var(--lime); }
+.fg-breadcrumb svg { color: rgba(255,255,255,.3); flex-shrink: 0; }
+.fg-breadcrumb .is-current {
+  color: var(--on-dark); max-width: 360px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.fg-hero {
+  position: relative; overflow: hidden;
+  min-height: calc(100vh - 76px);
+  display: flex; align-items: center; justify-content: flex-start;
+  padding: clamp(140px, 16vw, 180px) 0 clamp(48px, 6vw, 72px);
+  background: var(--bg) url('/article background.png') center / cover no-repeat;
+}
+@media (max-width: 1024px) { .fg-hero { min-height: calc(100vh - 68px); } }
+@media (max-width: 480px) { .fg-hero { min-height: calc(100vh - 60px); } }
+.fg-hero__bg-veil {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(100deg, rgba(4,8,4,.68) 0%, rgba(4,8,4,.52) 28%, rgba(4,8,4,.26) 52%, rgba(4,8,4,.08) 74%, rgba(4,8,4,.02) 100%),
+    linear-gradient(180deg, rgba(4,8,4,.22) 0%, transparent 20%, transparent 70%, rgba(4,8,4,.3) 100%),
+    radial-gradient(900px 480px at 8% -10%, rgba(178,222,58,.14), transparent 60%);
+}.fg-hero__inner {
+  position: relative; z-index: 1; max-width: 860px;
+  padding: 0 var(--gutter); text-align: left;
+}
+.fg-hero__chip {
+  display: inline-block;
+  font-size: .8rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--lime); background: rgba(178,222,58,.14);
+  border: 1px solid rgba(178,222,58,.35);
+  padding: 7px 14px; border-radius: 999px; margin: 0 0 18px;
+}
+.fg-hero h1 {
+  color: var(--white); font-size: clamp(2.1rem, 4.6vw, 3.4rem); line-height: 1.16;
+  margin: 0 0 24px;
+}
+/* Scoped under .fg-hero (not just .fg-hero__lead alone) so this beats
+   the shared .fg-article p rule further down — that rule's higher
+   specificity (class + element) was silently overriding this color. */
+.fg-hero .fg-hero__lead {
+  color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.45);
+  font-size: clamp(1rem, 1.7vw, 1.15rem); line-height: 1.6;
+  max-width: 620px; margin: 0 0 28px;
+}
+.fg-hero__meta {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px;
+  color: var(--on-dark-mut); font-size: .96rem; font-weight: 500;
+}
+.fg-hero__meta span { display: inline-flex; align-items: center; gap: 6px; }
+.fg-hero__meta svg { color: var(--lime); }
+.fg-hero__meta-author { color: var(--lime); font-weight: 700; }
+.fg-hero__dot { opacity: .5; }
+
+.fg-hero__scroll-cue {
+  position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%);
+  z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  color: rgba(255,255,255,.5); text-decoration: none;
+  font-size: .72rem; font-weight: 600;
+  animation: fg-scroll-bounce 1.8s ease-in-out infinite;
+}
+@keyframes fg-scroll-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fg-hero__scroll-cue { animation: none; }
+}
+
+/* ── Shared: heading accents ──────────────────────────────── */
+.fg-article h2 em { font-style: normal; font-weight: 900; color: var(--lime-deep); }
+.fg-article h2 { font-size: clamp(1.85rem, 3.9vw, 2.6rem); color: var(--ink); line-height: 1.22; margin: 0 0 14px; }
+.fg-article p { font-size: clamp(1.05rem, 1.85vw, 1.2rem); line-height: 1.7; color: var(--on-light-mut); max-width: 62ch; margin: 0 0 16px; }
+.fg-article strong { color: var(--ink); }
+
+.fg-eyebrow {
+  display: block;
+  font-size: clamp(.92rem, 2.4vmin, 1.05rem); font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--lime-deep); margin: 0 0 14px;
+}
+
+/* ── Shared chapter shell ──────────────────────────────────── */
+.fg-chapter { background: var(--paper); padding: clamp(56px, 12vmin, 88px) 0; scroll-margin-top: 100px; }
+
+/* ── Image placeholder — swap for a real <img> once uploaded ─ */
+.fg-img-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 10px, rgba(0,0,0,.06) 10px, rgba(0,0,0,.06) 20px);
+  border: 2px dashed rgba(0,0,0,.16);
+  color: var(--on-light-mut);
+  font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+}
+.fg-img-placeholder svg { color: rgba(0,0,0,.24); }
+
+/* Scroll reveal — used by the process timeline rows below */
+.fg-reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1); }
+.fg-reveal.fg-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .fg-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ── Chapter 01 — the end of the line (image + text) ──────── */
+.fg-challenge {
+  scroll-margin-top: 76px;
+  background: var(--paper);
+}
+/* Full-bleed section, content column capped the same way .container is
+   site-wide — without this, the 1fr/1fr grid stretches the media column
+   to absurd widths on ultrawide/4K and strands the image in dead space. */
+.fg-challenge__inner {
+  display: grid; grid-template-columns: 1fr 1fr; align-items: center;
+  max-width: var(--content-maxw); margin: 0 auto;
+}
+.fg-challenge__media { padding: clamp(20px, 4.5vmin, 36px); }
+.fg-challenge__media--inline { display: none; }
+.fg-challenge__media img, .fg-challenge__media .fg-img-placeholder {
+  display: block; width: 100%; max-width: 560px; margin: 0 auto; aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: var(--r-lg, 24px); border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 24px 48px rgba(10,15,5,.12);
+}
+.fg-challenge__text { display: flex; flex-direction: column; justify-content: center; padding: clamp(24px, 7.2vmin, 48px); }
+@media (max-width: 780px) {
+  .fg-challenge__inner { grid-template-columns: 1fr; }
+  .fg-challenge__inner > .fg-challenge__media { display: none; }
+  .fg-challenge__media--inline { display: block; padding: 4px 0 20px; }
+}
+
+/* ── Chapter 02 — a second chance (text + image) ──────────── */
+.fg-recovery {
+  scroll-margin-top: 76px;
+  background: var(--paper);
+}
+/* Same content-width cap as .fg-challenge__inner above, and for the same
+   reason — this row is full-bleed, not wrapped in .container. */
+.fg-recovery__inner {
+  display: grid; grid-template-columns: 1fr 1fr; align-items: center;
+  max-width: var(--content-maxw); margin: 0 auto;
+}
+.fg-recovery__text { display: flex; flex-direction: column; justify-content: center; padding: clamp(40px, 10.8vmin, 72px); }
+.fg-recovery__accent { color: var(--lime-deep); font-weight: 700; }
+.fg-recovery__media { padding: clamp(28px, 7.2vmin, 56px); }
+.fg-recovery__media--inline { display: none; }
+.fg-recovery__media img, .fg-recovery__media .fg-img-placeholder {
+  display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover;
+  border-radius: var(--r-lg, 24px); border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 24px 48px rgba(10,15,5,.12);
+}
+@media (max-width: 780px) {
+  .fg-recovery__inner { grid-template-columns: 1fr; }
+  .fg-recovery__inner > .fg-recovery__media { display: none; }
+  .fg-recovery__media--inline { display: block; padding: 4px 0 24px; }
+}
+
+.fg-pull {
+  border-left: 3px solid var(--lime-deep); padding: 2px 0 2px 18px; margin: 6px 0 0;
+  font-size: clamp(1.18rem, 2.9vmin, 1.45rem); font-weight: 700; line-height: 1.5; color: var(--ink); max-width: 34ch;
+}
+
+/* ── Chapter 03 — the transformation ──────────────────────────
+   Same alternating text-block / white-card row layout as the Investors
+   page's "Backed by Institutions" section (.ip-backers-*), reused here with
+   each card holding a phase's process steps instead of partner logos. */
+.fg-process-timeline { margin-top: clamp(28px, 4vw, 44px); border-top: 1px solid rgba(0,0,0,.08); }
+.fg-process-row {
+  display: flex; align-items: center; gap: clamp(24px, 3.6vw, 64px);
+  padding: clamp(32px, 4.4vw, 56px) 0; border-bottom: 1px solid rgba(0,0,0,.08);
+}
+.fg-process-row__text { flex: 0 0 clamp(220px, 24vw, 340px); }
+.fg-process-row__text h3 { font-size: clamp(1.15rem, 2.4vw, 1.5rem); font-weight: 800; color: var(--ink); line-height: 1.28; margin: 0 0 10px; }
+.fg-process-row__text p { font-size: clamp(.9rem, 1.5vw, 1.02rem); color: var(--on-light-mut); line-height: 1.6; margin: 0; max-width: 34ch; }
+
+.fg-process-row__box {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; flex-direction: column; gap: clamp(16px, 2.2vw, 24px);
+  background: var(--white); border: 1.5px solid rgba(0,0,0,.08); border-radius: var(--r-lg, 18px);
+  padding: clamp(22px, 2.6vw, 32px) clamp(22px, 3vw, 36px);
+  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+}
+.fg-process-item { display: flex; align-items: flex-start; gap: 16px; }
+.fg-process-item__num {
+  flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+  background: #14170F; color: var(--lime);
+  display: grid; place-items: center; font-weight: 800; font-size: .9rem;
+}
+/* Without flex-grow, a flex item's text sizes to its content's natural
+   (unwrapped) width instead of filling the row — that's what left the card
+   with a wide dead strip of empty space next to short-ish lines. */
+.fg-process-item__body { flex: 1 1 0%; min-width: 0; }
+.fg-process-item__body h4 { font-size: clamp(1.15rem, 2.4vw, 1.5rem); font-weight: 800; color: var(--ink); margin: 0 0 6px; }
+/* max-width overrides the shared .fg-article p rule's 62ch cap — CSS
+   cascades per-property, so leaving it unset here still let that narrower
+   width leak through even after the flex fix above, wrapping text well
+   short of the card's actual (now-wide) available space. */
+.fg-process-item__body p { font-size: clamp(.9rem, 1.5vw, 1.02rem); color: var(--on-light-mut); line-height: 1.6; margin: 0; max-width: none; }
+.fg-process-item__chip {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+  background: #14170F; color: var(--lime); border-radius: 8px; padding: 7px 12px;
+  font-size: .84rem; font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .fg-process-row { flex-direction: column; align-items: stretch; gap: 20px; }
+  .fg-process-row__text { flex-basis: auto; order: 0; }
+  .fg-process-row__box { order: 1; }
+}
+
+/* ── Chapter 04 — the payoff (why cards) ──────────────────── */
+.fg-why-grid {
+  display: grid; gap: 1.2rem; margin-top: clamp(28px, 4vw, 44px);
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+}
+.fg-why-card {
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-top: 3px solid var(--lime-deep);
+  border-radius: var(--r-md); padding: 22px 20px;
+}
+.fg-why-card svg { color: var(--lime-deep); margin-bottom: 10px; }
+.fg-why-card h3 { font-size: clamp(1.15rem, 2.4vw, 1.5rem); font-weight: 800; color: var(--ink); margin: 0 0 8px; }
+.fg-why-card p { font-size: clamp(.9rem, 1.5vw, 1.02rem); color: var(--on-light-mut); margin: 0; max-width: none; }
+
+#why > .container > .fg-eyebrow,
+.fg-research__text .fg-eyebrow,
+#future > .container > .fg-eyebrow { font-size: clamp(1rem, 2.6vmin, 1.13rem); }
+
+/* ── Chapter 05 — research-driven innovation (people chain) ── */
+.fg-research { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(32px, 5vw, 64px); align-items: center; }
+
+.fg-research__tags { display: grid; grid-template-columns: repeat(2, max-content); gap: 10px; margin-top: clamp(20px, 3vw, 28px); }
+.fg-research__tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: .92rem; font-weight: 700; color: var(--lime-deep);
+  background: rgba(178,222,58,.08); border: 1px solid rgba(178,222,58,.35);
+  border-radius: 999px; padding: 8px 14px;
+}
+.fg-research__tag svg { flex-shrink: 0; }
+
+.fg-research__chain { display: flex; flex-direction: column; gap: clamp(28px, 4vw, 40px); }
+.fg-research__node { position: relative; display: flex; align-items: center; gap: 28px; }
+.fg-research__circle {
+  position: relative; z-index: 1; flex-shrink: 0; width: 140px; height: 140px;
+  border-radius: 50%; overflow: hidden; border: 3px solid var(--white);
+  box-shadow: 0 10px 28px rgba(10,15,5,.14); background: var(--paper);
+}
+/* object-position anchored to the top — these are headshots with hair
+   close to the top edge of the source photo; a centered crop shaved into
+   the hairline on tighter-aspect portraits (e.g. yokesh-reneonix.jpeg). */
+.fg-research__circle img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.fg-research__circle .fg-img-placeholder { width: 100%; height: 100%; border: none; background: rgba(178,222,58,.12); }
+.fg-research__circle .fg-img-placeholder svg { color: var(--lime-deep); }
+
+.fg-research__info { min-width: 0; }
+.fg-research__role { display: block; font-size: .88rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--lime-deep); margin-bottom: 4px; }
+.fg-research__info p { font-size: clamp(.9rem, 1.5vw, 1.02rem); color: var(--on-light-mut); line-height: 1.5; margin: 0; max-width: 36ch; }
+
+/* Dashed connector between consecutive circles, centred on the 140px circle */
+.fg-research__node:not(:last-child)::after {
+  content: ''; position: absolute; left: 69px; top: 100%; width: 2px; height: clamp(28px, 4vw, 40px);
+  background-image: linear-gradient(var(--lime-deep) 55%, transparent 0%);
+  background-size: 2px 9px; background-repeat: repeat-y;
+}
+
+@media (max-width: 900px) {
+  .fg-research { grid-template-columns: 1fr; }
+}
+
+/* ── Go to Blog (end of article, above footer) ────────────── */
+.fg-goto-blog {
+  background: var(--paper); border-top: 1px solid rgba(0,0,0,.06);
+  padding: clamp(20px, 4vmin, 28px) var(--gutter);
+  display: flex; justify-content: flex-end;
+  gap: 12px; flex-wrap: wrap;
+}

@@ -103,6 +103,19 @@ export default function MagicRings({
     const mount = mountRef.current;
     if (!mount) return;
 
+    // This is a continuous per-frame WebGL shader (requestAnimationFrame,
+    // forever, for as long as the section is mounted) with no visibility or
+    // power gating. On desktop-class GPUs that's cheap; on mid/low-tier
+    // mobile GPUs (Mali in particular — common on MediaTek/Dimensity chips)
+    // it's heavy enough to compete with the compositor thread and stall
+    // touch-scroll. It's purely decorative, so skip it outright on mobile
+    // widths and when the user has asked for reduced motion — same bail-out
+    // pattern TargetCursor.jsx already uses for its own always-on effect.
+    const isMobile = window.matchMedia('(max-width: 820px)').matches
+      || ('ontouchstart' in window && window.matchMedia('(pointer: coarse)').matches);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isMobile || reduceMotion) return;
+
     let renderer;
     try {
       // alpha: false → solid black canvas; avoids WebGL alpha-compositing bugs

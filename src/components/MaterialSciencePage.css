@@ -679,12 +679,15 @@
   .ms-ra__acc-out-item { font-size: 0.58rem; padding: 5px 6px; }
 }
 
-/* ── Small phone (≤600px): match Software page hero height ── */
+/* ── Small phone (≤600px): match Investors page hero height ── */
 @media (max-width: 600px) {
   .ms-hero {
     height: auto;
-    min-height: unset;
-    aspect-ratio: 3 / 4;
+    min-height: 0;
+  }
+  .ms-hero__container {
+    padding-top: 32px;
+    padding-bottom: 40px;
   }
 }
 
@@ -753,9 +756,9 @@
   display: inline-flex;
   align-items: center;
   font-family: 'Inter', sans-serif;
-  font-size: 0.80rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: clamp(.92rem, 2.4vmin, 1.05rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--lime-deep, #9CC130);
   margin-bottom: 16px;
@@ -1413,9 +1416,9 @@
   display: inline-flex;
   align-items: center;
   font-family: 'Inter', sans-serif;
-  font-size: 0.80rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: clamp(.92rem, 2.4vmin, 1.05rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--lime-deep, #9CC130);
   margin-bottom: 16px;

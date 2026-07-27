@@ -1,0 +1,269 @@
+/* ==========================================================
+   ProcessChain — animated 5-step recovery chain
+   "broken"  variant → Challenge sections (fragmented, mismatched nodes)
+   "healed"  variant → Solution sections (connected, uniform, flowing data)
+
+   Motion policy: animations always run, regardless of the OS-level
+   reduce-motion setting — real users don't go into device settings before
+   viewing the site, so the animated reveal is unconditional. Only
+   transform, opacity and stroke-dashoffset are ever animated.
+   ========================================================== */
+
+.pc-chain {
+  --pc-circle: clamp(52px, 7vw, 68px);
+  --pc-amber: #E2A63B;
+  --pc-deep-green: #0B3D2E;
+  --pc-tint-a-bg: #EFEDE6; --pc-tint-a-bd: #C9C2AF;
+  --pc-tint-b-bg: #E9F0E2; --pc-tint-b-bd: #AACB98;
+  --pc-tint-c-bg: #F3EAE1; --pc-tint-c-bd: #D8BCA2;
+  --pc-tint-d-bg: #E6EEF3; --pc-tint-d-bd: #A6C2D0;
+  --pc-tint-e-bg: #F6F0DB; --pc-tint-e-bd: #D6C282;
+
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* ── Node (circle + label) ─────────────────────────────────── */
+.pc-node {
+  display: flex; flex-direction: column; align-items: center;
+  flex: 0 0 auto;
+  width: clamp(84px, 12vw, 112px);
+  text-align: center;
+  opacity: 1;
+}
+
+.pc-node__circle {
+  position: relative;
+  width: var(--pc-circle); height: var(--pc-circle);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  outline: none; cursor: default;
+  transform: rotate(var(--pc-tilt, 0deg));
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.pc-node__circle:hover,
+.pc-node__circle:focus-visible {
+  transform: rotate(var(--pc-tilt, 0deg)) scale(1.08);
+  box-shadow: 0 10px 26px rgba(20, 30, 15, .22);
+}
+.pc-node__circle:focus-visible { outline: 2px solid var(--lime-deep); outline-offset: 3px; }
+
+.pc-node__icon { display: flex; }
+.pc-node__icon svg { width: 26px; height: 26px; }
+
+.pc-node__label {
+  margin-top: 12px;
+  font-size: .86rem; font-weight: 700; color: var(--ink);
+  max-width: 13ch; line-height: 1.3;
+}
+
+/* ── Broken variant: each node reads as a different, uncoordinated owner ─ */
+.pc-chain--broken .pc-node__circle { background: var(--paper); border: 1.5px solid var(--on-light-mut); }
+.pc-chain--broken .pc-node__icon { color: var(--on-light-mut); }
+.pc-node__circle--a { background: var(--pc-tint-a-bg); border-color: var(--pc-tint-a-bd); }
+.pc-node__circle--b { background: var(--pc-tint-b-bg); border-color: var(--pc-tint-b-bd); }
+.pc-node__circle--c { background: var(--pc-tint-c-bg); border-color: var(--pc-tint-c-bd); }
+.pc-node__circle--d { background: var(--pc-tint-d-bg); border-color: var(--pc-tint-d-bd); }
+.pc-node__circle--e { background: var(--pc-tint-e-bg); border-color: var(--pc-tint-e-bd); }
+.pc-node__circle--dashed { border-style: dashed; }
+.pc-node__circle--dotted { border-style: dotted; }
+
+/* ── Healed variant: uniform, deliberate, connected ────────────────────── */
+.pc-chain--healed .pc-node__circle {
+  background: var(--pc-deep-green); border: none;
+  box-shadow: 0 8px 20px rgba(11, 61, 46, .3);
+}
+.pc-chain--healed .pc-node__icon { color: var(--lime); }
+
+/* ── Pulse ring — hints interactivity on the first node ───────────────── */
+.pc-node__circle--pulse::after {
+  content: ''; position: absolute; inset: -6px; border-radius: 50%;
+  border: 2px solid var(--on-light-mut); opacity: 0; pointer-events: none;
+}
+.pc-chain--healed .pc-node__circle--pulse::after { border-color: var(--lime-deep); }
+
+/* ── Tooltip pill ───────────────────────────────────────────────────────
+   Rendered from step.tooltip; shown on hover AND :focus-visible so
+   keyboard users get the same content as pointer users. */
+.pc-node__tooltip {
+  position: absolute; left: 50%; bottom: calc(100% + 14px);
+  transform: translateX(-50%);
+  min-width: 160px; max-width: 220px;
+  background: #14170F; color: var(--lime);
+  font-size: .8rem; font-weight: 600; line-height: 1.42;
+  padding: 10px 12px; border-radius: 10px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .3);
+  opacity: 0; pointer-events: none; z-index: 5;
+}
+.pc-node__tooltip::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 6px solid transparent; border-top-color: #14170F;
+}
+.pc-node__circle:hover .pc-node__tooltip,
+.pc-node__circle:focus-visible .pc-node__tooltip { opacity: 1; }
+
+/* ── Connector (SVG line + arrowhead, reveal mask, flow/leak dots) ────── */
+.pc-connector {
+  position: relative;
+  flex: 1 1 auto; min-width: 24px;
+  height: var(--pc-circle);
+  display: flex; align-items: center;
+}
+.pc-connector__svg { width: 100%; height: 24px; overflow: visible; display: block; }
+.pc-connector__line { fill: none; stroke-linecap: round; }
+.pc-connector__reveal { fill: none; stroke-dashoffset: 0; }
+
+.pc-chain--broken .pc-connector__line { stroke: #B7AF9E; stroke-width: 1.6; stroke-dasharray: 4 7; }
+.pc-chain--broken .pc-connector__head { fill: #B7AF9E; }
+
+.pc-chain--healed .pc-connector__line { stroke: var(--lime-deep); stroke-width: 2.6; }
+.pc-chain--healed .pc-connector__head { fill: var(--lime-deep); }
+
+/* Amber "data-leak" dot — floats just off the broken connector */
+.pc-connector__leak {
+  position: absolute; left: calc(50% - 2.4px); top: 2px;
+  width: 4.8px; height: 4.8px; border-radius: 50%;
+  background: var(--pc-amber); opacity: .85; pointer-events: none;
+}
+
+/* Data-flow dot — travels the healed connector once it has drawn in */
+.pc-connector__flow {
+  position: absolute; left: 6px; top: 50%;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--white);
+  box-shadow: 0 0 8px rgba(178, 222, 58, .9), 0 0 2px rgba(255, 255, 255, .85);
+  opacity: 0; pointer-events: none;
+  transform: translate(0, -50%);
+}
+
+/* ==========================================================
+   Motion — everything below only runs for users who haven't
+   requested reduced motion. Without it, all of the above renders
+   in its finished state immediately: full opacity, no transform
+   offset, stroke-dashoffset 0, no dot/pulse animation.
+   ========================================================== */
+/* Unconditional (not gated behind prefers-reduced-motion) — this site
+   intentionally always runs these entrance/preview animations regardless
+   of the OS-level reduce-motion setting, since real users don't expect to
+   have to change device settings to see the site as designed. */
+.pc-node {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .5s ease, transform .5s cubic-bezier(.2, .7, .2, 1);
+}
+.pc-chain.is-in .pc-node { opacity: 1; transform: translateY(0); }
+
+.pc-connector__reveal { transition: stroke-dashoffset .55s ease; }
+
+.pc-node__tooltip {
+  transform: translateX(-50%) translateY(6px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.pc-node__circle:hover .pc-node__tooltip,
+.pc-node__circle:focus-visible .pc-node__tooltip { transform: translateX(-50%) translateY(0); }
+
+/* Ghost-hover preview — once, after the chain has drawn in, each node
+   with a tooltip briefly "hovers itself" in sequence: tooltip fades up,
+   circle gives a soft nudge. Teaches a mouse-idle visitor that these
+   nodes are interactive before they've touched anything. */
+.pc-chain.is-in .pc-node__circle--has-tip .pc-node__tooltip {
+  animation: pc-tooltip-preview 1s ease;
+  animation-delay: var(--pc-preview-delay, 1s);
+  animation-fill-mode: backwards;
+}
+@keyframes pc-tooltip-preview {
+  0%, 100% { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  22%, 68% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.pc-chain.is-in .pc-node__circle--has-tip {
+  animation: pc-node-preview-nudge 1s ease;
+  animation-delay: var(--pc-preview-delay, 1s);
+}
+@keyframes pc-node-preview-nudge {
+  0%, 100% { transform: rotate(var(--pc-tilt, 0deg)) scale(1); box-shadow: none; }
+  22%, 68% { transform: rotate(var(--pc-tilt, 0deg)) scale(1.08); box-shadow: 0 10px 26px rgba(20, 30, 15, .22); }
+}
+
+.pc-chain.is-in .pc-node__circle--pulse::after {
+  animation: pc-pulse-ring 1.5s ease-out 3;
+  animation-delay: var(--pc-pulse-delay, .6s);
+}
+@keyframes pc-pulse-ring {
+  0%   { transform: scale(.72); opacity: .6; }
+  70%  { transform: scale(1.35); opacity: 0; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+.pc-chain.is-in .pc-connector__leak {
+  animation: pc-leak-float 2.6s ease-in-out infinite;
+}
+@keyframes pc-leak-float {
+  0%, 100% { transform: translateY(0); opacity: .85; }
+  50%      { transform: translateY(4px); opacity: .5; }
+}
+
+.pc-chain.is-in .pc-connector__flow {
+  animation: pc-flow 1.2s linear infinite;
+}
+@keyframes pc-flow {
+  0%   { transform: translate(0, -50%); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translate(var(--pc-travel, 60px), -50%); opacity: 0; }
+}
+
+/* ==========================================================
+   Responsive — vertical timeline below 760px
+   ========================================================== */
+@media (max-width: 760px) {
+  .pc-chain { flex-direction: column; align-items: center; }
+  .pc-node { width: auto; }
+
+  .pc-connector { width: var(--pc-circle); height: var(--pc-circle); margin: 2px 0; }
+  .pc-connector__svg { width: 100%; height: 100%; transform: rotate(90deg); }
+
+  /* Tooltips move to the side so they don't collide with the node above/below */
+  .pc-node__tooltip {
+    left: calc(100% + 14px); bottom: auto; top: 50%;
+    transform: translateY(-50%);
+  }
+  .pc-node__tooltip::after {
+    top: 50%; left: -6px; transform: translateY(-50%) rotate(90deg);
+    border-top-color: transparent; border-right-color: #14170F;
+  }
+
+  /* Infinite flow-dot disabled on the mobile timeline */
+  .pc-connector__flow { display: none; }
+}
+@media (max-width: 760px) {
+  .pc-node__tooltip { transform: translateY(-50%) translateX(6px); }
+  .pc-node__circle:hover .pc-node__tooltip,
+  .pc-node__circle:focus-visible .pc-node__tooltip { transform: translateY(-50%) translateX(0); }
+}
+
+/* Below ~480px there isn't enough room to the side of a node for the
+   760px breakpoint's side-positioned tooltip — it needs its FULL width
+   (~160-220px) clear to one side, and a narrow phone doesn't have that,
+   so it was running off the viewport edge (clipped by the site-wide
+   overflow-x:clip). Centered above the node only needs HALF that width
+   clear on each side, which fits — and this reuses the ghost-hover
+   preview keyframes unmodified, since they already animate
+   translateX(-50%) assuming this exact centered position. */
+@media (max-width: 480px) {
+  .pc-node__tooltip {
+    left: 50%; right: auto; bottom: calc(100% + 14px); top: auto;
+    transform: translateX(-50%);
+    max-width: min(200px, 78vw);
+  }
+  .pc-node__tooltip::after {
+    top: 100%; left: 50%; bottom: auto; right: auto;
+    transform: translateX(-50%);
+    border-top-color: #14170F; border-right-color: transparent;
+  }
+}
+@media (max-width: 480px) {
+  .pc-node__tooltip { transform: translateX(-50%) translateY(4px); }
+  .pc-node__circle:hover .pc-node__tooltip,
+  .pc-node__circle:focus-visible .pc-node__tooltip { transform: translateX(-50%) translateY(0); }
+}

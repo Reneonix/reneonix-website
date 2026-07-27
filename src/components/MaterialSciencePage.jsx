@@ -7,6 +7,7 @@ import {
   Landmark, HardHat, Lightbulb,
   Users, TrendingUp, CheckCircle,
 } from 'lucide-react';
+import { navClick } from '../utils/nav.js';
 import './MaterialSciencePage.css';
 
 const GlassBottleIcon = ({ size = 24, ...props }) => (
@@ -306,9 +307,9 @@ export default function MaterialSciencePage() {
 
         <div className="container ms-hero__container">
           <nav className="ms-crumb" aria-label="Breadcrumb">
-            <a href="#home">Home</a>
+            <a href="/" onClick={navClick('/')}>Home</a>
             <ChevronRight size={14} aria-hidden="true" />
-            <a href="#solutions">Solutions</a>
+            <a href="/solutions" onClick={navClick('/solutions')}>Solutions</a>
             <ChevronRight size={14} aria-hidden="true" />
             <span className="ms-crumb__current">Material Science</span>
           </nav>
@@ -448,7 +449,7 @@ export default function MaterialSciencePage() {
                 className="ms-ra__visual-img"
                 draggable="false"
                 loading="eager"
-                fetchPriority="high"
+                fetchpriority="high"
                 decoding="async"
               />
               <div className="ms-ra__visual-overlay" aria-hidden="true" />
