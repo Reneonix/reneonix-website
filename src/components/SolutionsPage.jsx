@@ -18,6 +18,7 @@ import {
   Rocket,
   Shield,
 } from 'lucide-react';
+import { navClick } from '../utils/nav.js';
 import './SolutionsPage.css';
 
 const SOLUTIONS_CARDS = [
@@ -26,7 +27,7 @@ const SOLUTIONS_CARDS = [
     body: 'AI-powered hardware systems for smarter machines and industrial infrastructure.',
     img: '/hardware-main.jpeg',
     Icon: Wrench,
-    href: '#hardware',
+    href: '/solutions/hardware',
     active: true,
   },
   {
@@ -34,7 +35,7 @@ const SOLUTIONS_CARDS = [
     body: 'AI & technology platform for traceability, transparency and compliance.',
     img: '/software-main.jpeg',
     Icon: Cpu,
-    href: '#software',
+    href: '/solutions/software',
     active: true,
   },
   {
@@ -42,7 +43,7 @@ const SOLUTIONS_CARDS = [
     body: 'AI-driven material science to re-engineer waste into advanced sustainable materials.',
     img: '/ms-main.webp',
     Icon: FlaskConical,
-    href: '#material-science',
+    href: '/solutions/material-science',
     active: true,
   },
 ];
@@ -166,7 +167,7 @@ export default function SolutionsPage() {
                   alt="Reneonix circular economy — recycling ecosystem"
                   loading="eager"
                   decoding="async"
-                  fetchPriority="high"
+                  fetchpriority="high"
                 />
               </div>
 
@@ -187,7 +188,7 @@ export default function SolutionsPage() {
           <div className="sol-grid">
             {SOLUTIONS_CARDS.map(({ title, body, img, Icon, href, active }) => (
               active ? (
-                <a className="sol-card" href={href} key={title}>
+                <a className="sol-card" href={href} onClick={navClick(href)} key={title}>
                   <div className="sol-card__media">
                     <img src={img} alt={title} loading="lazy" decoding="async" />
                   </div>

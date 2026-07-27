@@ -1,0 +1,5 @@
+.article-pdf-btn__spin { animation: article-pdf-spin 0.9s linear infinite; }
+@keyframes article-pdf-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .article-pdf-btn__spin { animation: none; }
+}

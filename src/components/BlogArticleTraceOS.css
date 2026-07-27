@@ -1,0 +1,496 @@
+/* ==========================================================
+   BlogArticleTraceOS — "one batch's proof" narrative article
+   ========================================================== */
+
+/* ── Breadcrumb (inside hero) ──────────────────────────────── */
+.tos-breadcrumb {
+  position: absolute; z-index: 1; top: 96px; left: 0; right: 0;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 6px;
+  font-size: .88rem; font-weight: 600; color: var(--on-dark-mut);
+  padding: 0 var(--gutter); text-align: left;
+}
+.tos-breadcrumb a { color: var(--on-dark-mut); text-decoration: none; transition: color .18s ease; }
+.tos-breadcrumb a:hover { color: var(--lime); }
+.tos-breadcrumb svg { color: rgba(255,255,255,.3); flex-shrink: 0; }
+.tos-breadcrumb .is-current {
+  color: var(--on-dark); max-width: 360px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ── Hero ─────────────────────────────────────────────────── */
+.tos-hero {
+  position: relative; overflow: hidden;
+  min-height: calc(100vh - 76px);
+  display: flex; align-items: center; justify-content: flex-start;
+  padding: clamp(140px, 16vw, 180px) 0 clamp(48px, 6vw, 72px);
+  background: var(--bg) url('/article background.png') center / cover no-repeat;
+}
+@media (max-width: 1024px) { .tos-hero { min-height: calc(100vh - 68px); } }
+@media (max-width: 480px) { .tos-hero { min-height: calc(100vh - 60px); } }
+.tos-hero__bg-veil {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(100deg, rgba(4,8,4,.68) 0%, rgba(4,8,4,.52) 28%, rgba(4,8,4,.26) 52%, rgba(4,8,4,.08) 74%, rgba(4,8,4,.02) 100%),
+    linear-gradient(180deg, rgba(4,8,4,.22) 0%, transparent 20%, transparent 70%, rgba(4,8,4,.3) 100%),
+    radial-gradient(900px 480px at 8% -10%, rgba(178,222,58,.14), transparent 60%);
+}.tos-hero__inner {
+  position: relative; z-index: 1; max-width: 860px;
+  padding: 0 var(--gutter); text-align: left;
+}
+.tos-hero__chip {
+  display: inline-block;
+  font-size: .8rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--lime); background: rgba(178,222,58,.14);
+  border: 1px solid rgba(178,222,58,.35);
+  padding: 7px 14px; border-radius: 999px; margin: 0 0 18px;
+}
+.tos-hero h1 {
+  color: var(--white); font-size: clamp(2.1rem, 4.6vw, 3.4rem); line-height: 1.16;
+  margin: 0 0 24px;
+}
+/* Scoped under .tos-hero (not just .tos-hero__lead alone) so this beats
+   the shared .tos-article p rule further down — that rule's higher
+   specificity (class + element) was silently overriding this color. */
+.tos-hero .tos-hero__lead {
+  color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.45);
+  font-size: clamp(1rem, 1.7vw, 1.15rem); line-height: 1.6;
+  max-width: 620px; margin: 0 0 28px;
+}
+.tos-hero__meta {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px;
+  color: var(--on-dark-mut); font-size: .96rem; font-weight: 500;
+}
+.tos-hero__meta span { display: inline-flex; align-items: center; gap: 6px; }
+.tos-hero__meta svg { color: var(--lime); }
+.tos-hero__meta-author { color: var(--lime); font-weight: 700; }
+.tos-hero__dot { opacity: .5; }
+
+.tos-hero__scroll-cue {
+  position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%);
+  z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  color: rgba(255,255,255,.5); text-decoration: none;
+  font-size: .72rem; font-weight: 600;
+  animation: tos-scroll-bounce 1.8s ease-in-out infinite;
+}
+@keyframes tos-scroll-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+/* ── Shared: heading accents, eyebrow, chapter shell, bridge ── */
+.tos-article h2 em { font-style: normal; font-weight: 900; color: var(--lime-deep); }
+.tos-article h2 { font-size: clamp(1.7rem, 3.6vw, 2.4rem); color: var(--ink); line-height: 1.22; margin: 0 0 14px; }
+.tos-article p { font-size: clamp(1rem, 1.8vw, 1.15rem); line-height: 1.7; color: var(--on-light-mut); max-width: 62ch; margin: 0 0 16px; }
+.tos-article strong { color: var(--ink); }
+
+.tos-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: clamp(.92rem, 2.4vmin, 1.05rem); font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--lime-deep); margin: 0 0 14px;
+}
+
+/* ── Image placeholder — swap for a real <img> once uploaded ─ */
+.tos-img-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 10px, rgba(0,0,0,.06) 10px, rgba(0,0,0,.06) 20px);
+  border: 2px dashed rgba(0,0,0,.16);
+  color: var(--on-light-mut);
+  font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+}
+.tos-img-placeholder svg { color: rgba(0,0,0,.24); }
+
+.tos-chapter { background: var(--paper); padding: clamp(56px, 12vmin, 88px) 0; scroll-margin-top: 100px; }
+.tos-chapter .container + .container { margin-top: clamp(28px, 4vw, 44px); }
+
+/* ── Chapter 01 — why traceability matters (hero-style intro) ── */
+.tos-chapter1 { background: var(--paper); padding: clamp(56px, 10vmin, 88px) 0 clamp(48px, 8vmin, 64px); scroll-margin-top: 100px; }
+/* Named areas (not source order) place text/media/features — that's what
+   lets the photo land between the paragraphs and the features grid on
+   mobile while keeping the original side-by-side desktop composition,
+   without needing two different DOM orders. */
+.tos-chapter1__grid {
+  display: grid; grid-template-columns: 1.05fr .95fr;
+  grid-template-areas: "text media" "features media";
+  column-gap: clamp(32px, 5vw, 64px); row-gap: 22px;
+  align-items: center;
+}
+.tos-chapter1__text { grid-area: text; }
+.tos-chapter1__features { grid-area: features; }
+.tos-chapter1__media { grid-area: media; }
+.tos-chapter1__title {
+  font-size: clamp(1.7rem, 3.6vw, 2.4rem); font-weight: 800; line-height: 1.16;
+  color: var(--ink); margin: 0 0 20px;
+}
+.tos-chapter1__title em { font-style: normal; font-weight: 900; color: var(--lime-deep); }
+.tos-chapter1__text p { margin: 0 0 14px; max-width: 56ch; }
+
+.tos-chapter1__features {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+}
+.tos-chapter1__feature { display: flex; flex-direction: column; gap: 6px; }
+.tos-chapter1__feature-icon {
+  display: grid; place-items: center; margin-bottom: 4px;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: rgba(178,222,58,.14); color: var(--lime-deep);
+}
+.tos-chapter1__feature strong { font-size: .9rem; font-weight: 800; color: var(--ink); line-height: 1.3; }
+.tos-chapter1__feature span { font-size: .8rem; color: var(--on-light-mut); line-height: 1.45; }
+
+.tos-chapter1__media {
+  position: relative; overflow: hidden;
+  border-radius: var(--r-lg, 24px); border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 24px 48px rgba(10,15,5,.12);
+}
+.tos-chapter1__media img, .tos-chapter1__media .tos-img-placeholder {
+  display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover;
+}
+.tos-chapter1__media .tos-img-placeholder { display: flex; }
+/* Darkens the photo's lighter highlights so its own overlaid card/QR text
+   keeps enough contrast against the surrounding light page background. */
+.tos-chapter1__media::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(4,8,4,.08) 0%, transparent 30%, transparent 62%, rgba(4,8,4,.4) 100%),
+    linear-gradient(90deg, rgba(4,8,4,.12) 0%, transparent 18%);
+}
+
+@media (max-width: 900px) {
+  .tos-chapter1__grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: "text" "media" "features";
+    row-gap: 28px;
+  }
+  .tos-chapter1__media { max-width: 480px; margin: 0 auto; }
+}
+@media (max-width: 560px) {
+  .tos-chapter1__features { grid-template-columns: 1fr; }
+}
+
+/* ── Chapter 02 — why paper trails break ───────────────────── */
+.tos-problems__head { text-align: center; max-width: 720px; margin: 0 auto clamp(40px, 6vw, 56px); }
+.tos-problems__head .tos-eyebrow { justify-content: center; }
+.tos-problems__head p { margin: 0 auto; }
+.tos-problems__title {
+  font-size: clamp(1.7rem, 3.6vw, 2.4rem); font-weight: 800; line-height: 1.16;
+  color: var(--ink); margin: 0 0 18px;
+}
+.tos-problems__title span { color: var(--lime-deep); }
+
+.tos-problems {
+  display: grid; gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+}
+.tos-problem-card {
+  background: var(--white); border: 1px solid rgba(0,0,0,.06); border-top: 4px solid var(--lime);
+  border-radius: var(--r-md, 14px); padding: clamp(28px, 4vw, 34px) 20px 26px;
+  text-align: center; box-shadow: 0 12px 28px rgba(10,15,5,.05);
+}
+.tos-problem-card__icon {
+  display: grid; place-items: center; margin: 0 auto 20px;
+  width: 68px; height: 68px; border-radius: 50%;
+  background: rgba(178,222,58,.14); color: var(--lime-deep);
+}
+.tos-problem-card h3 { font-size: clamp(1.05rem, 2vw, 1.24rem); font-weight: 800; color: var(--ink); margin: 0 0 12px; line-height: 1.35; }
+.tos-problem-card__underline { display: block; width: 30px; height: 3px; margin: 0 auto 14px; border-radius: 2px; background: var(--lime-deep); }
+.tos-problem-card p { font-size: clamp(1rem, 1.8vw, 1.15rem); line-height: 1.55; color: var(--on-light-mut); margin: 0; max-width: none; }
+
+
+/* ── Chapter 03 — introducing TraceOS (full-bleed photo + panel) ── */
+.tos-intro {
+  scroll-margin-top: 76px;
+  background: var(--paper);
+}
+/* Capped like .container so the two columns don't stretch into dead
+   space on ultrawide/4K, while .tos-intro's background stays full-bleed. */
+.tos-intro__inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center;
+  max-width: var(--content-maxw); margin: 0 auto;
+}
+.tos-intro__text {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(40px, 10.8vmin, 72px);
+}
+.tos-intro__accent { color: var(--lime-deep); }
+.tos-pull {
+  border-left: 3px solid var(--lime-deep); padding: 2px 0 2px 18px; margin: 6px 0 0;
+  font-size: clamp(1.09rem, 2.66vmin, 1.33rem); font-weight: 700; line-height: 1.5; color: var(--ink); max-width: 34ch;
+}
+.tos-intro__media { padding: clamp(28px, 7.2vmin, 56px); }
+.tos-intro__media--inline { display: none; }
+.tos-intro__media img, .tos-intro__media .tos-img-placeholder {
+  display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; object-position: top;
+  border-radius: var(--r-lg, 24px); border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 24px 48px rgba(10,15,5,.12);
+}
+.tos-intro__media .tos-img-placeholder { display: flex; }
+
+@media (max-width: 780px) {
+  .tos-intro__inner { grid-template-columns: 1fr; }
+  .tos-intro__inner > .tos-intro__media { display: none; }
+  .tos-intro__media--inline { display: block; padding: 4px 0 24px; }
+}
+
+/* ── Chapter 04 — how TraceOS works (four legs, click-to-focus) ── */
+.tos-journey { background: var(--paper); scroll-margin-top: 76px; padding: clamp(56px, 12vmin, 88px) 0; }
+.tos-journey__head { font-size: clamp(1.7rem, 3.6vw, 2.4rem); color: var(--ink); margin: 0 0 10px; line-height: 1.22; text-align: center; }
+.tos-journey .tos-journey__sub { text-align: center; max-width: none; margin: 0 auto clamp(32px, 5vw, 48px); font-size: clamp(1rem, 1.8vw, 1.15rem); color: var(--on-light-mut); white-space: nowrap; }
+@media (max-width: 640px) { .tos-journey .tos-journey__sub { white-space: normal; } }
+
+.tos-journey__list { display: flex; flex-direction: column; gap: 16px; }
+.tos-leg {
+  --node: 44px;
+  display: grid; grid-template-columns: var(--node) 1fr minmax(180px, 260px);
+  gap: clamp(16px, 3vw, 32px); align-items: center;
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-radius: var(--r-lg, 16px);
+  padding: clamp(20px, 3vw, 28px); cursor: pointer;
+  transition: border-color .25s ease, box-shadow .25s ease, background-color .25s ease;
+}
+.tos-leg:hover { box-shadow: 0 16px 36px rgba(10,15,5,.08); }
+.tos-leg.is-active { border-color: rgba(178,222,58,.5); background: rgba(178,222,58,.05); box-shadow: 0 16px 36px rgba(10,15,5,.1); }
+
+.tos-leg__rail { display: flex; align-items: flex-start; padding-top: 2px; }
+.tos-leg__node {
+  width: var(--node); height: var(--node); border-radius: 50%;
+  background: #14170F; color: var(--lime);
+  display: grid; place-items: center; font-size: .95rem; font-weight: 800;
+  transition: background-color .3s ease, color .3s ease;
+}
+.tos-leg.is-active .tos-leg__node { background: var(--lime-deep); color: var(--white); }
+
+.tos-leg__role {
+  font-size: .78rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--lime-deep); margin: 0 0 6px;
+}
+.tos-leg__body h3 { font-size: clamp(1.05rem, 2vw, 1.24rem); font-weight: 800; color: var(--ink); margin: 0 0 8px; line-height: 1.3; }
+.tos-leg__body p { font-size: clamp(1rem, 1.8vw, 1.15rem); line-height: 1.6; color: var(--on-light-mut); margin: 0; max-width: 56ch; }
+
+.tos-leg__shot { display: flex; }
+.tos-leg__shot .tos-mock { width: 100%; }
+
+/* ── System readout mock card (dark, monospace) ────────────── */
+.tos-mock {
+  background: #14170F; color: var(--on-dark);
+  border: 1px solid rgba(178,222,58,.16); border-radius: var(--r-md, 14px);
+  padding: 18px 20px; box-shadow: 0 16px 34px rgba(10,15,5,.2);
+  font-family: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: .8rem;
+}
+.tos-mock__title {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: .64rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--on-dark-mut); padding-bottom: 10px; margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.tos-mock__tag { color: var(--lime); }
+.tos-mock__row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 6px 0; border-bottom: 1px dashed rgba(255,255,255,.08);
+}
+.tos-mock__row:last-of-type { border-bottom: 0; }
+.tos-mock__k { color: var(--on-dark-mut); }
+.tos-mock__v { font-weight: 700; color: var(--white); }
+.tos-mock__v.is-good { color: var(--lime); }
+.tos-mock__stamp {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  background: var(--lime); color: #06210F; font-weight: 800; letter-spacing: .04em;
+  border-radius: 999px; padding: 7px 15px; font-size: .7rem;
+}
+
+@media (max-width: 860px) {
+  .tos-leg { grid-template-columns: var(--node) 1fr; }
+  .tos-leg__shot { grid-column: 1 / -1; grid-row: 2; margin-top: 4px; }
+}
+@media (max-width: 480px) {
+  .tos-leg { --node: 36px; }
+}
+
+/* ── Chapter 05 — turn recovery data into smarter decisions ── */
+.tos-insight { background: var(--paper); padding: clamp(56px, 12vmin, 88px) 0; scroll-margin-top: 100px; }
+.tos-insight__grid {
+  display: grid; grid-template-columns: .85fr 1.15fr;
+  align-items: center; gap: clamp(32px, 5vw, 56px);
+}
+
+.tos-insight__feats { display: flex; flex-direction: column; gap: 12px; margin: 22px 0 28px; }
+.tos-insight__feat {
+  background: var(--white); border: 1px solid rgba(0,0,0,.06); border-left: 3px solid var(--lime-deep);
+  border-radius: var(--r-md, 14px); padding: 14px 16px;
+}
+.tos-insight__feat strong { display: block; font-size: .94rem; font-weight: 800; color: var(--ink); line-height: 1.3; }
+.tos-insight__feat span { display: block; font-size: .83rem; color: var(--on-light-mut); margin-top: 2px; line-height: 1.45; }
+
+/* ── viz column: sources → AI hub → dashboard ──────────────── */
+.tos-insight__viz { display: flex; align-items: center; gap: clamp(10px, 1.6vw, 16px); }
+
+.tos-insight__sources { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+.tos-source {
+  background: var(--white); border: 1px solid rgba(0,0,0,.06); border-left: 3px solid var(--lime-deep);
+  border-radius: var(--r-md, 12px);
+  padding: 10px 12px; box-shadow: 0 8px 18px rgba(10,15,5,.05); min-width: 128px;
+}
+.tos-source strong { display: block; font-size: .86rem; font-weight: 800; color: var(--ink); }
+.tos-source__status { display: flex; align-items: center; gap: 5px; font-size: .75rem; color: var(--on-light-mut); margin-top: 2px; }
+.tos-source__status i { width: 6px; height: 6px; border-radius: 50%; background: var(--lime-deep); flex-shrink: 0; }
+
+.tos-insight__connector {
+  flex-shrink: 0; align-self: center;
+  width: clamp(14px, 2vw, 26px); height: 2px;
+  background: repeating-linear-gradient(to right, var(--lime-deep) 0 5px, transparent 5px 10px);
+  background-size: 10px 2px;
+  animation: tos-flow-x .6s linear infinite;
+}
+@keyframes tos-flow-x { to { background-position: 10px 0; } }
+@keyframes tos-flow-y { to { background-position: 0 10px; } }
+@media (prefers-reduced-motion: reduce) { .tos-insight__connector { animation: none; } }
+
+.tos-hub { position: relative; flex-shrink: 0; width: 72px; height: 72px; display: grid; place-items: center; }
+.tos-hub__pulse {
+  position: absolute; inset: -10px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(178,222,58,.35), transparent 68%);
+  animation: tos-hub-pulse 3s ease-in-out infinite;
+}
+@keyframes tos-hub-pulse {
+  0%, 100% { transform: scale(1); opacity: .6; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+.tos-hub__core {
+  position: relative; width: 64px; height: 64px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--lime), var(--lime-deep) 70%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  color: #06210F; box-shadow: 0 14px 30px rgba(178,222,58,.35);
+}
+.tos-hub__core b { font-size: .86rem; font-weight: 800; letter-spacing: .04em; }
+@media (prefers-reduced-motion: reduce) { .tos-hub__pulse { animation: none; } }
+
+.tos-dashboard {
+  flex: 1; min-width: 0; background: var(--white);
+  border: 1px solid rgba(0,0,0,.07); border-radius: var(--r-lg, 20px);
+  padding: clamp(14px, 2.4vw, 20px); box-shadow: 0 20px 44px rgba(10,15,5,.09);
+}
+.tos-dashboard__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.tos-dashboard__head h3 { font-size: 1.16rem; font-weight: 800; color: var(--ink); margin: 0; }
+.tos-dashboard__range {
+  font-size: .8rem; font-weight: 700; color: var(--on-light-mut);
+  border: 1px solid rgba(0,0,0,.1); border-radius: 8px; padding: 3px 9px; white-space: nowrap;
+}
+
+.tos-dashboard__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 18px; }
+.tos-dashboard__stat { background: var(--paper); border-radius: 10px; padding: 8px 10px; }
+.tos-dashboard__stat-k { display: block; font-size: .76rem; color: var(--on-light-mut); }
+.tos-dashboard__stat-v { display: block; font-size: 1.2rem; font-weight: 800; color: var(--ink); margin-top: 1px; }
+.tos-dashboard__stat-d { display: block; font-size: .74rem; font-weight: 700; color: var(--lime-deep); margin-top: 1px; }
+
+.tos-dashboard__sec { font-size: .94rem; font-weight: 800; color: var(--ink); margin: 12px 0 6px; }
+.tos-dashboard__list, .tos-dashboard__recs { display: flex; flex-direction: column; gap: 5px; }
+.tos-dashboard__row {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--paper); border-radius: 8px; padding: 6px 9px; font-size: .93rem; line-height: 1.4; color: var(--ink);
+}
+.tos-dashboard__row::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--lime-deep); flex-shrink: 0; }
+.tos-dashboard__row span { flex: 1; }
+.tos-dashboard__view {
+  flex-shrink: 0; font-size: .78rem; font-weight: 800; color: var(--lime-deep);
+  border: 1px solid rgba(178,222,58,.4); border-radius: 6px; padding: 2px 8px; text-decoration: none;
+}
+.tos-dashboard__view:hover { background: rgba(178,222,58,.14); }
+
+.tos-dashboard__rec {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(178,222,58,.1); border-radius: 8px; padding: 6px 9px;
+  font-size: .92rem; font-weight: 600; line-height: 1.4; color: var(--lime-deep);
+}
+.tos-dashboard__rec svg { flex-shrink: 0; }
+
+.tos-dashboard__foot {
+  display: flex; align-items: center; justify-content: flex-end; gap: 6px;
+  margin-top: 10px; font-size: .8rem; color: var(--on-light-mut);
+}
+.tos-dashboard__foot svg { color: var(--lime-deep); flex-shrink: 0; }
+
+@media (max-width: 900px) {
+  .tos-insight__viz { flex-direction: column; align-items: stretch; }
+  /* align-items:stretch only stretches auto-sized items — .tos-hub has an
+     explicit 72px width, so it defaulted to the cross-axis start (left)
+     instead of centering like the connector lines above/below it do. */
+  .tos-hub { align-self: center; }
+  .tos-insight__connector {
+    width: 2px; height: clamp(16px, 4vw, 24px); align-self: center;
+    background: repeating-linear-gradient(to bottom, var(--lime-deep) 0 5px, transparent 5px 10px);
+    background-size: 2px 10px;
+    animation-name: tos-flow-y;
+  }
+  .tos-insight__sources { flex-direction: row; flex-wrap: wrap; }
+  .tos-source { min-width: 0; flex: 1 1 140px; }
+}
+@media (max-width: 780px) {
+  .tos-insight__grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .tos-dashboard__stats { grid-template-columns: 1fr; }
+}
+
+/* ── Chapter 06 — building trust through transparency ──────── */
+.tos-trust { background: var(--paper); padding: clamp(56px, 12.6vmin, 88px) 0; scroll-margin-top: 100px; }
+.tos-trust__head { text-align: center; max-width: 680px; margin: 0 auto clamp(32px, 7.2vmin, 48px); }
+.tos-trust__head .tos-eyebrow, .tos-trust__head h2, .tos-trust__head p { margin-left: auto; margin-right: auto; }
+
+.tos-trust__grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(24px, 4vw, 44px); align-items: center; }
+.tos-trust__media img, .tos-trust__media .tos-img-placeholder {
+  display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: var(--r-lg, 20px); border: 1px solid rgba(0,0,0,.07);
+  box-shadow: 0 20px 44px rgba(10,15,5,.1);
+}
+.tos-trust__media .tos-img-placeholder { display: flex; }
+
+.tos-stakeholders { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.tos-stakeholder {
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-top: 3px solid var(--lime);
+  border-radius: var(--r-md); box-shadow: 0 10px 24px rgba(10,15,5,.05);
+  padding: 22px 20px; display: flex; flex-direction: column; gap: 6px;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.tos-stakeholder:hover {
+  transform: translateY(-3px); box-shadow: 0 16px 32px rgba(10,15,5,.1); border-top-color: var(--lime-deep);
+}
+.tos-stakeholder strong { font-size: clamp(1.05rem, 2vw, 1.24rem); font-weight: 800; color: var(--ink); letter-spacing: -.005em; }
+.tos-stakeholder__caption {
+  font-size: .8rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--lime-deep);
+}
+.tos-stakeholder p { font-size: clamp(1rem, 1.8vw, 1.15rem); color: var(--on-light-mut); line-height: 1.55; margin: 2px 0 0; }
+
+@media (max-width: 780px) {
+  .tos-trust__grid { grid-template-columns: 1fr; }
+  .tos-trust__media { max-width: 380px; margin: 0 auto; }
+}
+@media (max-width: 480px) {
+  .tos-stakeholders { grid-template-columns: 1fr; }
+}
+
+/* ── Chapter 07 — designed for the future + takeaways + close ── */
+.tos-future { background: var(--paper); padding: clamp(56px, 12.6vmin, 88px) 0; scroll-margin-top: 100px; }
+.tos-future__head { font-size: clamp(1.7rem, 3.6vw, 2.4rem); color: var(--ink); margin: 0 0 18px; max-width: 44ch; line-height: 1.25; }
+.tos-future__body { font-size: clamp(1rem, 1.8vw, 1.15rem); line-height: 1.75; color: var(--on-light-mut); max-width: 68ch; margin: 0 0 clamp(32px, 7.2vmin, 44px); }
+
+.tos-future__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.tos-future__cell {
+  background: var(--white); border: 1px solid rgba(0,0,0,.08); border-radius: var(--r-md);
+  padding: 22px 18px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.tos-future__cell svg { color: var(--lime-deep); margin-bottom: 6px; }
+.tos-future__cell strong { font-size: clamp(1.08rem, 2.6vmin, 1.32rem); letter-spacing: .02em; color: var(--ink); }
+.tos-future__cell span { font-size: clamp(.92rem, 2.18vmin, 1.1rem); color: var(--on-light-mut); line-height: 1.45; }
+
+@media (max-width: 900px) { .tos-future__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .tos-future__grid { grid-template-columns: 1fr; } }
+
+/* ── Go to Blog (end of article, above footer) ────────────── */
+.tos-goto-blog {
+  background: var(--paper); border-top: 1px solid rgba(0,0,0,.06);
+  padding: clamp(20px, 4vmin, 28px) var(--gutter);
+  display: flex; justify-content: flex-end;
+  gap: 12px; flex-wrap: wrap;
+}

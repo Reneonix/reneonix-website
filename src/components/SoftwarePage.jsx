@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, Fragment } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, Fragment } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
@@ -6,20 +6,23 @@ import {
   Database, Shield, FileText,
   Eye, ShieldAlert,
   Cpu, ShieldCheck,
-  BarChart3, Network, Leaf, ArrowRight, ChevronRight,
+  BarChart3, ArrowRight, ChevronRight,
   CheckCircle2, FileCheck,
   Smartphone, Tag, MapPin, User, Scale,
-  ScanLine, AlertTriangle, ImageIcon, ClipboardCheck,
+  AlertTriangle, ImageIcon,
   Box, Clock, Link2, GitBranch,
   TrendingUp, LineChart, Target, Lightbulb,
   Share2, BookOpen, Settings,
   Layers, Scissors, Sun,
   Calendar, ChevronDown,
   Truck, Factory, Recycle, Download,
+  Upload,
 } from 'lucide-react';
 
 import './SoftwarePage.css';
 import './SoftwarePage_how.css';
+import PlatformPreviewMockup from './SoftwarePagePreview';
+import { navClick } from '../utils/nav.js';
 
 const RETRIAZ_STEPS = [
   {
@@ -27,35 +30,35 @@ const RETRIAZ_STEPS = [
     title: 'Capture Material Data',
     desc: 'Upload any material documents or files. Our AI extracts key information instantly.',
     features: ['PDF reports & certificates', 'CSV data files', 'COA documents', 'Images & scans'],
-    img: '/retriaz1.jpeg',
+    Icon: Upload,
   },
   {
     num: '02', key: 'verify', eyebrow: 'Verify',
     title: 'AI Verification',
     desc: 'We verify composition, supplier, compliance and lab results with industry standards.',
     features: ['Composition verified', 'Supplier verified', 'Compliance checked', 'Lab results matched'],
-    img: '/retriaz2.jpeg',
+    Icon: ShieldCheck,
   },
   {
     num: '03', key: 'trace', eyebrow: 'Trace',
     title: 'End-to-End Traceability',
     desc: 'We map every step of the material journey - from raw to recovery.',
     features: ['Raw material to recovery', 'Immutable chain of custody', 'Time & location stamps', 'Blockchain-backed records'],
-    img: '/retriaz3.jpeg',
+    Icon: GitBranch,
   },
   {
     num: '04', key: 'analyze', eyebrow: 'Analyze',
     title: 'Insights & Analytics',
     desc: 'Get actionable insights, trend analysis and quality metrics to drive better decisions.',
     features: ['Purity & quality scores', 'Compliance tracking', 'Recovered weight metrics', 'Quality trend charts'],
-    img: '/retriaz4.jpeg',
+    Icon: TrendingUp,
   },
   {
     num: '05', key: 'report', eyebrow: 'Report',
     title: 'Material Passport',
     desc: 'Export, share and stay audit-ready at all times.',
     features: ['Material passport generation', 'Audit-ready reports', 'Secure sharing', 'Download in one click'],
-    img: '/retriaz5.jpeg',
+    Icon: FileCheck,
   },
 ];
 
@@ -68,46 +71,45 @@ const MARQUEE_ITEMS = [
   { label: 'E-Waste',       Icon: Cpu,        color: '#60a5fa' },
 ];
 
-const TOP_CAPS = [
-  {
-    num: '01', title: 'AI-Powered Verification',
-    body: 'Our AI validates recovery data, detects anomalies, and ensures only verifiable, audit-ready information enters your compliance workflow.',
-    checks: ['Automated Validation', 'Anomaly Detection', 'Risk Scoring'],
-    Illus: IllusAI,
-  },
-  {
-    num: '02', title: 'Blockchain Traceability',
-    body: 'Every transaction is recorded on an immutable ledger, ensuring transparency and trust across the entire value chain.',
-    checks: ['Tamper-proof Records', 'Transparent', 'Traceable'],
-    Illus: IllusBlockchain,
-  },
-  {
-    num: '03', title: 'Digital Product Passport',
-    body: 'Create a digital passport with full lifecycle history, specs, and compliance data for every recovered material.',
-    checks: ['Identifiable', 'Shareable', 'Verifiable'],
-    Illus: IllusPassport,
-  },
-  {
-    num: '04', title: 'Compliance Automation',
-    body: 'Streamline regulatory reporting, generate audit-ready documents, and stay compliant with evolving regulations — always.',
-    checks: ['Regulation-ready', 'Automated', 'Reliable'],
-    Illus: IllusCompliance,
-  },
-];
-
-const BOT_CAPS = [
-  { num: '05', title: 'EPR Compliance & Reporting', Icon: FileCheck,
-    body: 'Simplify EPR obligations with automated data capture, reporting, and documentation.' },
-  { num: '06', title: 'Real-time Analytics', Icon: BarChart3,
-    body: 'Live dashboards and alerts help you act fast and stay ahead of issues.' },
-  { num: '07', title: 'Material Intelligence', Icon: Network,
-    body: 'Turn recovery data into actionable insights to optimize operations and maximize value.' },
-  { num: '08', title: 'Carbon Impact Tracking', Icon: Leaf,
+/* Core capabilities — 8 equal cards, sequential fade-in + slide-up on reveal */
+const CAPS = [
+  { num: '01', title: 'AI-Powered Verification',
+    body: 'Validate recovery data with AI and ensure audit-ready compliance.' },
+  { num: '02', title: 'Blockchain Traceability',
+    body: 'Immutable records for complete transparency and trust.' },
+  { num: '03', title: 'Digital Product Passport',
+    body: 'Track every material with a digital passport across its lifecycle.' },
+  { num: '04', title: 'Compliance Automation',
+    body: 'Automate reporting and documentation to stay compliant, always.' },
+  { num: '05', title: 'EPR Compliance & Reporting',
+    body: 'Simplify EPR obligations with automated data capture and reports.' },
+  { num: '06', title: 'Real-time Analytics',
+    body: 'Live dashboards and alerts to act fast and stay ahead of issues.' },
+  { num: '07', title: 'Material Intelligence',
+    body: 'Convert recovery data into actionable insights to optimize operations.' },
+  { num: '08', title: 'Carbon Impact Tracking',
     body: 'Measure, monitor, and report environmental impact with confidence.' },
 ];
 
 export default function SoftwarePage() {
   const pinRef = useRef(null);
+  const mobileTrackRef = useRef(null);
+  const [mobileStep, setMobileStep] = useState(0);
+
+  // Mobile step slider — native scroll-snap, no vertical scroll-jacking.
+  // Syncs the active dot as the user swipes the track.
+  const handleMobileTrackScroll = () => {
+    const track = mobileTrackRef.current;
+    if (!track) return;
+    const idx = Math.round(track.scrollLeft / track.offsetWidth);
+    setMobileStep(Math.min(Math.max(idx, 0), RETRIAZ_STEPS.length - 1));
+  };
+
+  const scrollToMobileStep = (idx) => {
+    const track = mobileTrackRef.current;
+    if (!track) return;
+    track.scrollTo({ left: idx * track.offsetWidth, behavior: 'smooth' });
+  };
 
   // Reveal elements already in view on first paint
   useLayoutEffect(() => {
@@ -130,24 +132,21 @@ export default function SoftwarePage() {
     return () => io.disconnect();
   }, []);
 
-  // GSAP pinned scroll storytelling
+  // GSAP pinned scroll storytelling — desktop only. On mobile the section
+  // uses a swipeable card track instead (see .rzp-mobile-track below), so
+  // users are never scroll-jacked and can leave the section at any time.
   useEffect(() => {
     const pin = pinRef.current;
-    if (!pin) return;
+    if (!pin || window.matchMedia('(max-width: 767px)').matches) return;
 
     const N          = RETRIAZ_STEPS.length;
-    const isMobile   = window.innerWidth < 768;
-    const xStep      = isMobile ? 80  : 150;
-    const xImg       = isMobile ? 50  : 100;
-    const stepEls    = gsap.utils.toArray(pin.querySelectorAll('.rzp-step'));
+    const xImg       = 100;
     const imgWraps   = gsap.utils.toArray(pin.querySelectorAll('.rzp-img-wrap'));
     const indItems   = gsap.utils.toArray(pin.querySelectorAll('.rzp-ind__item'));
 
     const ctx = gsap.context(() => {
-      // Position all steps: first visible, rest waiting right
-      gsap.set(stepEls,     { x: xStep, opacity: 0 });
+      // Position all panels: first visible, rest waiting right
       gsap.set(imgWraps,    { x: xImg,  opacity: 0, scale: 0.95 });
-      gsap.set(stepEls[0],  { x: 0, opacity: 1 });
       gsap.set(imgWraps[0], { x: 0, opacity: 1, scale: 1 });
       indItems[0]?.classList.add('is-active');
 
@@ -155,9 +154,7 @@ export default function SoftwarePage() {
       const tl = gsap.timeline({ defaults: { ease: 'power3.inOut', duration: 1 } });
       for (let i = 1; i < N; i++) {
         const t = i - 1;
-        tl.to(stepEls[i - 1],  { x: -xStep, opacity: 0 }, t)
-          .to(imgWraps[i - 1], { x: -xImg,  opacity: 0, scale: 0.95 }, t)
-          .to(stepEls[i],      { x: 0,      opacity: 1 }, t)
+        tl.to(imgWraps[i - 1], { x: -xImg,  opacity: 0, scale: 0.95 }, t)
           .to(imgWraps[i],     { x: 0,      opacity: 1, scale: 1 }, t);
       }
 
@@ -186,14 +183,14 @@ export default function SoftwarePage() {
       <section className="sw-hero">
         {/* Background — responsive desktop / mobile image */}
         <picture>
-          <source media="(max-width: 768px)" srcSet="/software-hero-mobile.jpeg" />
+          <source media="(max-width: 768px)" srcSet="/software-hero-mobile.png" />
           <img
             className="sw-hero__bg"
             src="/software-hero.png"
             alt=""
             aria-hidden="true"
             draggable="false"
-            fetchPriority="high"
+            fetchpriority="high"
           />
         </picture>
         {/* cross flare — dark left */}
@@ -205,9 +202,9 @@ export default function SoftwarePage() {
 
           <div className="sw-hero__copy sw-reveal">
             <nav className="sw-crumb" aria-label="Breadcrumb">
-              <a href="#home">Home</a>
+              <a href="/" onClick={navClick('/')}>Home</a>
               <ChevronRight size={13} aria-hidden="true" />
-              <a href="#solutions">Solutions</a>
+              <a href="/solutions" onClick={navClick('/solutions')}>Solutions</a>
               <ChevronRight size={13} aria-hidden="true" />
               <span className="sw-crumb__current">Software</span>
             </nav>
@@ -244,36 +241,17 @@ export default function SoftwarePage() {
             </p>
           </div>
 
-          {/* top row: 4 large cards */}
-          <div className="sw-caps-top sw-reveal">
-            {TOP_CAPS.map(({ num, title, body, checks, Illus }) => (
-              <div key={num} className="sw-cap-card">
-                <span className="sw-cap__num">{num}</span>
-                <div className="sw-cap-card__illus"><Illus /></div>
-                <h3 className="sw-cap-card__title">
-                  {title}
-                  <span className="sw-cap-card__rule" />
-                </h3>
-                <p className="sw-cap-card__body">{body}</p>
-                <ul className="sw-cap-card__checks">
-                  {checks.map(c => (
-                    <li key={c}><CheckCircle2 size={14} />{c}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {/* bottom row: 4 smaller cards */}
-          <div className="sw-caps-bot sw-reveal">
-            {BOT_CAPS.map(({ num, title, body, Icon }) => (
-              <div key={num} className="sw-cap-sm">
+          {/* 8 equal cards — sequential fade-in + slide-up, staggered 100ms apart */}
+          <div className="sw-caps-grid">
+            {CAPS.map(({ num, title, body }, i) => (
+              <div
+                key={num}
+                className="sw-cap-sm sw-reveal"
+                style={{ transitionDelay: `${i * 100}ms` }}
+              >
                 <div className="sw-cap-sm__head">
-                  <div className="sw-cap-sm__icon"><Icon size={20} /></div>
-                  <div>
-                    <span className="sw-cap__num">{num}</span>
-                    <h4 className="sw-cap-sm__title">{title}</h4>
-                  </div>
+                  <span className="sw-cap__num">{num}</span>
+                  <h4 className="sw-cap-sm__title">{title}</h4>
                 </div>
                 <p className="sw-cap-sm__body">{body}</p>
               </div>
@@ -285,75 +263,109 @@ export default function SoftwarePage() {
 
       </section>
 
-      {/* ══ HOW RETRIAZ WORKS ══ */}
-
-      {/* Section header — scrolls normally above the pin */}
-      <div className="rzs-header">
-        <span className="rzs-header__eyebrow">How Retriaz Works</span>
-        <h2 className="rzs-header__title">
-          One Material,<br className="rzs-title-br" /> <span className="rzs-header__accent">Complete Confidence</span>
-        </h2>
-        <p className="rzs-header__desc">
-          Retriaz brings transparency, intelligence, and trust to every step of your recovery journey.
-        </p>
-        <p className="rzs-header__sub">
-          Works for all types of Materials
-        </p>
-        <div className="rzs-marquee" aria-hidden="true">
-          <div className="rzs-marquee__track">
-            {MARQUEE_ITEMS.map(({ label, Icon, color }, i) => (
-              <div key={i} className="rzs-badge">
-                <Icon size={16} color={color} strokeWidth={1.8} />
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Pinned 5-step presentation */}
+      {/* ══ HOW RETRIAZ WORKS — header + rail + panel, all pinned together ══ */}
       <div className="rzp-wrap" ref={pinRef}>
         <div className="rzp-stage">
 
-          {/* Vertical progress indicator */}
-          <div className="rzp-indicator">
-            {RETRIAZ_STEPS.map((step, i) => (
-              <div key={step.key} className="rzp-ind__item">
-                <div className="rzp-ind__track">
-                  <div className="rzp-ind__dot" />
-                  {i < RETRIAZ_STEPS.length - 1 && <div className="rzp-ind__line" />}
+          {/* Header — stays fixed at the top of the pinned viewport */}
+          <div className="rzs-header">
+            <span className="rzs-header__eyebrow">How Retriaz Works</span>
+            <h2 className="rzs-header__title">
+              One Material,<br className="rzs-title-br" /> <span className="rzs-header__accent">Complete Confidence</span>
+            </h2>
+            <p className="rzs-header__desc">
+              Retriaz brings transparency, intelligence, and trust to every step of your recovery journey.
+            </p>
+            <p className="rzs-header__sub">
+              Works for all types of Materials
+            </p>
+            <div className="rzs-marquee" aria-hidden="true">
+              <div className="rzs-marquee__track">
+                {MARQUEE_ITEMS.map(({ label, Icon, color }, i) => (
+                  <div key={i} className="rzs-badge">
+                    <Icon size={14} color={color} strokeWidth={1.8} />
+                    <span>{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Rail + panel grid — fills the remaining pinned height */}
+          <div className="rzp-grid">
+
+            {/* Rail: compact, always-visible list — only the active item highlights */}
+            <div className="rzp-rail">
+              {RETRIAZ_STEPS.map((step, i) => (
+                <div key={step.key} className="rzp-ind__item">
+                  <span className="rzp-ind__dot">{step.num}</span>
+                  <span className="rzp-ind__label">
+                    <small>{step.eyebrow}</small>
+                    <strong>{step.title}</strong>
+                  </span>
                 </div>
-                <span className="rzp-ind__num">{step.num}</span>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* Panel: rich content, GSAP crossfades between steps */}
+            <div className="rzp-visual">
+              {RETRIAZ_STEPS.map((step) => (
+                <div key={step.key} className="rzp-img-wrap">
+                  <div className="rzp-panel">
+                    <span className="rzp-panel__icon"><step.Icon size={22} strokeWidth={1.8} /></span>
+                    <h3 className="rzp-panel__title">{step.title}</h3>
+                    <p className="rzp-panel__desc">{step.desc}</p>
+                    <ul className="rzp-panel__ticks">
+                      {step.features.map(f => (
+                        <li key={f}>
+                          <span className="rzp-panel__tick"><CheckCircle2 size={11} strokeWidth={2.5} /></span>
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <span className="rzp-panel__tagline">Step {step.num} — {step.eyebrow}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
           </div>
 
-          {/* Step content — all stacked, GSAP controls which is visible */}
-          <div className="rzp-content">
+          {/* Mobile: swipeable card track, no scroll-jacking — the user can
+              swipe through all 5 steps or just scroll past at any time */}
+          <div
+            className="rzp-mobile-track"
+            ref={mobileTrackRef}
+            onScroll={handleMobileTrackScroll}
+          >
             {RETRIAZ_STEPS.map((step) => (
-              <div key={step.key} className="rzp-step">
-                <div className="rzp-step-bgnum" aria-hidden="true">{step.num}</div>
-                <span className="rzp-eyebrow">{step.eyebrow}</span>
-                <h3 className="rzp-title">{step.title}</h3>
-                <p className="rzp-desc">{step.desc}</p>
-                <ul className="rzp-feats">
-                  {step.features.map(f => <li key={f}>{f}</li>)}
-                </ul>
+              <div key={step.key} className="rzp-mobile-slide">
+                <div className="rzp-panel">
+                  <span className="rzp-panel__icon"><step.Icon size={22} strokeWidth={1.8} /></span>
+                  <h3 className="rzp-panel__title">{step.title}</h3>
+                  <p className="rzp-panel__desc">{step.desc}</p>
+                  <ul className="rzp-panel__ticks">
+                    {step.features.map(f => (
+                      <li key={f}>
+                        <span className="rzp-panel__tick"><CheckCircle2 size={11} strokeWidth={2.5} /></span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <span className="rzp-panel__tagline">Step {step.num} — {step.eyebrow}</span>
+                </div>
               </div>
             ))}
           </div>
-
-          {/* Mockup images — all stacked, GSAP controls which is visible */}
-          <div className="rzp-visual">
+          <div className="rzp-mobile-dots">
             {RETRIAZ_STEPS.map((step, i) => (
-              <div key={step.key} className="rzp-img-wrap">
-                <img
-                  src={step.img}
-                  alt={step.title}
-                  className="rzp-img"
-                  loading={i === 0 ? 'eager' : 'lazy'}
-                />
-              </div>
+              <button
+                key={step.key}
+                type="button"
+                className={`rzp-mobile-dot${mobileStep === i ? ' rzp-mobile-dot--on' : ''}`}
+                aria-label={`Go to step ${i + 1}`}
+                onClick={() => scrollToMobileStep(i)}
+              />
             ))}
           </div>
 
@@ -364,11 +376,9 @@ export default function SoftwarePage() {
       <section className="sw-plat">
         <div className="container">
 
-          {/* Divider + label */}
+          {/* Label */}
           <div className="sw-plat__divrow sw-reveal">
-            <span className="sw-plat__divline" />
             <span className="sw-plat__divcap">Platform Preview</span>
-            <span className="sw-plat__divline" />
           </div>
 
           {/* Heading */}
@@ -383,24 +393,9 @@ export default function SoftwarePage() {
             </p>
           </div>
 
-          {/* Preview cards */}
-          <div className="sw-plat__cards sw-reveal">
-            <div className="sw-plat__card">
-              <img
-                src="/product-passport-sample.jpeg"
-                alt="Digital Product Passport Sample"
-                className="sw-plat__card-img"
-                loading="lazy"
-              />
-            </div>
-            <div className="sw-plat__card">
-              <img
-                src="/live-dashboard-sample.jpeg"
-                alt="Live Dashboard Sample"
-                className="sw-plat__card-img"
-                loading="lazy"
-              />
-            </div>
+          {/* Interactive platform preview mockup */}
+          <div className="sw-plat__preview">
+            <PlatformPreviewMockup />
           </div>
 
         </div>
@@ -914,31 +909,3 @@ function BottleCanvas({ step }) {
   );
 }
 
-/* ── Verification ring ── */
-/* ── Illustration: AI-Powered Verification ── */
-function IllusAI() {
-  return (
-    <img src="/step1-core.png" alt="AI-Powered Verification" className="sw-illus sw-illus--img" draggable="false" loading="lazy" decoding="async" />
-  );
-}
-
-/* ── Illustration: Blockchain Traceability ── */
-function IllusBlockchain() {
-  return (
-    <img src="/step2-core.png" alt="Blockchain Traceability" className="sw-illus sw-illus--img" draggable="false" loading="lazy" decoding="async" />
-  );
-}
-
-/* ── Illustration: Digital Product Passport ── */
-function IllusPassport() {
-  return (
-    <img src="/step3-core.png" alt="Digital Product Passport" className="sw-illus sw-illus--img" draggable="false" loading="lazy" decoding="async" />
-  );
-}
-
-/* ── Illustration: Compliance Automation ── */
-function IllusCompliance() {
-  return (
-    <img src="/step4-core.png" alt="Compliance Automation" className="sw-illus sw-illus--img" draggable="false" loading="lazy" decoding="async" />
-  );
-}

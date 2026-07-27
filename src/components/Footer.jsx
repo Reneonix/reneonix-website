@@ -1,10 +1,14 @@
-// Hashes that are full page routes (not home-page sections)
+import { navigate, navClick } from '../utils/nav.js';
+
+// Real paths that are full page routes (not home-page sections)
 const PAGE_ROUTES = new Set([
-  '#solutions', '#careers', '#hardware', '#software', '#material-science',
+  '/solutions', '/careers', '/solutions/hardware', '/solutions/software', '/solutions/material-science', '/investors-page', '/blog', '/contact-us',
 ]);
 
 
-// Hashes that are anchored sections on the home page
+// Hashes that are anchored sections on the home page — these stay as URL
+// fragments (not page routes), since they only ever mean "scroll to this
+// element on the home page", never a page of their own.
 const HOME_SECTIONS = new Set([
   '#about', '#investors', '#contact', '#highlights',
 ]);
@@ -30,14 +34,16 @@ function scrollToSection(id) {
 function handleSectionNav(e, href) {
   e.preventDefault();
   const sectionId = href.slice(1); // '#about' → 'about'
-  const currentHash = window.location.hash.split('?')[0];
-  const onHomePage = !PAGE_ROUTES.has(currentHash);
+  // Every other route now has its own real path, so "home page" is
+  // exhaustively just the root path — no per-route enumeration needed the
+  // way the old hash-based check required.
+  const onHomePage = window.location.pathname === '/';
 
   if (onHomePage) {
     scrollToSection(sectionId);
   } else {
     sessionStorage.setItem('sw_scroll_target', sectionId);
-    window.location.hash = '#home';
+    navigate('/');
   }
 }
 
@@ -47,16 +53,16 @@ function handleSectionNav(e, href) {
  */
 function handlePageNav(e, page, section) {
   e.preventDefault();
-  const currentHash = window.location.hash.split('?')[0];
+  const currentPath = window.location.pathname;
   if (section) {
-    if (currentHash === page) {
+    if (currentPath === page) {
       scrollToSection(section);
     } else {
       sessionStorage.setItem('sw_scroll_target', section);
-      window.location.hash = page;
+      navigate(page);
     }
   } else {
-    window.location.hash = page;
+    navigate(page);
   }
 }
 
@@ -64,40 +70,41 @@ const COLUMNS = [
   {
     title: 'Solutions',
     items: [
-      ['Hardware', '#hardware'],
-      ['Software', '#software'],
-      ['Material Science', '#material-science'],
+      ['Hardware', '/solutions/hardware'],
+      ['Software', '/solutions/software'],
+      ['Material Science', '/solutions/material-science'],
     ],
   },
   {
     title: 'Technology',
-    // 3-tuple: [label, pageHash, sectionId|null]
+    // 3-tuple: [label, pagePath, sectionId|null]
     items: [
-      ['AI Vision & Sorting', '#hardware',         'hw-sorter'],
-      ['Sensor Networks',     '#hardware',         'hw-mrm'],
-      ['TraceOS Platform',    '#software',         null],
-      ['R&D Labs',            '#material-science', null],
+      ['AI Vision & Sorting', '/solutions/hardware',         'hw-sorter'],
+      ['Sensor Networks',     '/solutions/hardware',         'hw-mrm'],
+      ['TraceOS Platform',    '/solutions/software',         null],
+      ['R&D Labs',            '/solutions/material-science', null],
     ],
   },
   {
     title: 'Industries',
     items: [
-      ['Glass Manufacturers', '#'],
-      ['Municipalities & Government', '#'],
-      ['Beverage & FMCG Brands', '#'],
-      ['Construction & Real Estate', '#'],
-      ['Recycling Operators', '#'],
+      ['Glass Manufacturers', null],
+      ['Municipalities & Government', null],
+      ['Beverage & FMCG Brands', null],
+      ['Construction & Real Estate', null],
+      ['Recycling Operators', null],
     ],
   },
   {
     title: 'Resources',
     items: [
-      ['Blog', '#'],
-      ['Case Studies', '#'],
-      ['Sustainability Reports', '#'],
-      ['Whitepapers', '#'],
-      ['Press & Media', '#highlights'],
-      ['FAQ', '#'],
+      ['Blog', '/blog'],
+      ['Case Studies', null],
+      ['Sustainability Reports', null],
+      ['Whitepapers', null],
+      ['Press & Media', null],
+      ['Investors Relations', '/investors-page'],
+      ['FAQ', null],
     ],
   },
   {
@@ -105,8 +112,8 @@ const COLUMNS = [
     items: [
       ['About', '#about'],
       ['Investors & Partners', '#investors'],
-      ['Careers', '#careers'],
-      ['Contact', '#contact'],
+      ['Careers', '/careers'],
+      ['Contact', '/contact-us'],
     ],
   },
 ];
@@ -117,7 +124,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer__grid">
           <div className="footer__about">
-            <a href="#home" className="footer__brand" aria-label="Reneonix home">
+            <a href="/" className="footer__brand" aria-label="Reneonix home" onClick={navClick('/')}>
               <img src="/reneonix-logo.svg" alt="Reneonix" className="footer__brand-img" />
             </a>
             <p style={{ marginTop: 20 }}>
@@ -176,8 +183,8 @@ export default function Footer() {
         <div className="footer__bottom">
           <span>© 2026 Reneonix. All rights reserved.</span>
           <span>
-            <a href="#policy">Privacy</a> · <a href="#policy">Terms</a> ·{' '}
-            <a href="#policy">Security</a>
+            <a href="/policy" onClick={navClick('/policy')}>Privacy</a> · <a href="/policy" onClick={navClick('/policy')}>Terms</a> ·{' '}
+            <a href="/policy" onClick={navClick('/policy')}>Security</a>
           </span>
         </div>
       </div>

@@ -7,8 +7,7 @@ export default function Preloader({ minDisplayMs = 1600 }) {
 
   useEffect(() => {
     // Only show on the home route — skip on Solutions, Careers, or any other page refresh
-    const hash = window.location.hash.split('?')[0];
-    const isHome = !hash || hash === '#' || hash === '#home';
+    const isHome = window.location.pathname === '/';
 
     if (!isHome || window.__preloaderShown) {
       setDone(true);

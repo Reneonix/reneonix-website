@@ -4,6 +4,7 @@ import {
   Briefcase, Key, AlertCircle, RefreshCw,
   Calendar, ChevronDown,
 } from 'lucide-react';
+import { navClick } from '../utils/nav.js';
 import './PolicyPage.css';
 
 /* ── Data ─────────────────────────────────────────────── */
@@ -475,7 +476,7 @@ export default function PolicyPage() {
         <div className="container pol-hero__container">
           <div className="pol-hero__content">
             <nav className="pol-breadcrumb" aria-label="Breadcrumb">
-              <a href="#home" className="pol-breadcrumb__link">Home</a>
+              <a href="/" className="pol-breadcrumb__link" onClick={navClick('/')}>Home</a>
               <span className="pol-breadcrumb__sep" aria-hidden="true">›</span>
               <span className="pol-breadcrumb__current" aria-current="page">Policy</span>
             </nav>
@@ -500,7 +501,7 @@ export default function PolicyPage() {
               className="pol-hero__img"
               draggable="false"
               loading="eager"
-              fetchPriority="high"
+              fetchpriority="high"
               decoding="async"
               width="500"
               height="500"

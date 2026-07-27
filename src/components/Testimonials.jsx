@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import MagicRings from './MagicRings.jsx';
 
 const QUOTES = [
@@ -25,29 +26,42 @@ const QUOTES = [
 ];
 
 export default function Testimonials() {
+  // MagicRings is a continuous WebGL animation — skip the mix-blend-mode
+  // wrapper too (not just the canvas) on mobile, so the section carries no
+  // extra compositing layer at all there. See MagicRings.jsx for why.
+  const [showRings, setShowRings] = useState(false);
+  useEffect(() => {
+    const isMobile = window.matchMedia('(max-width: 820px)').matches
+      || ('ontouchstart' in window && window.matchMedia('(pointer: coarse)').matches);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setShowRings(!isMobile && !reduceMotion);
+  }, []);
+
   return (
     <section className="section section-dark" id="testimonials" style={{ position: 'relative', overflow: 'hidden' }}>
       {/* mix-blend-mode:screen makes the solid-black canvas invisible so the dark
           section background always shows through, while bright lime rings remain
           fully visible. This fixes white-background on Android/low-end GPUs. */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', mixBlendMode: 'screen' }}>
-        <MagicRings
-          color="#B2DE3A"
-          colorTwo="#9CC130"
-          ringCount={6}
-          speed={0.6}
-          attenuation={12}
-          lineThickness={2}
-          baseRadius={0.35}
-          radiusStep={0.12}
-          scaleRate={0.08}
-          opacity={0.45}
-          noiseAmount={0.04}
-          ringGap={1.5}
-          fadeIn={0.7}
-          fadeOut={0.5}
-        />
-      </div>
+      {showRings && (
+        <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', mixBlendMode: 'screen' }}>
+          <MagicRings
+            color="#B2DE3A"
+            colorTwo="#9CC130"
+            ringCount={6}
+            speed={0.6}
+            attenuation={12}
+            lineThickness={2}
+            baseRadius={0.35}
+            radiusStep={0.12}
+            scaleRate={0.08}
+            opacity={0.45}
+            noiseAmount={0.04}
+            ringGap={1.5}
+            fadeIn={0.7}
+            fadeOut={0.5}
+          />
+        </div>
+      )}
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div className="section-head">
           <span className="eyebrow on-dark">Client Feedback</span>

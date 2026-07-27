@@ -1,0 +1,54 @@
+/* ==========================================================
+   ProcessSection — shared shell for Challenge / Solution sections
+   ========================================================== */
+
+.ps-section {
+  background: var(--paper);
+  padding: clamp(56px, 12vmin, 88px) 0;
+}
+.ps-section__inner { max-width: 900px; }
+
+.ps-eyebrow {
+  display: block;
+  font-size: clamp(.92rem, 2.4vmin, 1.05rem); font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
+  margin: 0 0 14px;
+}
+.ps-heading {
+  font-size: clamp(1.7rem, 3.6vw, 2.4rem); color: var(--ink); line-height: 1.22;
+  margin: 0 0 16px;
+}
+.ps-intro {
+  font-size: clamp(.96rem, 1.7vw, 1.08rem); line-height: 1.7; color: var(--on-light-mut);
+  max-width: 68ch; margin: 0 0 32px;
+}
+
+.ps-chain-slot { margin: clamp(24px, 4vw, 40px) 0; }
+
+.ps-stat-punch {
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem); font-weight: 800; color: var(--ink);
+  margin: clamp(20px, 3vw, 28px) 0 0;
+}
+.ps-closing {
+  font-size: clamp(.96rem, 1.7vw, 1.08rem); line-height: 1.7; color: var(--on-light-mut);
+  max-width: 68ch; margin: 14px 0 0;
+}
+
+/* ── Tone accents ─────────────────────────────────────────── */
+.ps-section--challenge .ps-eyebrow { color: #B4772C; }
+.ps-section--challenge .ps-stat-punch { color: #B4772C; }
+
+.ps-section--solution .ps-eyebrow { color: var(--lime-deep); }
+.ps-section--solution .ps-stat-punch { color: var(--lime-deep); }
+
+/* ==========================================================
+   Motion — text reveal mirrors ProcessChain's policy: final state
+   by default, staggered fade/rise only when motion is allowed.
+   ========================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  .ps-reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .55s ease, transform .55s cubic-bezier(.2, .7, .2, 1);
+  }
+  .ps-section.is-in .ps-reveal { opacity: 1; transform: translateY(0); }
+}

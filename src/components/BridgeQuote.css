@@ -1,0 +1,65 @@
+/* ==========================================================
+   BridgeQuote — shared brush-stroke pull-quote divider used by
+   the blog article pages (MRM, TraceOS, Foam Glass, Resource Recovery)
+   ========================================================== */
+
+.bq-wrap {
+  display: flex; justify-content: center;
+  padding: clamp(40px, 10.8vmin, 64px) var(--gutter);
+  background: var(--paper);
+  opacity: 0; transform: translateY(24px) scale(.98);
+  transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+}
+.bq-wrap.bq-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .bq-wrap { opacity: 1; transform: none; transition: none; }
+}
+
+.bq-card {
+  position: relative; isolation: isolate;
+  display: flex; align-items: center; justify-content: center;
+  width: fit-content; max-width: min(760px, 100%); min-height: clamp(170px, 30vmin, 220px); margin: 0;
+  padding: clamp(40px, 9.9vmin, 56px) clamp(44px, 10.8vmin, 72px);
+}
+.bq-brush {
+  position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; overflow: visible;
+}
+.bq-brush path { fill: var(--lime); }
+
+.bq-mark {
+  position: absolute; z-index: 1; pointer-events: none; user-select: none;
+  font-family: Georgia, 'Times New Roman', serif; font-style: normal; font-weight: 700;
+  line-height: .6; color: var(--ink);
+}
+.bq-mark--open {
+  top: 32%; left: 10%;
+  font-size: clamp(2.6rem, 8.1vmin, 4.6rem);
+  opacity: 0; transform: translateY(-10px) scale(.8);
+  transition: opacity .5s ease .18s, transform .5s cubic-bezier(.2,.7,.2,1) .18s;
+}
+.bq-wrap.bq-in .bq-mark--open { opacity: .82; transform: translateY(0) scale(1); }
+@media (prefers-reduced-motion: reduce) {
+  .bq-mark--open { transition: none; opacity: .82; transform: none; }
+}
+.bq-mark--close {
+  bottom: 18%; right: 6%;
+  font-size: clamp(2.6rem, 8.1vmin, 4.6rem);
+  opacity: .82;
+}
+
+.bq-card .bq-text {
+  position: relative; z-index: 1; margin: 0; box-sizing: border-box;
+  width: fit-content; max-width: min(600px, 68vw);
+  padding: 0 clamp(22px, 5.4vmin, 38px);
+  text-align: center;
+  font-weight: 700; font-size: clamp(1.24rem, 3.42vmin, 1.5rem); line-height: 1.44;
+  color: var(--ink);
+}
+.bq-card .bq-text b { font-style: normal; font-weight: 800; color: var(--white); }
+
+@media (max-width: 560px) {
+  .bq-card { padding: clamp(48px, 20vmin, 60px) clamp(24px, 8vmin, 32px) clamp(32px, 12vmin, 40px); }
+  .bq-card .bq-text { max-width: 78vw; padding: 0 clamp(14px, 4vmin, 22px); }
+  .bq-mark--open { font-size: clamp(2.1rem, 12vmin, 2.8rem); }
+  .bq-mark--close { font-size: clamp(2.1rem, 12vmin, 2.8rem); }
+}

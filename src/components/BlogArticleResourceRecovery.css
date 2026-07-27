@@ -1,0 +1,653 @@
+/* ==========================================================
+   BlogArticleResourceRecovery — integrated infrastructure +
+   verified data (merged Industry Insight / Sustainability article)
+   ========================================================== */
+
+/* ── Breadcrumb (inside hero) ─────────────────────────────── */
+.rr-breadcrumb {
+  position: absolute; z-index: 1; top: 96px; left: 0; right: 0;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 6px;
+  font-size: .88rem; font-weight: 600; color: var(--on-dark-mut);
+  padding: 0 var(--gutter); text-align: left;
+}
+.rr-breadcrumb a { color: var(--on-dark-mut); text-decoration: none; transition: color .18s ease; }
+.rr-breadcrumb a:hover { color: var(--lime); }
+.rr-breadcrumb svg { color: rgba(255,255,255,.3); flex-shrink: 0; }
+.rr-breadcrumb .is-current {
+  color: var(--on-dark); max-width: 360px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ── Hero (same treatment as the other article pages) ─────── */
+.rr-hero {
+  position: relative; overflow: hidden;
+  min-height: calc(100vh - 76px);
+  display: flex; align-items: center; justify-content: flex-start;
+  padding: clamp(140px, 16vw, 180px) 0 clamp(48px, 6vw, 72px);
+  background: var(--bg) url('/article background.png') center / cover no-repeat;
+}
+@media (max-width: 1024px) { .rr-hero { min-height: calc(100vh - 68px); } }
+@media (max-width: 480px) { .rr-hero { min-height: calc(100vh - 60px); } }
+.rr-hero__bg-veil {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(100deg, rgba(4,8,4,.68) 0%, rgba(4,8,4,.52) 28%, rgba(4,8,4,.26) 52%, rgba(4,8,4,.08) 74%, rgba(4,8,4,.02) 100%),
+    linear-gradient(180deg, rgba(4,8,4,.22) 0%, transparent 20%, transparent 70%, rgba(4,8,4,.3) 100%),
+    radial-gradient(900px 480px at 8% -10%, rgba(178,222,58,.14), transparent 60%);
+}.rr-hero__inner {
+  position: relative; z-index: 1; max-width: 900px;
+  padding: 0 var(--gutter); text-align: left;
+}
+.rr-hero__chip {
+  display: inline-block;
+  font-size: .8rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--lime); background: rgba(178,222,58,.14);
+  border: 1px solid rgba(178,222,58,.35);
+  padding: 7px 14px; border-radius: 999px; margin: 0 0 18px;
+}
+.rr-hero h1 {
+  color: var(--white); font-size: clamp(2rem, 4.4vw, 3.2rem); line-height: 1.18;
+  margin: 0 0 18px;
+}
+/* Scoped under .rr-hero (not just .rr-hero__lead alone) so this beats
+   the shared .rr-article p rule further down — that rule's higher
+   specificity (class + element) was silently overriding this color. */
+.rr-hero .rr-hero__lead {
+  color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.45);
+  font-size: clamp(1rem, 1.7vw, 1.15rem); line-height: 1.6;
+  max-width: 620px; margin: 0 0 24px;
+}
+.rr-hero__meta {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px;
+  color: var(--on-dark-mut); font-size: .96rem; font-weight: 500;
+}
+.rr-hero__meta span { display: inline-flex; align-items: center; gap: 6px; }
+.rr-hero__meta svg { color: var(--lime); }
+.rr-hero__meta-author { color: var(--lime); font-weight: 700; }
+.rr-hero__dot { opacity: .5; }
+
+.rr-hero__scroll-cue {
+  position: absolute; left: 50%; bottom: 20px; transform: translateX(-50%);
+  z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  color: rgba(255,255,255,.5); text-decoration: none;
+  font-size: .72rem; font-weight: 600;
+  animation: rr-scroll-bounce 1.8s ease-in-out infinite;
+}
+@keyframes rr-scroll-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+/* Full-width paper surface behind the whole article — the <article> is a
+   plain full-width block, so this covers the page in one continuous piece
+   with no viewport-relative hacks needed. The hero still paints its own
+   opaque background on top of it. */
+.rr-article { background: var(--paper); }
+
+/* Cap the width of the Overview, Challenge, Circularity, and Integration
+   blocks so their lines don't run edge-to-edge, and center them on the
+   page — their text is centered too, via the shared rule below. Ids are
+   used (not the shared .rr-chapter class) since that class is reused by
+   other chapters that haven't been asked to do this. */
+.rr-intro, #challenge, #circularity, #integration {
+  max-width: 880px; margin-left: auto; margin-right: auto;
+}
+
+/* ── Shared typography ─────────────────────────────────────── */
+/* Every section centers its own text content (eyebrow, heading, body
+   copy) — matches the hero's centered treatment. Card grids (pillars,
+   why-cards) opt back out to left-aligned body text further down, since
+   that reads better inside a card. */
+.rr-article .container { text-align: center; }
+.rr-article h2 em { font-style: normal; font-weight: 900; color: var(--lime-deep); }
+.rr-article h2 { font-size: clamp(1.7rem, 3.6vw, 2.4rem); color: var(--ink); line-height: 1.22; margin: 0 0 14px; }
+.rr-article p { font-size: clamp(1rem, 1.8vw, 1.15rem); line-height: 1.7; color: var(--on-light-mut); max-width: 68ch; margin: 0 auto 16px; text-align: justify; }
+.rr-article strong { color: var(--ink); }
+
+.rr-eyebrow {
+  display: block;
+  font-size: clamp(.92rem, 2.4vmin, 1.05rem); font-weight: 800; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--lime-deep); margin: 0 0 14px;
+}
+.rr-eyebrow--lg { font-size: clamp(1.05rem, 2.7vmin, 1.18rem); }
+
+/* ── Shared chapter shell (same paper background as the MRM /
+   Foam Glass article pages) ───────────────────────────────── */
+.rr-chapter { background: var(--paper); padding: clamp(56px, 12vmin, 88px) 0; scroll-margin-top: 100px; }
+
+/* ── Image placeholder — swap for a real <img> once uploaded ─ */
+.rr-img-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; height: 100%; min-height: 160px;
+  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 10px, rgba(0,0,0,.06) 10px, rgba(0,0,0,.06) 20px);
+  border: 2px dashed rgba(0,0,0,.16);
+  color: var(--on-light-mut);
+  font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+}
+.rr-img-placeholder svg { color: rgba(0,0,0,.24); }
+
+
+/* ── Chapter 01 — introduction (text only) ────────────────── */
+.rr-intro { background: var(--paper); padding: clamp(56px, 12vmin, 88px) 0; scroll-margin-top: 76px; }
+
+/* ── Animated broken-chain slot (Challenge chapter) ────────── */
+.rr-process-slot {
+  margin: clamp(28px, 4vw, 40px) 0;
+  padding: clamp(28px, 4vw, 44px) clamp(20px, 3vw, 32px);
+  background: var(--white);
+  border: 1px solid rgba(0,0,0,.07); border-radius: var(--r-lg, 18px);
+}
+
+/* ── Chapter 04 — "One Connected Chain" line-draw + light-up ───────────
+   A single track draws itself through every node (stroke-free — a plain
+   scaleX bar, matching the section mockup), lighting each stage the
+   instant the line reaches its real rendered position, then a data pulse
+   loops through the finished chain. ─────────────────────────────────── */
+.rr-linechain {
+  --rr-circle: clamp(52px, 6vw, 68px);
+  position: relative;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: clamp(8px, 1.2vw, 16px);
+}
+
+.rr-linechain__track {
+  position: absolute; left: calc(var(--rr-circle) / 2); right: calc(var(--rr-circle) / 2);
+  top: 50%; height: 3px; margin-top: -1.5px;
+  background: var(--lime-deep); border-radius: 2px;
+  transform: scaleX(0); transform-origin: left center; z-index: 0;
+}
+.rr-linechain__dot {
+  position: absolute; top: 50%; left: calc(var(--rr-circle) / 2);
+  width: 11px; height: 11px; margin-top: -5.5px; border-radius: 50%;
+  background: var(--lime-deep);
+  box-shadow: 0 0 0 4px rgba(178,222,58,.18), 0 0 14px rgba(178,222,58,.5);
+  opacity: 0; z-index: 1;
+}
+
+.rr-linechain__node {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: clamp(8px, 1vw, 12px);
+  cursor: default; outline: none; min-width: 0;
+}
+.rr-linechain__circle {
+  width: var(--rr-circle); height: var(--rr-circle); flex-shrink: 0;
+  border-radius: 50%; display: grid; place-items: center;
+  background: var(--paper); border: 1.5px solid rgba(0,0,0,.14); color: var(--on-light-mut);
+  transition: background .45s ease, border-color .45s ease, color .45s ease, transform .25s ease, box-shadow .25s ease;
+}
+.rr-linechain__label {
+  font-weight: 700; font-size: 1.05rem; color: var(--on-light-mut);
+  transition: color .45s ease; white-space: nowrap;
+}
+
+/* The connected-chain diagram needs more room than the 880px centered
+   reading column (#integration's own max-width) gives it for 6 labelled
+   nodes at a readable size. Break just this card out to a wider,
+   section-width column instead of shrinking the diagram to fit. */
+@media (min-width: 1001px) {
+  #integration .rr-process-slot {
+    max-width: var(--maxw-tight, 1080px);
+    width: 100%;
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
+}
+#integration .rr-linechain {
+  --rr-circle: 60px;
+  align-items: flex-start;
+  gap: clamp(16px, 3vw, 36px);
+}
+/* Labels stack under their circle (instead of beside it) so 6 nodes have
+   room to breathe — the track/dot re-anchor to the circle's own vertical
+   center instead of the whole (now taller) node's center. */
+#integration .rr-linechain__track { top: calc(var(--rr-circle) / 2); margin-top: -1.5px; }
+#integration .rr-linechain__dot { top: calc(var(--rr-circle) / 2); margin-top: -5.5px; }
+#integration .rr-linechain__node { flex-direction: column; gap: 10px; text-align: center; }
+#integration .rr-linechain__label {
+  white-space: normal; font-size: 1rem; max-width: 10ch; line-height: 1.25; margin: 0 auto;
+}
+
+.rr-linechain__node.is-lit .rr-linechain__circle { background: rgba(178,222,58,.12); border-color: var(--lime-deep); color: var(--lime-deep); }
+.rr-linechain__node.is-lit .rr-linechain__label { color: var(--ink); }
+
+/* Small green chevrons between each pair of nodes — same idea as the
+   Challenge section's connector arrows (ProcessChain), but this chain has
+   its own continuous track line already, so these are just the arrow
+   marks on top of it, not full duplicate line segments. */
+.rr-linechain__arrow {
+  position: relative; z-index: 2; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--lime-deep); opacity: .5;
+  transition: opacity .3s ease;
+}
+.rr-linechain__arrow.is-lit { opacity: 1; }
+#integration .rr-linechain__arrow { height: var(--rr-circle); }
+
+.rr-linechain__circle:hover,
+.rr-linechain__node:focus-visible .rr-linechain__circle { transform: scale(1.08); box-shadow: 0 8px 22px rgba(20,30,15,.16); }
+.rr-linechain__node:focus-visible .rr-linechain__circle { box-shadow: 0 0 0 3px var(--lime-deep); }
+
+.rr-linechain__tip {
+  position: absolute; bottom: calc(100% + 14px); left: 50%; transform: translateX(-50%) translateY(4px);
+  background: #14170F; color: var(--lime);
+  font-size: .8rem; font-weight: 600; line-height: 1.45;
+  padding: 10px 13px; border-radius: 10px;
+  width: max-content; max-width: 190px; white-space: normal; text-align: center;
+  opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; z-index: 6;
+}
+.rr-linechain__tip::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 6px solid transparent; border-top-color: #14170F;
+}
+.rr-linechain__node:hover .rr-linechain__tip,
+.rr-linechain__node:focus-visible .rr-linechain__tip,
+.rr-linechain__node.is-active .rr-linechain__tip { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.rr-linechain.is-in .rr-linechain__track { transform: scaleX(1); transition: transform var(--rr-draw-ms, 1600ms) linear; }
+.rr-linechain.is-flowing .rr-linechain__dot { opacity: 1; animation: rr-linechain-flow var(--rr-flow-ms, 3200ms) linear infinite; }
+@keyframes rr-linechain-flow {
+  from { transform: translateX(0); }
+  to   { transform: translateX(var(--rr-track-w, 900px)); }
+}
+
+.rr-linechain__node.is-lit .rr-linechain__circle { animation: rr-linechain-pop .5s ease; }
+@keyframes rr-linechain-pop {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+
+/* ── Responsive — vertical timeline below 1000px ───────────────────────
+   (Six labelled stages need more room before wrapping than the article's
+   usual 760px breakpoint gives them.) */
+@media (max-width: 1000px) {
+  .rr-linechain { flex-direction: column; align-items: flex-start; gap: 24px; }
+  /* align-items:flex-start above only sets the chain's default — nodes
+     (variable-width, since labels vary in length) were left hugging the
+     left edge instead of centering like the arrows between them do. */
+  .rr-linechain__node { align-self: center; }
+  /* No continuous line on mobile — a discrete dashed connector + arrowhead
+     between each pair of stacked nodes instead, matching the Challenge
+     section's mobile pattern (just green here, per this chain's own
+     colour, instead of Challenge's muted grey). */
+  .rr-linechain__track, .rr-linechain__dot { display: none; }
+  .rr-linechain__arrow {
+    align-self: center; flex-direction: column; align-items: center; gap: 3px;
+    height: auto; margin: -4px 0; opacity: 1;
+  }
+  .rr-linechain__arrow::before {
+    content: '';
+    width: 3px; height: 16px; border-radius: 2px;
+    background: repeating-linear-gradient(to bottom, var(--lime-deep) 0 4px, transparent 4px 8px);
+  }
+  .rr-linechain__arrow svg { transform: rotate(90deg); }
+  /* The vertical track line runs straight down through every node's label
+     text (circles mask it fine since they have an opaque fill, but plain
+     text doesn't) — giving the label its own opaque backing, like the
+     circles already have, hides the line behind it instead of showing
+     through the gaps between letters. */
+  .rr-linechain__label {
+    white-space: normal; position: relative; z-index: 2;
+    background: var(--white); padding: 2px 8px; border-radius: 4px;
+  }
+  .rr-linechain__tip {
+    bottom: auto; top: 50%; left: auto; right: calc(100% + 12px);
+    transform: translateY(-50%) translateX(-4px); max-width: 150px;
+  }
+  .rr-linechain__tip::after {
+    top: 50%; left: 100%; transform: translateY(-50%);
+    border: 6px solid transparent; border-left-color: #14170F; border-top-color: transparent;
+  }
+  .rr-linechain__node:hover .rr-linechain__tip,
+  .rr-linechain__node:focus-visible .rr-linechain__tip,
+  .rr-linechain__node.is-active .rr-linechain__tip { transform: translateY(-50%) translateX(0); }
+}
+@media (max-width: 1000px) {
+  .rr-linechain.is-in .rr-linechain__track { transform: scaleY(1); }
+  .rr-linechain.is-flowing .rr-linechain__dot { opacity: 0; animation: none; }
+}
+
+/* ── Chapter 03 — Traditional Recycling → Verified Circularity ─────────
+   Pair-wise choreographed comparison: cards enter from opposite sides,
+   the arrow draws itself between them, then each old item strikes out a
+   beat before its paired new item is born (staggering handled in JS via
+   the .is-done / .is-born classes; every transition/animation below is
+   pure CSS, keyed off those classes). ────────────────────────────────── */
+.rr-compare {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  align-items: stretch; gap: clamp(16px, 3vw, 28px);
+  margin: clamp(24px, 4vw, 36px) 0 clamp(36px, 5.5vw, 52px);
+}
+
+.rr-compare__card {
+  flex: 0 1 300px; max-width: 300px;
+  border-radius: var(--r-lg, 18px); padding: clamp(22px, 3vw, 30px);
+  display: flex; flex-direction: column;
+}
+.rr-compare__label { display: block; font-size: .82rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; }
+.rr-compare__card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.rr-compare__card li { font-size: 1.05rem; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+
+.rr-compare__card--old { background: var(--white); border: 1px solid rgba(0,0,0,.08); transform: scale(.97); filter: saturate(.85); }
+.rr-compare__label--old, .rr-compare__card--old .rr-compare__label { color: var(--on-light-mut); }
+
+.rr-compare__card--new {
+  background: rgba(178,222,58,.08); border: 1.5px solid rgba(178,222,58,.35);
+  box-shadow: 0 14px 44px rgba(178,222,58,.14);
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+.rr-compare__card--new:hover { transform: translateY(-5px); box-shadow: 0 22px 56px rgba(178,222,58,.2); }
+.rr-compare__card--new .rr-compare__label { color: var(--lime-deep); }
+
+/* strike-through line that grows across a struck old item */
+.rr-compare__strike { position: relative; display: inline-block; }
+.rr-compare__strike::after {
+  content: ''; position: absolute; left: 0; top: 54%; height: 2px; width: 0;
+  background: var(--on-light-mut); transition: width .45s ease;
+}
+.rr-compare__card--old li.is-done { color: var(--on-light-mut); transition: color .5s ease; }
+.rr-compare__card--old li.is-done .rr-compare__strike::after { width: 100%; }
+
+.rr-compare__check { width: 20px; height: 20px; flex-shrink: 0; color: var(--lime-deep); }
+.rr-compare__check path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 20; stroke-dashoffset: 20; }
+.rr-compare__card--new li.is-born .rr-compare__check path { stroke-dashoffset: 0; transition: stroke-dashoffset .4s ease; }
+
+.rr-compare__arrow {
+  align-self: center; width: clamp(40px, 4.5vw, 56px); flex-shrink: 0;
+  filter: drop-shadow(0 3px 5px rgba(124, 164, 38, .45)) drop-shadow(0 1px 1px rgba(20, 30, 15, .3));
+}
+.rr-compare__arrow svg { width: 100%; overflow: visible; display: block; }
+/* Solid gradient-filled shape (light lime top-left → deep lime
+   bottom-right) plus a thin white top-edge highlight — the combination
+   reads as a raised, beveled 3D arrow instead of a flat drawn line. */
+.rr-compare__arrow-body { stroke: rgba(20, 30, 15, .35); stroke-width: .75; stroke-linejoin: round; }
+.rr-compare__arrow-shine {
+  fill: none; stroke: rgba(255, 255, 255, .55); stroke-width: 1.4;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+@media (max-width: 640px) {
+  .rr-compare__card { flex-basis: 100%; max-width: 360px; }
+  .rr-compare__arrow { transform: rotate(90deg); }
+}
+
+/* ── Motion — entrance, draw-in and pulse, always on (see policy note
+   at the top of this file) ────────────────────────────────────────── */
+.rr-compare__card--old {
+  opacity: 0; transform: translateX(-36px) scale(.97);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.rr-compare__card--new {
+  opacity: 0; transform: translateX(36px);
+  transition: opacity .6s ease .55s, transform .6s ease .55s, box-shadow .35s ease;
+}
+.rr-compare.is-in .rr-compare__card--old { opacity: 1; transform: translateX(0) scale(.97); transition-delay: .05s; }
+.rr-compare.is-in .rr-compare__card--new { opacity: 1; transform: translateX(0); }
+
+/* A filled shape can't "draw itself" via stroke-dashoffset like the old
+   thin-line arrow did — scale+fade in instead, still timed to land after
+   the cards. */
+.rr-compare__arrow { opacity: 0; transform: scale(.5); transition: opacity .35s ease .38s, transform .35s ease .38s; }
+.rr-compare.is-in .rr-compare__arrow { opacity: 1; transform: scale(1); }
+.rr-compare.is-in .rr-compare__arrow { animation: rr-compare-arrow-pulse 2.6s ease-in-out 2.8s infinite; }
+@keyframes rr-compare-arrow-pulse {
+  0%, 100% { transform: translateX(0); opacity: 1; }
+  50%      { transform: translateX(6px); opacity: .65; }
+}
+
+.rr-compare__card--new li { opacity: 0; transform: translateY(10px); transition: opacity .45s ease, transform .45s ease; }
+.rr-compare__card--new li.is-born { opacity: 1; transform: none; }
+
+@media (max-width: 640px) {
+  .rr-compare__card--old { transform: translateY(-24px) scale(.97); }
+  .rr-compare__card--new { transform: translateY(24px); }
+  .rr-compare.is-in .rr-compare__card--old { transform: translateY(0) scale(.97); }
+  .rr-compare.is-in .rr-compare__card--new { transform: translateY(0); }
+  .rr-compare.is-in .rr-compare__arrow { animation: rr-compare-arrow-pulse-v 2.6s ease-in-out 2.8s infinite; }
+  @keyframes rr-compare-arrow-pulse-v {
+    0%, 100% { transform: rotate(90deg) translateX(0); opacity: 1; }
+    50%      { transform: rotate(90deg) translateX(6px); opacity: .65; }
+  }
+}
+
+/* ── Chapter 05 — four pillars ─────────────────────────────── */
+.rr-pillars-grid {
+  display: grid; gap: 1.2rem; margin-top: clamp(28px, 4vw, 44px);
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+}
+.rr-pillar-card {
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-radius: var(--r-md);
+  overflow: hidden;
+}
+.rr-pillar-card__media { aspect-ratio: 4 / 3; }
+.rr-pillar-card__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.rr-pillar-card__body { padding: 18px 18px 20px; text-align: left; }
+.rr-pillar-card__body svg { color: var(--lime-deep); margin-bottom: 8px; }
+.rr-pillar-card__body h3 { font-size: clamp(1.05rem, 2.4vmin, 1.2rem); font-weight: 800; color: var(--ink); margin: 0 0 6px; }
+.rr-pillar-card__body p { font-size: clamp(1rem, 1.8vw, 1.15rem); color: var(--on-light-mut); margin: 0; max-width: none; text-align: left; }
+
+/* ── Chapter 06 — verified data chips ─────────────────────── */
+/* ── Chapter 06 — verified-data chips (live audit choreography) ────────
+   Chips fade in together in a pending (gray) state, then — one by one —
+   each is "verified": its ring badge fills lime, the checkmark draws
+   itself, and the chip stamps with a small pop, while the status line
+   above counts up and finally flips to its finished state. ───────────── */
+.rr-verify { margin: clamp(20px, 3vw, 28px) 0; }
+
+.rr-verify__status {
+  display: inline-flex; align-items: center; gap: 9px;
+  margin: 0 0 18px;
+  font-size: .84rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--on-light-mut); transition: color .4s ease;
+}
+.rr-verify__dot { width: 9px; height: 9px; border-radius: 50%; background: var(--on-light-mut); flex-shrink: 0; }
+.rr-verify__status.is-complete { color: var(--lime-deep); }
+.rr-verify__status.is-complete .rr-verify__dot { background: var(--lime-deep); animation: none; }
+
+.rr-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.rr-chip {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 999px;
+  font-size: 1.05rem; font-weight: 700; cursor: default; outline: none;
+  background: var(--white); border: 1.5px solid rgba(0,0,0,.14); color: var(--on-light-mut);
+  transition: background .45s ease, border-color .45s ease, color .45s ease, box-shadow .25s ease, transform .25s ease;
+}
+.rr-chip:hover, .rr-chip:focus-visible { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(20,30,15,.12); }
+.rr-chip:focus-visible { box-shadow: 0 0 0 3px var(--lime-deep); }
+
+.rr-chip__badge { width: 19px; height: 19px; flex-shrink: 0; }
+.rr-chip__ring { fill: none; stroke: rgba(0,0,0,.2); stroke-width: 1.8; transition: stroke .45s ease, fill .45s ease; }
+.rr-chip__mark { fill: none; stroke: var(--white); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 20; stroke-dashoffset: 20; }
+
+.rr-chip.is-verified { background: rgba(178,222,58,.1); border-color: rgba(178,222,58,.4); color: var(--ink); }
+.rr-chip.is-verified .rr-chip__ring { fill: var(--lime-deep); stroke: var(--lime-deep); }
+.rr-chip.is-verified .rr-chip__mark { stroke-dashoffset: 0; transition: stroke-dashoffset .35s ease .15s; }
+
+.rr-chip__tip {
+  position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(4px);
+  background: #14170F; color: var(--lime);
+  font-size: .78rem; font-weight: 600; line-height: 1.45;
+  padding: 9px 13px; border-radius: 10px;
+  width: max-content; max-width: 210px; white-space: normal; text-align: center;
+  opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; z-index: 6;
+}
+.rr-chip__tip::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 6px solid transparent; border-top-color: #14170F;
+}
+.rr-chip:hover .rr-chip__tip, .rr-chip:focus-visible .rr-chip__tip { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.rr-verify__status.is-running .rr-verify__dot { background: var(--lime-deep); animation: rr-verify-blink 1s ease-in-out infinite; }
+@keyframes rr-verify-blink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+.rr-chip { opacity: 0; transform: translateY(10px); }
+.rr-chips.is-in .rr-chip {
+  opacity: 1; transform: none;
+  transition: opacity .45s ease, transform .45s ease, background .45s ease, border-color .45s ease, color .45s ease, box-shadow .25s ease;
+}
+.rr-chip.is-verified { animation: rr-chip-stamp .45s ease; }
+@keyframes rr-chip-stamp { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
+
+/* ── Chapter 07 — beyond compliance hub-and-spoke diagram ────────────────
+   Desktop: a centered "Verified Data" ring with three panels (operational
+   / market — either side, long-term — spanning the bottom) connected by
+   lines running through the column gap. Because the side columns are
+   equal 1fr, the center column (and anything spanning full width below
+   it) is always horizontally centered, so the vertical connector into the
+   bottom panel lines up with the ring without extra math.
+   Mobile: collapses to a single stacked column, ring first, connector
+   lines dropped (they only read correctly in the radial layout). */
+.rr-hub {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 220px 1fr;
+  column-gap: 56px;
+  align-items: start;
+  margin-top: clamp(32px, 4vw, 48px);
+  text-align: left;
+}
+
+.rr-hub__panel-wrap--operational { grid-column: 1; grid-row: 1; }
+.rr-hub__center { grid-column: 2; grid-row: 1; position: relative; display: flex; justify-content: center; }
+.rr-hub__panel-wrap--market { grid-column: 3; grid-row: 1; }
+.rr-hub__panel-wrap--longterm { grid-column: 1 / -1; grid-row: 2; margin: 72px auto 0; width: 100%; max-width: 780px; }
+
+.rr-hub__panel-wrap { position: relative; }
+
+/* Faint stacked-paper depth: a plain sibling div painted before the panel
+   in DOM order, so the panel's own opaque background naturally covers the
+   overlap and only the offset edges peek out — a same-element ::before
+   with a negative z-index can't achieve this, since a box's own background
+   always paints below its descendants regardless of z-index. */
+.rr-hub__panel-shadow {
+  position: absolute; inset: 10px -8px -12px 8px;
+  background: var(--paper-3); border-radius: var(--r-lg);
+}
+.rr-hub__panel {
+  position: relative;
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-top: 3px solid var(--lime-deep);
+  border-radius: var(--r-lg); padding: clamp(18px, 2vw, 24px);
+  box-shadow: 0 18px 40px rgba(20,30,10,.08);
+}
+.rr-hub__panel-head { margin-bottom: 16px; }
+.rr-hub__panel-head h3 { font-size: clamp(1.05rem, 2.4vmin, 1.2rem); font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--lime-deep); margin: 0; }
+
+.rr-hub__cards { display: flex; flex-direction: column; gap: 12px; }
+.rr-hub__panel-wrap--longterm .rr-hub__cards { flex-direction: row; }
+.rr-hub__card {
+  flex: 1; background: var(--white); border-radius: var(--r-sm);
+  padding: 14px 16px; box-shadow: 0 2px 10px rgba(20,30,10,.06);
+}
+.rr-hub__card h4 { font-size: clamp(.92rem, 2.1vmin, 1.05rem); font-weight: 800; color: var(--ink); margin: 0 0 4px; line-height: 1.3; }
+.rr-hub__card p { font-size: clamp(1rem, 1.8vw, 1.15rem); color: var(--on-light-mut); margin: 0; max-width: none; text-align: left; }
+
+/* Mobile-only markers — a numbered badge per section and a checkmark per
+   item — stay hidden on the desktop radial layout. */
+.rr-hub__check { display: none; }
+
+/* Center ring, with a faint dashed halo radiating behind it */
+.rr-hub__halo {
+  position: absolute; top: 50%; left: 50%; z-index: -1;
+  width: 300px; height: 300px; transform: translate(-50%, -50%);
+  border-radius: 50%; border: 1px dashed rgba(20,30,10,.12);
+}
+.rr-hub__halo::before {
+  content: ''; position: absolute; inset: -34px; border-radius: 50%; border: 1px dashed rgba(20,30,10,.08);
+}
+.rr-hub__ring {
+  width: 220px; height: 220px; border-radius: 50%;
+  background: conic-gradient(var(--lime-deep) 0deg 300deg, rgba(178,222,58,.25) 300deg 360deg);
+  display: flex; align-items: center; justify-content: center;
+  padding: 8px; box-shadow: 0 20px 44px rgba(20,30,10,.18);
+}
+.rr-hub__core {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: var(--ink); color: var(--white);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  padding: 20px; gap: 6px;
+}
+.rr-hub__core svg { color: var(--lime); margin-bottom: 4px; }
+.rr-hub__core strong { color: var(--white); font-size: 1.15rem; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; line-height: 1.25; }
+.rr-hub__core p { font-size: .82rem; color: rgba(255,255,255,.7); margin: 6px 0 0; max-width: 22ch; text-align: center; }
+
+@media (max-width: 900px) {
+  /* One unified white card holds all three sections (instead of three
+     separate floating panels) — the ring badge overlaps its top edge,
+     and each section connects to the next via a vertical connector,
+     echoing the desktop hub without needing the radial layout. */
+  .rr-hub {
+    grid-template-columns: 1fr; row-gap: 0;
+    background: var(--white); border-radius: var(--r-lg);
+    box-shadow: 0 18px 40px rgba(20,30,10,.08);
+    padding: 20px 20px 8px;
+    margin-top: 34px;
+  }
+  /* Kept in normal grid flow (not position:absolute) so it sizes its own
+     row naturally, then pulled up over the card's top edge with a negative
+     margin — abspos would instead resize to whatever (zero-height) grid
+     cell it's assigned, which fights any padding tuning below it. */
+  .rr-hub__center {
+    grid-column: 1; grid-row: 1; order: -1;
+    display: flex; justify-content: center;
+    margin: -54px 0 20px;
+  }
+  .rr-hub__halo, .rr-hub__panel-shadow { display: none; }
+  .rr-hub__ring { width: 68px; height: 68px; padding: 5px; box-shadow: 0 10px 24px rgba(20,30,10,.22); }
+  .rr-hub__core { padding: 0; }
+  .rr-hub__core svg { margin: 0; width: 22px; height: 22px; }
+  .rr-hub__core strong, .rr-hub__core p { display: none; }
+
+  .rr-hub__panel-wrap--operational { grid-column: 1; grid-row: 2; }
+  .rr-hub__panel-wrap--market { grid-column: 1; grid-row: 3; }
+  .rr-hub__panel-wrap--longterm { grid-column: 1; grid-row: 4; margin: 0; width: auto; max-width: none; }
+
+  .rr-hub__panel-wrap { padding: 18px 0 22px; }
+  .rr-hub__panel-wrap--operational { padding-top: 8px; }
+  .rr-hub__panel-wrap--market, .rr-hub__panel-wrap--longterm { margin-top: 28px; }
+  .rr-hub__panel-wrap--market::before, .rr-hub__panel-wrap--longterm::before {
+    content: ''; position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+    width: 2px; height: 28px; background: var(--lime-deep);
+  }
+  .rr-hub__panel-wrap--market::after, .rr-hub__panel-wrap--longterm::after {
+    content: ''; position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
+    width: 9px; height: 9px; border-radius: 50%; background: var(--white); border: 2px solid var(--lime-deep);
+  }
+
+  .rr-hub__panel { background: none; border: none; box-shadow: none; padding: 0; border-radius: 0; }
+
+  .rr-hub__panel-wrap--longterm .rr-hub__cards { flex-direction: column; }
+  .rr-hub__card {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: none; box-shadow: none; border-radius: 0; padding: 14px 0;
+    border-bottom: 1px dashed rgba(0,0,0,.12);
+  }
+  .rr-hub__card:last-child { border-bottom: none; padding-bottom: 0; }
+  .rr-hub__check {
+    display: flex; flex-shrink: 0; align-items: center; justify-content: center;
+    width: 20px; height: 20px; margin-top: 2px; border-radius: 50%;
+    background: var(--lime-deep); color: var(--white);
+  }
+}
+
+/* ── Closing statement — plain quote with a left accent bar ───────────── */
+.rr-pull-card {
+  margin: clamp(24px, 4vw, 36px) 0 0;
+  padding-left: clamp(18px, 2.6vw, 24px);
+  border-left: 4px solid var(--lime-deep);
+}
+.rr-pull-card p {
+  font-size: clamp(1.05rem, 2.2vw, 1.2rem); font-weight: 700; line-height: 1.5; color: var(--ink);
+  max-width: 52ch; margin: 0; text-align: left;
+}
+
+/* ── Go to Blog (end of article, above footer) ────────────── */
+/* Full-bleed like .container itself, so on ultrawide/4K these buttons sit
+   under the same right edge as the article content above them instead of
+   drifting off to the raw viewport edge. */
+.rr-goto-blog {
+  background: var(--paper); border-top: 1px solid rgba(0,0,0,.06);
+  max-width: var(--content-maxw); margin: 0 auto;
+  padding: clamp(20px, 4vmin, 28px) var(--gutter);
+  display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap;
+}
