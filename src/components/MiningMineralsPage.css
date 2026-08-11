@@ -1,0 +1,264 @@
+/* ---------- Mining & Minerals — industry page ---------- */
+.mm-page { overflow-x: clip; }
+
+/* ── Scroll reveal (page-local — see the useLayoutEffect/useEffect pair
+   in MiningMineralsPage.jsx for why this can't reuse the site-wide
+   .reveal observer on a lazy-loaded page) ── */
+.mm-reveal { opacity: 0; filter: blur(12px); transform: translateY(24px); transition: opacity .7s ease, filter .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+.mm-reveal.mm-in { opacity: 1; filter: none; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .mm-reveal { opacity: 1; filter: none; transform: none; transition: none; }
+}
+
+/* ── Hero — same dark treatment used by every article page (shared
+   /article background.png + veil gradient + chip + breadcrumb), matching
+   the Glass Manufacturers industry page. ── */
+.mm-hero {
+  position: relative; overflow: hidden;
+  min-height: calc(100vh - 76px);
+  display: flex; align-items: center; justify-content: flex-start;
+  /* Matches GlassManufacturersPage's tighter hero spacing - this hero
+     carries the same chip/h1/tagline/lead/cta stack (just without a
+     stats strip), so the plain-article hero's larger 140-180/48-72
+     padding was leaving it overflowing a laptop-height viewport. */
+  padding: clamp(88px, 9.5vw, 112px) 0 clamp(28px, 4vw, 44px);
+  background: var(--bg) url('/mining-hero.png') center / cover no-repeat;
+}
+@media (max-width: 1024px) { .mm-hero { min-height: calc(100vh - 68px); } }
+@media (max-width: 480px) { .mm-hero { min-height: calc(100vh - 60px); } }
+.mm-hero__bg-veil {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(100deg, rgba(4,8,4,.68) 0%, rgba(4,8,4,.52) 28%, rgba(4,8,4,.26) 52%, rgba(4,8,4,.08) 74%, rgba(4,8,4,.02) 100%),
+    linear-gradient(180deg, rgba(4,8,4,.22) 0%, transparent 20%, transparent 70%, rgba(4,8,4,.3) 100%),
+    radial-gradient(900px 480px at 8% -10%, rgba(178,222,58,.14), transparent 60%);
+}
+.mm-breadcrumb {
+  position: absolute; z-index: 1; top: 34px; left: 0; right: 0;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  font-size: .88rem; font-weight: 600; color: var(--on-dark-mut);
+  padding: 0 var(--gutter);
+}
+.mm-breadcrumb a { color: var(--on-dark-mut); text-decoration: none; transition: color .18s ease; }
+.mm-breadcrumb a:hover { color: var(--lime); }
+.mm-breadcrumb svg { color: rgba(255,255,255,.3); flex-shrink: 0; }
+.mm-breadcrumb .is-current { color: var(--on-dark); }
+.mm-hero__inner {
+  position: relative; z-index: 1; max-width: 860px;
+  padding: 0 var(--gutter);
+}
+.mm-hero__chip {
+  display: inline-block;
+  font-size: .8rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--lime); background: rgba(178,222,58,.14);
+  border: 1px solid rgba(178,222,58,.35);
+  padding: 7px 14px; border-radius: 999px; margin: 0 0 14px;
+}
+.mm-hero__inner h1 {
+  color: var(--white); font-size: clamp(2.1rem, 4.2vw, 3.1rem); line-height: 1.14;
+  margin: 0 0 16px;
+}
+.mm-hero__inner h1 em { font-style: normal; color: var(--lime); }
+.mm-hero__tagline {
+  color: var(--white); font-weight: 600;
+  font-size: clamp(1rem, 1.7vw, 1.2rem); line-height: 1.4;
+  max-width: 640px; margin: 0 0 12px;
+  text-shadow: 0 1px 8px rgba(0,0,0,.4);
+}
+.mm-hero__lead {
+  color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.45);
+  font-size: clamp(1rem, 1.7vw, 1.15rem); line-height: 1.55;
+  max-width: 620px; margin: 0 0 20px;
+}
+.mm-hero__cta { display: flex; gap: 14px; flex-wrap: wrap; }
+.mm-hero__cta .btn-outline-light { border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.04); }
+.mm-hero__cta .btn-outline-light:hover { background: rgba(255,255,255,.1); border-color: var(--white); }
+
+/* ── The Problem — plain accent-top cards + image side (matches
+   GlassManufacturersPage's .gm-problem-card treatment) ── */
+.mm-problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.mm-problem-cards {
+  display: grid; gap: 16px; align-content: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+}
+.mm-problem-card {
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-top: 3px solid var(--lime-deep);
+  border-radius: var(--r-md); padding: 22px 20px;
+}
+.mm-problem-card h4 { font-size: 1.05rem; font-weight: 800; color: var(--ink); margin: 0 0 8px; }
+.mm-problem-card p { font-size: .9rem; color: var(--on-light-mut); margin: 0; }
+.mm-problem-media {
+  min-height: 340px; border-radius: var(--r-lg); overflow: hidden;
+  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
+}
+.mm-problem-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 860px) { .mm-problem-grid { grid-template-columns: 1fr; } }
+
+/* ── The Approach — scroll rail with numbered, filling steps
+   (mirrors GlassManufacturersPage's Reneonix Solution rail — see the
+   railWrapRef/railFillRef scroll effect in MiningMineralsPage.jsx) ── */
+.mm-rail-wrap { position: relative; }
+.mm-rail {
+  /* top/height are set inline by MiningMineralsPage.jsx to span exactly
+     between the first and last step-circle centers — see positionRail(). */
+  position: absolute; left: 17px; width: 2px;
+  background: var(--line-light);
+}
+.mm-rail-fill {
+  position: absolute; left: 0; top: 0; width: 2px; height: 0%;
+  background: linear-gradient(180deg, var(--lime), var(--lime-deep));
+  box-shadow: 0 0 12px rgba(178,222,58,.35);
+  transition: height .1s linear;
+}
+
+.mm-step {
+  position: relative;
+  display: grid; grid-template-columns: 56px 1.2fr .9fr; gap: 20px;
+  padding: 56px 0;
+}
+.mm-step:first-child { padding-top: 8px; }
+.mm-step:last-child { padding-bottom: 8px; }
+
+.mm-step-num {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  font-family: 'Arimo', sans-serif; font-weight: 800; font-size: .9rem;
+  color: var(--on-light-mut); background: var(--paper); border: 2px solid var(--line-light);
+  transition: color .5s ease .1s, background .5s ease .1s, border-color .5s ease .1s, box-shadow .5s ease .1s;
+}
+.mm-step.mm-in .mm-step-num {
+  color: var(--ink); background: var(--lime); border-color: var(--lime);
+  box-shadow: 0 0 0 6px rgba(178,222,58,.28);
+}
+
+.mm-step-content { padding-top: 2px; }
+.mm-step-content h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); margin: 0 0 14px; color: var(--ink); line-height: 1.25; }
+.mm-step-content p { color: var(--on-light-mut); font-size: 1.05rem; line-height: 1.65; margin: 0 0 22px; max-width: 480px; }
+.mm-step__tag {
+  display: inline-block; font-family: 'Inter', sans-serif; font-weight: 700;
+  font-size: .74rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--lime-deep); margin-bottom: 12px;
+}
+
+.mm-step-visual { position: relative; }
+.mm-step-visual-card {
+  position: relative; border-radius: var(--r-lg); overflow: hidden;
+  height: 360px;
+  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 10px, rgba(0,0,0,.06) 10px, rgba(0,0,0,.06) 20px);
+  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
+  display: flex; align-items: flex-end;
+  transition: transform .3s ease;
+}
+.mm-step-visual-card:hover { transform: scale(1.015); }
+.mm-step-visual-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* For UI screenshots (e.g. the Retraiz dashboard) - cover crops the
+   sidebar/table edges off, so show the whole image uncropped on a solid
+   dark fill instead, same fix as GlassManufacturersPage's Retraiz shot. */
+.mm-step-visual-card--contain { background: var(--ink); }
+.mm-step-visual-card--contain img { object-fit: contain; }
+.mm-step-visual-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(4,8,4,0) 40%, rgba(4,8,4,.6));
+}
+.mm-step-visual-card__caption {
+  position: relative; z-index: 2; color: var(--white); font-size: .78rem;
+  padding: 18px; line-height: 1.5;
+}
+
+@media (max-width: 860px) {
+  .mm-rail { display: none; }
+  .mm-step { grid-template-columns: 1fr; gap: 18px; padding: 40px 0; }
+  .mm-step-visual { order: -1; }
+}
+
+/* Chips */
+.mm-chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.mm-chip {
+  background: var(--paper-2); border: 1px solid rgba(0,0,0,.08);
+  font-size: .85rem; padding: 8px 14px; border-radius: var(--r-pill);
+  font-weight: 500; color: var(--on-light);
+}
+.mm-chip b { color: var(--lime-deep); }
+
+/* ── What This Could Look Like — numbered rail + photo cards + trust bar ── */
+.mm-flow-rail {
+  position: relative;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  margin: 0 22px 28px;
+}
+.mm-flow-rail::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 50%;
+  height: 2px; background: linear-gradient(90deg, var(--lime), var(--lime-deep));
+  transform: translateY(-50%); z-index: 0;
+}
+.mm-flow-rail__endcap {
+  position: absolute; top: 50%; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--lime-deep); transform: translateY(-50%);
+}
+.mm-flow-rail__endcap--start { left: -22px; }
+.mm-flow-rail__endcap--end { right: -22px; }
+.mm-flow-rail__dot {
+  position: relative; z-index: 1; justify-self: center;
+  display: flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--paper); border: 2px solid var(--lime);
+  color: var(--ink); font-family: 'Arimo', sans-serif; font-weight: 800; font-size: 1rem;
+}
+
+.mm-flow-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+.mm-flow-card {
+  display: flex; flex-direction: column;
+  background: var(--paper); border: 1px solid var(--line-light); border-radius: var(--r-lg);
+  padding: 22px 20px 24px;
+  box-shadow: 0 8px 24px rgba(10,15,5,.05);
+}
+.mm-flow-card__tag {
+  align-self: center; font-size: .72rem; color: var(--lime-deep); font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; margin-bottom: 16px;
+}
+.mm-flow-card__media { border-radius: var(--r-md); overflow: hidden; height: 230px; margin-bottom: 18px; }
+.mm-flow-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mm-flow-card__placeholder {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 10px, rgba(0,0,0,.06) 10px, rgba(0,0,0,.06) 20px);
+  border: 1.5px dashed rgba(0,0,0,.16); color: var(--on-light-mut);
+  padding: 10px; text-align: center;
+}
+.mm-flow-card__placeholder svg { color: rgba(0,0,0,.28); }
+.mm-flow-card__placeholder span { font-size: .7rem; font-weight: 500; line-height: 1.4; }
+.mm-flow-card h5 { font-size: 1rem; font-weight: 800; color: var(--ink); margin: 0 0 8px; }
+.mm-flow-card p { font-size: .85rem; color: var(--on-light-mut); line-height: 1.5; margin: 0 0 16px; flex: 1; }
+.mm-flow-card__accent { width: 28px; height: 3px; border-radius: 2px; background: var(--lime); }
+
+@media (max-width: 960px) {
+  .mm-flow-rail { display: none; }
+  .mm-flow-cards { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 640px) {
+  .mm-flow-cards { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 420px) {
+  .mm-flow-cards { grid-template-columns: 1fr; }
+}
+
+/* ── Why This Matters — reuses global .card, just needs the grid ── */
+.mm-why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+@media (max-width: 1080px) { .mm-why-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px)  { .mm-why-grid { grid-template-columns: 1fr; } }
+
+/* ── Where We Are Today — single dark status card, no paired image
+   (matches GlassManufacturersPage's .gm-proof card - capped width,
+   left-aligned, not stretched/centered across the full container). ── */
+.mm-status {
+  background: var(--ink); color: var(--paper); border-radius: var(--r-lg);
+  padding: 40px; max-width: 820px;
+}
+.mm-status .eyebrow { color: var(--lime); margin-bottom: 16px; }
+.mm-status p { color: rgba(255,255,255,.72); font-size: .98rem; line-height: 1.7; margin-bottom: 22px; }
+.mm-status__quote {
+  border-left: 3px solid var(--lime); padding-left: 18px;
+  font-family: 'Arimo', sans-serif; font-weight: 600; font-style: italic;
+  font-size: 1.05rem; color: var(--white); line-height: 1.5; max-width: 700px;
+}

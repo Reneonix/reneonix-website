@@ -12,6 +12,7 @@ import Footer from './components/Footer.jsx';
 import SiteEffects from './components/SiteEffects.jsx';
 import Preloader from './components/Preloader.jsx';
 import BackToTop from './components/BackToTop.jsx';
+import SplashCursor from './components/SplashCursor.jsx';
 import PAGE_META from './data/pageMeta.js';
 
 // Sub-pages are code-split: their JS + CSS loads only when the user navigates
@@ -21,6 +22,11 @@ const SolutionsPage    = lazy(() => import('./components/SolutionsPage.jsx'));
 const HardwareSystems  = lazy(() => import('./components/HardwareSystems.jsx'));
 const SoftwarePage     = lazy(() => import('./components/SoftwarePage.jsx'));
 const MaterialSciencePage = lazy(() => import('./components/MaterialSciencePage.jsx'));
+const IndustriesPage    = lazy(() => import('./components/IndustriesPage.jsx'));
+const GlassManufacturersPage = lazy(() => import('./components/GlassManufacturersPage.jsx'));
+const MiningMineralsPage = lazy(() => import('./components/MiningMineralsPage.jsx'));
+const BeverageFmcgPage = lazy(() => import('./components/BeverageFmcgPage.jsx'));
+const RecyclingOperatorsPage = lazy(() => import('./components/RecyclingOperatorsPage.jsx'));
 const PolicyPage       = lazy(() => import('./components/PolicyPage.jsx'));
 const InvestorsPage    = lazy(() => import('./components/InvestorsPage.jsx'));
 const BlogPage         = lazy(() => import('./components/BlogPage.jsx'));
@@ -72,6 +78,11 @@ function getRoute() {
   if (path === '/solutions/software') return 'software';
   if (path === '/solutions/material-science') return 'material-science';
   if (path === '/solutions' || path.startsWith('/solutions/')) return 'solutions';
+  if (path === '/industries') return 'industries';
+  if (path === '/industries/glass-manufacturers') return 'industry-glass-manufacturers';
+  if (path === '/industries/mining-minerals') return 'industry-mining-minerals';
+  if (path === '/industries/beverage-fmcg-brands') return 'industry-beverage-fmcg';
+  if (path === '/industries/recycling-operators') return 'industry-recycling-operators';
   if (path === '/careers' || path.startsWith('/careers/')) return 'careers';
   if (path === '/policy') return 'policy';
   if (path === '/investors-page') return 'investors-page';
@@ -223,6 +234,16 @@ export default function App() {
     page = <SoftwarePage />;
   } else if (route === 'material-science') {
     page = <MaterialSciencePage />;
+  } else if (route === 'industries') {
+    page = <IndustriesPage />;
+  } else if (route === 'industry-glass-manufacturers') {
+    page = <GlassManufacturersPage />;
+  } else if (route === 'industry-mining-minerals') {
+    page = <MiningMineralsPage />;
+  } else if (route === 'industry-beverage-fmcg') {
+    page = <BeverageFmcgPage />;
+  } else if (route === 'industry-recycling-operators') {
+    page = <RecyclingOperatorsPage />;
   } else if (route === 'policy') {
     page = <PolicyPage />;
   } else if (route === 'investors-page') {
@@ -266,6 +287,7 @@ export default function App() {
       <Footer />
       <SiteEffects route={route} />
       <BackToTop />
+      <SplashCursor />
     </>
   );
 }

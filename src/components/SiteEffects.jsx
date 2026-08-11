@@ -1,83 +1,17 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 
 /**
  * Global JS behaviours:
- *  - Cursor glow (pointer devices only)
  *  - Parallax on [data-parallax]
  *  - Scroll-reveal (.reveal / .reveal-img / .stagger)
  *
  * Accepts `route` so the reveal + parallax effects re-run after
  * every hash navigation, picking up fresh DOM nodes.
+ *
+ * The cursor-follow spotlight glow that used to live here was removed —
+ * superseded by the SplashCursor WebGL fluid effect mounted in App.jsx.
  */
 export default function SiteEffects({ route }) {
-  const glowRef = useRef(null);
-
-  /* ─────────────────────────────────────────────────────────────
-     Cursor glow — pointer / hover devices only.
-     Mounted once; never needs to re-run on route change.
-  ───────────────────────────────────────────────────────────── */
-  useEffect(() => {
-    const glow = glowRef.current;
-    if (!glow) return;
-
-    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (isTouch || prefersReduced) return;
-
-    const RADIUS = 28;
-    let cx = window.innerWidth / 2;
-    let cy = window.innerHeight / 2;
-    let tx = cx;
-    let ty = cy;
-    let rafId;
-    let ready = false;
-
-    function lerp(a, b, t) { return a + (b - a) * t; }
-
-    function loop() {
-      cx = lerp(cx, tx, 0.14);
-      cy = lerp(cy, ty, 0.14);
-      glow.style.transform = `translate(${(cx - RADIUS).toFixed(1)}px, ${(cy - RADIUS).toFixed(1)}px)`;
-      rafId = requestAnimationFrame(loop);
-    }
-    rafId = requestAnimationFrame(loop);
-
-    const onMouseMove = (e) => {
-      tx = e.clientX;
-      ty = e.clientY;
-      if (!ready) {
-        ready = true;
-        document.body.classList.add('cursor-ready');
-      }
-    };
-    const onMouseOver = (e) => {
-      if (e.target.closest('a, button, [role="button"], input, textarea, select, label'))
-        document.body.classList.add('cursor-hover');
-    };
-    const onMouseOut = (e) => {
-      if (e.target.closest('a, button, [role="button"], input, textarea, select, label'))
-        document.body.classList.remove('cursor-hover');
-    };
-    const onMouseDown = () => document.body.classList.add('cursor-down');
-    const onMouseUp   = () => document.body.classList.remove('cursor-down');
-
-    document.addEventListener('mousemove',  onMouseMove,  { passive: true });
-    document.addEventListener('mouseover',  onMouseOver,  { passive: true });
-    document.addEventListener('mouseout',   onMouseOut,   { passive: true });
-    document.addEventListener('mousedown',  onMouseDown);
-    document.addEventListener('mouseup',    onMouseUp);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      document.removeEventListener('mousemove',  onMouseMove);
-      document.removeEventListener('mouseover',  onMouseOver);
-      document.removeEventListener('mouseout',   onMouseOut);
-      document.removeEventListener('mousedown',  onMouseDown);
-      document.removeEventListener('mouseup',    onMouseUp);
-      document.body.classList.remove('cursor-ready', 'cursor-hover', 'cursor-down');
-    };
-  }, []);
-
   /* ─────────────────────────────────────────────────────────────
      Phase 1 — SYNCHRONOUS (before first paint).
      Add .reveal to home-specific elements, then immediately
@@ -177,5 +111,5 @@ export default function SiteEffects({ route }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, [route]);
 
-  return <div className="cursor-glow" ref={glowRef} aria-hidden="true" />;
+  return null;
 }

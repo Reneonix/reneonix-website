@@ -1,0 +1,319 @@
+/* ---------- Beverage & FMCG Brands — industry page ---------- */
+.bf-page { overflow-x: clip; }
+
+/* ── Scroll reveal (page-local — see the useLayoutEffect/useEffect pair
+   in BeverageFmcgPage.jsx for why this can't reuse the site-wide .reveal
+   observer on a lazy-loaded page) ── */
+.bf-reveal { opacity: 0; filter: blur(12px); transform: translateY(24px); transition: opacity .7s ease, filter .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+.bf-reveal.bf-in { opacity: 1; filter: none; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .bf-reveal { opacity: 1; filter: none; transform: none; transition: none; }
+}
+
+/* ── Hero — same dark treatment used by every article page and the other
+   industry pages (shared /article background.png + veil + chip + crumb) ── */
+.bf-hero {
+  position: relative; overflow: hidden;
+  min-height: calc(100vh - 76px);
+  display: flex; align-items: center; justify-content: flex-start;
+  /* Tighter top/bottom than a plain article hero — this hero carries a
+     tagline + lead + stats strip on top of chip/h1/cta, so it needs the
+     room back to keep the whole block inside a laptop-height viewport
+     (matches the Glass Manufacturers hero, .gm-hero). */
+  padding: clamp(88px, 9.5vw, 112px) 0 clamp(28px, 4vw, 44px);
+  background: var(--bg) url('/fmcg hero.png') center / cover no-repeat;
+}
+@media (max-width: 1024px) { .bf-hero { min-height: calc(100vh - 68px); } }
+@media (max-width: 480px) { .bf-hero { min-height: calc(100vh - 60px); } }
+.bf-hero__bg-veil {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(100deg, rgba(4,8,4,.68) 0%, rgba(4,8,4,.52) 28%, rgba(4,8,4,.26) 52%, rgba(4,8,4,.08) 74%, rgba(4,8,4,.02) 100%),
+    linear-gradient(180deg, rgba(4,8,4,.22) 0%, transparent 20%, transparent 70%, rgba(4,8,4,.3) 100%),
+    radial-gradient(900px 480px at 8% -10%, rgba(178,222,58,.14), transparent 60%);
+}
+.bf-breadcrumb {
+  position: absolute; z-index: 1; top: 34px; left: 0; right: 0;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  font-size: .88rem; font-weight: 600; color: var(--on-dark-mut);
+  padding: 0 var(--gutter);
+}
+.bf-breadcrumb a { color: var(--on-dark-mut); text-decoration: none; transition: color .18s ease; }
+.bf-breadcrumb a:hover { color: var(--lime); }
+.bf-breadcrumb svg { color: rgba(255,255,255,.3); flex-shrink: 0; }
+.bf-breadcrumb .is-current { color: var(--on-dark); }
+.bf-hero__inner {
+  position: relative; z-index: 1; max-width: 860px;
+  padding: 0 var(--gutter);
+}
+.bf-hero__chip {
+  display: inline-block;
+  font-size: .8rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--lime); background: rgba(178,222,58,.14);
+  border: 1px solid rgba(178,222,58,.35);
+  padding: 7px 14px; border-radius: 999px; margin: 0 0 14px;
+}
+.bf-hero__inner h1 {
+  color: var(--white); font-size: clamp(2.1rem, 4.2vw, 3.1rem); line-height: 1.14;
+  margin: 0 0 16px;
+}
+.bf-hero__inner h1 em { font-style: normal; color: var(--lime); }
+.bf-hero__tagline {
+  color: var(--white); font-weight: 600;
+  font-size: clamp(1rem, 1.7vw, 1.2rem); line-height: 1.4;
+  max-width: 640px; margin: 0 0 12px;
+  text-shadow: 0 1px 8px rgba(0,0,0,.4);
+}
+.bf-hero__lead {
+  color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.45);
+  font-size: clamp(1rem, 1.7vw, 1.15rem); line-height: 1.55;
+  max-width: 620px; margin: 0 0 20px;
+}
+.bf-hero__cta { display: flex; gap: 14px; flex-wrap: wrap; }
+.bf-hero__cta .btn-outline-light { border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.04); }
+.bf-hero__cta .btn-outline-light:hover { background: rgba(255,255,255,.1); border-color: var(--white); }
+
+/* Hero stats strip (3 cells for this page) */
+.bf-hero__stats {
+  display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 24px; margin-top: 18px; padding-top: 16px; max-width: 760px;
+  border-top: 1px solid rgba(255,255,255,.14);
+}
+.bf-hero__stat strong {
+  display: block; font-family: 'Arimo', sans-serif;
+  font-size: clamp(1.2rem, 2vw, 1.7rem); font-weight: 800; color: var(--white);
+}
+.bf-hero__stat span { color: rgba(255,255,255,.62); font-size: .82rem; }
+@media (max-width: 720px) { .bf-hero__stats { grid-template-columns: 1fr; gap: 18px; } }
+
+/* Numbers hidden for now, but the block still occupies its layout space
+   (border-top rule + the row's own height) rather than collapsing — visibility
+   over display:none so nothing above/below reflows. */
+.bf-hero__stats--hidden { visibility: hidden; }
+
+/* ── The Problem — plain accent-top cards + image side (matches
+   GlassManufacturersPage / MiningMineralsPage's card treatment) ── */
+.bf-problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.bf-problem-cards {
+  display: grid; gap: 16px; align-content: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+}
+.bf-problem-card {
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-top: 3px solid var(--lime-deep);
+  border-radius: var(--r-md); padding: 22px 20px;
+}
+.bf-problem-card h4 { font-size: 1.05rem; font-weight: 800; color: var(--ink); margin: 0 0 8px; }
+.bf-problem-card p { font-size: .9rem; color: var(--on-light-mut); margin: 0; }
+.bf-problem-media {
+  min-height: 340px; border-radius: var(--r-lg); overflow: hidden;
+  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
+}
+.bf-problem-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 860px) { .bf-problem-grid { grid-template-columns: 1fr; } }
+
+/* ── The Solution — scroll rail with numbered, filling steps (matches
+   GlassManufacturersPage's .gm-rail treatment) ── */
+.bf-rail-wrap { position: relative; }
+.bf-rail {
+  /* top/height are set inline by BeverageFmcgPage.jsx to span exactly
+     between the first and last step-circle centers - see positionRail(). */
+  position: absolute; left: 17px; width: 2px;
+  background: var(--line-light);
+}
+.bf-rail-fill {
+  position: absolute; left: 0; top: 0; width: 2px; height: 0%;
+  background: linear-gradient(180deg, var(--lime), var(--lime-deep));
+  box-shadow: 0 0 12px rgba(178,222,58,.35);
+  transition: height .1s linear;
+}
+
+.bf-step {
+  position: relative;
+  display: grid; grid-template-columns: 56px 1.2fr .9fr; gap: 20px;
+  padding: 56px 0;
+}
+.bf-step:first-child { padding-top: 8px; }
+.bf-step:last-child { padding-bottom: 8px; }
+
+.bf-step-num {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  font-family: 'Arimo', sans-serif; font-weight: 800; font-size: .9rem;
+  color: var(--on-light-mut); background: var(--paper); border: 2px solid var(--line-light);
+  transition: color .5s ease .1s, background .5s ease .1s, border-color .5s ease .1s, box-shadow .5s ease .1s;
+}
+.bf-step.bf-in .bf-step-num {
+  color: var(--ink); background: var(--lime); border-color: var(--lime);
+  box-shadow: 0 0 0 6px rgba(178,222,58,.28);
+}
+
+.bf-step-content { padding-top: 2px; }
+.bf-step-content h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); margin: 0 0 14px; color: var(--ink); line-height: 1.25; }
+.bf-step-content p { color: var(--on-light-mut); font-size: 1.05rem; line-height: 1.65; margin: 0 0 22px; max-width: 480px; }
+.bf-quote-inline {
+  border-left: 3px solid var(--lime); padding-left: 16px;
+  font-style: italic; font-size: .95rem; color: var(--on-light-mut); margin-bottom: 16px; line-height: 1.6;
+}
+
+.bf-row__tag {
+  display: inline-block; font-family: 'Inter', sans-serif; font-weight: 700;
+  font-size: .74rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--lime-deep); margin-bottom: 12px;
+}
+
+.bf-step-visual { position: relative; }
+.bf-step-visual-card {
+  position: relative; border-radius: var(--r-lg); overflow: hidden;
+  height: 360px;
+  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 10px, rgba(0,0,0,.06) 10px, rgba(0,0,0,.06) 20px);
+  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
+  display: flex; align-items: flex-end;
+  transition: transform .3s ease;
+}
+.bf-step-visual-card:hover { transform: scale(1.015); }
+.bf-step-visual-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* For photos whose own aspect ratio doesn't match this card - shows the
+   whole image instead of cropping it, with a solid dark fill (not the
+   diagonal placeholder stripe) behind whatever letterbox gap that leaves. */
+.bf-step-visual-card--contain { background: var(--ink); }
+.bf-step-visual-card--contain img { object-fit: contain; }
+.bf-step-visual-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(4,8,4,0) 40%, rgba(4,8,4,.6));
+}
+.bf-step-visual-card__caption {
+  position: relative; z-index: 2; color: var(--white); font-size: .78rem;
+  padding: 18px; line-height: 1.5;
+}
+
+@media (max-width: 860px) {
+  .bf-rail { display: none; }
+  .bf-step { grid-template-columns: 1fr; gap: 18px; padding: 40px 0; }
+  .bf-step-visual { order: -1; }
+}
+
+/* Chips */
+.bf-chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.bf-chip {
+  background: var(--paper-2); border: 1px solid rgba(0,0,0,.08);
+  font-size: .92rem; padding: 8px 14px; border-radius: var(--r-pill);
+  font-weight: 500; color: var(--on-light);
+}
+.bf-chip b { color: var(--lime-deep); }
+
+/* ── How It Works — "Journey" card: a vertical accordion (numbered rail +
+   one row expanded into a highlighted panel, the rest collapsed to a
+   one-line preview) with a benefits row fused into the same card below ── */
+.bf-journey2 {
+  border: 1px solid rgba(0,0,0,.08); border-radius: var(--r-lg);
+  background: var(--paper); box-shadow: 0 24px 48px rgba(10,15,5,.08);
+  padding: 4px clamp(20px, 3vw, 36px);
+}
+.bf-journey2__list { position: relative; }
+.bf-journey2__rail {
+  /* left/top/height are set inline by BeverageFmcgPage.jsx to span exactly
+     between the first and last row's number-circle centers. */
+  position: absolute; width: 2px; background: var(--line-light); z-index: 0;
+}
+.bf-journey2__rail-fill {
+  position: absolute; top: 0; left: 0; width: 100%; height: 0;
+  background: var(--lime); transition: height .35s cubic-bezier(.65,0,.35,1);
+}
+
+.bf-journey2__row {
+  position: relative;
+  display: grid; grid-template-columns: 44px 190px 1fr; gap: 20px; align-items: start;
+  padding: 22px 0;
+}
+.bf-journey2__row:not(.is-open) { border-bottom: 1px solid var(--line-light); }
+.bf-journey2__row:last-child { border-bottom: none; }
+
+.bf-journey2__num {
+  position: relative; z-index: 1;
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Arimo', sans-serif; font-weight: 800; font-size: 1rem;
+  background: var(--paper); border: 2px solid var(--line-light); color: var(--on-light-mut);
+  transition: color .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.bf-journey2__row.is-open .bf-journey2__num {
+  border-color: var(--lime); color: var(--lime-deep); box-shadow: 0 0 0 4px rgba(178,222,58,.16);
+}
+
+.bf-journey2__head {
+  all: unset; display: contents; cursor: pointer; font-family: inherit;
+}
+.bf-journey2__label { display: flex; flex-direction: column; gap: 4px; text-align: left; }
+.bf-journey2__tag {
+  font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--on-light-mut); transition: color .3s ease;
+}
+.bf-journey2__row.is-open .bf-journey2__tag { color: var(--lime-deep); }
+.bf-journey2__step-title { font-size: .92rem; font-weight: 700; color: var(--ink); }
+
+.bf-journey2__collapsed { display: flex; align-items: flex-start; gap: 20px; text-align: left; }
+.bf-journey2__preview { flex: 1; font-size: .92rem; color: var(--on-light-mut); line-height: 1.55; }
+.bf-journey2__chev { flex-shrink: 0; margin-top: 2px; color: var(--on-light-mut); }
+
+.bf-journey2__panel {
+  display: grid; grid-template-columns: 1fr auto repeat(3, 1fr); column-gap: 24px; align-items: start;
+  background: rgba(178,222,58,.08); border-radius: var(--r-md);
+  padding: clamp(18px, 2.2vw, 24px) clamp(20px, 2.5vw, 26px); text-align: left;
+}
+.bf-journey2__copy { display: flex; flex-direction: column; gap: 8px; }
+.bf-journey2__heading { font-size: 1.15rem; font-weight: 800; color: var(--ink); line-height: 1.25; }
+.bf-journey2__body { font-size: .88rem; color: var(--on-light-mut); line-height: 1.55; }
+.bf-journey2__divider { width: 1px; align-self: stretch; background: rgba(0,0,0,.08); }
+.bf-journey2__features { display: contents; }
+.bf-journey2__feature { display: flex; flex-direction: column; gap: 6px; }
+.bf-journey2__feature-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--paper); border: 1px solid rgba(0,0,0,.08); color: var(--lime-deep);
+}
+.bf-journey2__feature-title { font-size: .84rem; font-weight: 700; color: var(--ink); }
+.bf-journey2__feature-body { font-size: .76rem; color: var(--on-light-mut); line-height: 1.5; }
+
+@media (max-width: 900px) {
+  .bf-journey2__panel { grid-template-columns: 1fr; row-gap: 16px; }
+  .bf-journey2__divider { display: none; }
+  .bf-journey2__features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+}
+@media (max-width: 700px) {
+  .bf-journey2__row { grid-template-columns: 40px 1fr; }
+  .bf-journey2__head { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .bf-journey2__collapsed { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+@media (max-width: 560px) {
+  .bf-journey2__features { grid-template-columns: 1fr; }
+}
+
+/* ── Proof in the Field — brand logo cards ── */
+.bf-proof-logos { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.bf-logo-card {
+  background: var(--paper-2); border: 1px solid rgba(0,0,0,.08);
+  border-radius: var(--r-lg); padding: 26px;
+}
+.bf-logo-ph {
+  border: 1.5px dashed rgba(0,0,0,.18);
+  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 8px, rgba(0,0,0,.06) 8px, rgba(0,0,0,.06) 16px);
+  border-radius: var(--r-sm); height: 52px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .74rem; font-weight: 700; color: var(--on-light-mut);
+  letter-spacing: .05em; text-transform: uppercase; margin-bottom: 16px;
+}
+.bf-logo-card h4 { font-size: 1.05rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.bf-logo-card p { font-size: .9rem; color: var(--on-light-mut); margin: 0; }
+.bf-logo-card__stage {
+  display: inline-block; margin-top: 14px;
+  font-size: .74rem; font-weight: 700; color: var(--lime-deep);
+  background: var(--lime-tint, rgba(178,222,58,.14)); border: 1px solid rgba(178,222,58,.35);
+  padding: 4px 12px; border-radius: var(--r-pill);
+}
+@media (max-width: 720px) { .bf-proof-logos { grid-template-columns: 1fr; } }
+
+/* ── Why This Matters — reuses global .card, just needs the grid ── */
+.bf-why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+@media (max-width: 1080px) { .bf-why-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px)  { .bf-why-grid { grid-template-columns: 1fr; } }

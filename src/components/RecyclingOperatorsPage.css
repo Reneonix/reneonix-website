@@ -1,0 +1,310 @@
+/* ---------- Recycling Operators — industry page ---------- */
+.ro-page { overflow-x: clip; }
+
+/* ── Scroll reveal (page-local — see the useLayoutEffect/useEffect pair
+   in RecyclingOperatorsPage.jsx for why this can't reuse the site-wide
+   .reveal observer on a lazy-loaded page) ── */
+.ro-reveal { opacity: 0; filter: blur(12px); transform: translateY(24px); transition: opacity .7s ease, filter .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+.ro-reveal.ro-in { opacity: 1; filter: none; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ro-reveal { opacity: 1; filter: none; transform: none; transition: none; }
+}
+
+/* ── Hero — same dark treatment used by every article page and the other
+   industry pages (shared /article background.png + veil + chip + crumb) ── */
+.ro-hero {
+  position: relative; overflow: hidden;
+  min-height: calc(100vh - 76px);
+  display: flex; align-items: center; justify-content: flex-start;
+  /* A notch shorter top/bottom than the plain article heroes (clamp
+     140-180 / 48-72) — this hero carries a tagline + lead + stats strip
+     on top of chip/h1/cta, so it needs the extra room back to keep the
+     whole block inside a laptop-height viewport (same fix as the Glass
+     Manufacturers hero). */
+  padding: clamp(88px, 9.5vw, 112px) 0 clamp(28px, 4vw, 44px);
+  background: var(--bg) url('/recycling hero.png') center / cover no-repeat;
+}
+@media (max-width: 1024px) { .ro-hero { min-height: calc(100vh - 68px); } }
+@media (max-width: 480px) { .ro-hero { min-height: calc(100vh - 60px); } }
+.ro-hero__bg-veil {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(100deg, rgba(4,8,4,.68) 0%, rgba(4,8,4,.52) 28%, rgba(4,8,4,.26) 52%, rgba(4,8,4,.08) 74%, rgba(4,8,4,.02) 100%),
+    linear-gradient(180deg, rgba(4,8,4,.22) 0%, transparent 20%, transparent 70%, rgba(4,8,4,.3) 100%),
+    radial-gradient(900px 480px at 8% -10%, rgba(178,222,58,.14), transparent 60%);
+}
+.ro-breadcrumb {
+  position: absolute; z-index: 1; top: 34px; left: 0; right: 0;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  font-size: .88rem; font-weight: 600; color: var(--on-dark-mut);
+  padding: 0 var(--gutter);
+}
+.ro-breadcrumb a { color: var(--on-dark-mut); text-decoration: none; transition: color .18s ease; }
+.ro-breadcrumb a:hover { color: var(--lime); }
+.ro-breadcrumb svg { color: rgba(255,255,255,.3); flex-shrink: 0; }
+.ro-breadcrumb .is-current { color: var(--on-dark); }
+.ro-hero__inner {
+  position: relative; z-index: 1; max-width: 860px;
+  padding: 0 var(--gutter);
+}
+.ro-hero__chip {
+  display: inline-block;
+  font-size: .8rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--lime); background: rgba(178,222,58,.14);
+  border: 1px solid rgba(178,222,58,.35);
+  padding: 7px 14px; border-radius: 999px; margin: 0 0 14px;
+}
+.ro-hero__inner h1 {
+  color: var(--white); font-size: clamp(2.1rem, 4.2vw, 3.1rem); line-height: 1.16;
+  margin: 0 0 16px;
+}
+.ro-hero__inner h1 em { font-style: normal; color: var(--lime); }
+.ro-hero__tagline {
+  color: var(--white); font-weight: 600;
+  font-size: clamp(1rem, 1.7vw, 1.2rem); line-height: 1.4;
+  max-width: 640px; margin: 0 0 12px;
+  text-shadow: 0 1px 8px rgba(0,0,0,.4);
+}
+.ro-hero__lead {
+  color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.45);
+  font-size: clamp(1rem, 1.7vw, 1.15rem); line-height: 1.55;
+  max-width: 620px; margin: 0 0 20px;
+}
+.ro-hero__cta { display: flex; gap: 14px; flex-wrap: wrap; }
+.ro-hero__cta .btn-outline-light { border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.04); }
+.ro-hero__cta .btn-outline-light:hover { background: rgba(255,255,255,.1); border-color: var(--white); }
+
+/* ── The Problem — plain accent-top cards + image side (matches
+   GlassManufacturersPage / MiningMineralsPage / BeverageFmcgPage's card
+   treatment) ── */
+.ro-problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.ro-problem-cards {
+  display: grid; gap: 16px; align-content: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+}
+.ro-problem-card {
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-top: 3px solid var(--lime-deep);
+  border-radius: var(--r-md); padding: 22px 20px;
+}
+.ro-problem-card h4 { font-size: 1.05rem; font-weight: 800; color: var(--ink); margin: 0 0 8px; }
+.ro-problem-card p { font-size: .9rem; color: var(--on-light-mut); margin: 0; }
+.ro-problem-media {
+  height: clamp(280px, 28vw, 380px); border-radius: var(--r-lg); overflow: hidden;
+  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
+}
+.ro-problem-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 860px) { .ro-problem-grid { grid-template-columns: 1fr; } }
+
+/* ── The Solution — scroll rail with numbered, filling steps (matches
+   GlassManufacturersPage's rail treatment) ── */
+.ro-rail-wrap { position: relative; }
+.ro-rail {
+  /* top/height are set inline by RecyclingOperatorsPage.jsx to span exactly
+     between the first and last step-circle centers - see positionRail(). */
+  position: absolute; left: 17px; width: 2px;
+  background: var(--line-light);
+}
+.ro-rail-fill {
+  position: absolute; left: 0; top: 0; width: 2px; height: 0%;
+  background: linear-gradient(180deg, var(--lime), var(--lime-deep));
+  box-shadow: 0 0 12px rgba(178,222,58,.35);
+  transition: height .1s linear;
+}
+
+.ro-step {
+  position: relative;
+  display: grid; grid-template-columns: 56px 1.2fr .9fr; gap: 20px;
+  padding: 56px 0;
+}
+.ro-step:first-child { padding-top: 8px; }
+.ro-step:last-child { padding-bottom: 8px; }
+
+.ro-step-num {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  font-family: 'Arimo', sans-serif; font-weight: 800; font-size: .9rem;
+  color: var(--on-light-mut); background: var(--paper); border: 2px solid var(--line-light);
+  transition: color .5s ease .1s, background .5s ease .1s, border-color .5s ease .1s, box-shadow .5s ease .1s;
+}
+.ro-step.ro-in .ro-step-num {
+  color: var(--ink); background: var(--lime); border-color: var(--lime);
+  box-shadow: 0 0 0 6px rgba(178,222,58,.28);
+}
+
+.ro-step-content { padding-top: 2px; }
+.ro-step-content h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); margin: 0 0 14px; color: var(--ink); line-height: 1.25; }
+.ro-step-content p { color: var(--on-light-mut); font-size: 1.05rem; line-height: 1.65; margin: 0 0 22px; max-width: 480px; }
+
+.ro-row__tag {
+  display: inline-block; font-family: 'Inter', sans-serif; font-weight: 700;
+  font-size: .74rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--lime-deep); margin-bottom: 12px;
+}
+
+.ro-step-visual { position: relative; }
+.ro-step-visual-card {
+  position: relative; border-radius: var(--r-lg); overflow: hidden;
+  height: 360px;
+  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 10px, rgba(0,0,0,.06) 10px, rgba(0,0,0,.06) 20px);
+  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
+  display: flex; align-items: flex-end;
+  transition: transform .3s ease;
+}
+.ro-step-visual-card:hover { transform: scale(1.015); }
+.ro-step-visual-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ro-step-visual-card--contain { background: var(--ink); }
+.ro-step-visual-card--contain img { object-fit: contain; }
+.ro-step-visual-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(4,8,4,0) 40%, rgba(4,8,4,.6));
+}
+.ro-step-visual-card__caption {
+  position: relative; z-index: 2; color: var(--white); font-size: .78rem;
+  padding: 18px; line-height: 1.5;
+}
+
+@media (max-width: 860px) {
+  .ro-rail { display: none; }
+  .ro-step { grid-template-columns: 1fr; gap: 18px; padding: 40px 0; }
+  .ro-step-visual { order: -1; }
+}
+
+/* Chips */
+.ro-chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.ro-chip {
+  background: var(--paper-2); border: 1px solid rgba(0,0,0,.08);
+  font-size: .92rem; padding: 8px 14px; border-radius: var(--r-pill);
+  font-weight: 500; color: var(--on-light);
+}
+.ro-chip b { color: var(--lime-deep); }
+
+/* Comparison table */
+.ro-table-wrap { overflow-x: auto; margin-bottom: 20px; max-width: 480px; }
+.ro-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.ro-table th {
+  background: var(--ink); color: var(--white); text-align: left;
+  padding: 10px 14px; font-weight: 600; font-size: .78rem;
+}
+.ro-table td { padding: 10px 14px; border-bottom: 1px solid var(--line-light); color: var(--on-light-mut); }
+.ro-table tr:nth-child(even) td { background: var(--paper-2); }
+.ro-table__hl { color: var(--lime-deep); font-weight: 700; }
+
+/* ── How It Works — "Journey" card: a vertical accordion (numbered rail +
+   one row expanded into a highlighted panel, the rest collapsed to a
+   one-line preview) (matches BeverageFmcgPage's journey treatment) ── */
+.ro-journey2 {
+  border: 1px solid rgba(0,0,0,.08); border-radius: var(--r-lg);
+  background: var(--paper); box-shadow: 0 24px 48px rgba(10,15,5,.08);
+  padding: 4px clamp(20px, 3vw, 36px);
+}
+.ro-journey2__list { position: relative; }
+.ro-journey2__rail {
+  /* left/top/height are set inline by RecyclingOperatorsPage.jsx to span
+     exactly between the first and last row's number-circle centers. */
+  position: absolute; width: 2px; background: var(--line-light); z-index: 0;
+}
+.ro-journey2__rail-fill {
+  position: absolute; top: 0; left: 0; width: 100%; height: 0;
+  background: var(--lime); transition: height .35s cubic-bezier(.65,0,.35,1);
+}
+
+.ro-journey2__row {
+  position: relative;
+  display: grid; grid-template-columns: 44px 190px 1fr; gap: 20px; align-items: start;
+  padding: 22px 0;
+}
+.ro-journey2__row:not(.is-open) { border-bottom: 1px solid var(--line-light); }
+.ro-journey2__row:last-child { border-bottom: none; }
+
+.ro-journey2__num {
+  position: relative; z-index: 1;
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Arimo', sans-serif; font-weight: 800; font-size: 1rem;
+  background: var(--paper); border: 2px solid var(--line-light); color: var(--on-light-mut);
+  transition: color .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+.ro-journey2__row.is-open .ro-journey2__num {
+  border-color: var(--lime); color: var(--lime-deep); box-shadow: 0 0 0 4px rgba(178,222,58,.16);
+}
+
+.ro-journey2__head {
+  all: unset; display: contents; cursor: pointer; font-family: inherit;
+}
+.ro-journey2__label { display: flex; flex-direction: column; gap: 4px; text-align: left; }
+.ro-journey2__tag {
+  font-size: .72rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--on-light-mut); transition: color .3s ease;
+}
+.ro-journey2__row.is-open .ro-journey2__tag { color: var(--lime-deep); }
+.ro-journey2__step-title { font-size: .92rem; font-weight: 700; color: var(--ink); }
+
+.ro-journey2__collapsed { display: flex; align-items: flex-start; gap: 20px; text-align: left; }
+.ro-journey2__preview { flex: 1; font-size: .92rem; color: var(--on-light-mut); line-height: 1.55; }
+.ro-journey2__chev { flex-shrink: 0; margin-top: 2px; color: var(--on-light-mut); }
+
+.ro-journey2__panel {
+  display: grid; grid-template-columns: 1fr auto repeat(3, 1fr); column-gap: 24px; align-items: start;
+  background: rgba(178,222,58,.08); border-radius: var(--r-md);
+  padding: clamp(18px, 2.2vw, 24px) clamp(20px, 2.5vw, 26px); text-align: left;
+}
+.ro-journey2__copy { display: flex; flex-direction: column; gap: 8px; }
+.ro-journey2__heading { font-size: 1.15rem; font-weight: 800; color: var(--ink); line-height: 1.25; }
+.ro-journey2__body { font-size: .88rem; color: var(--on-light-mut); line-height: 1.55; }
+.ro-journey2__divider { width: 1px; align-self: stretch; background: rgba(0,0,0,.08); }
+.ro-journey2__features { display: contents; }
+.ro-journey2__feature { display: flex; flex-direction: column; gap: 6px; }
+.ro-journey2__feature-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--paper); border: 1px solid rgba(0,0,0,.08); color: var(--lime-deep);
+}
+.ro-journey2__feature-title { font-size: .84rem; font-weight: 700; color: var(--ink); }
+.ro-journey2__feature-body { font-size: .76rem; color: var(--on-light-mut); line-height: 1.5; }
+
+@media (max-width: 900px) {
+  .ro-journey2__panel { grid-template-columns: 1fr; row-gap: 16px; }
+  .ro-journey2__divider { display: none; }
+  .ro-journey2__features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+}
+@media (max-width: 700px) {
+  .ro-journey2__row { grid-template-columns: 40px 1fr; }
+  .ro-journey2__head { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .ro-journey2__collapsed { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+@media (max-width: 560px) {
+  .ro-journey2__features { grid-template-columns: 1fr; }
+}
+
+/* ── Why This Matters — reuses global .card, just needs the grid ── */
+.ro-why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+@media (max-width: 1080px) { .ro-why-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px)  { .ro-why-grid { grid-template-columns: 1fr; } }
+
+/* ── Proof in the Field — deployment-stage cards + status quote ── */
+.ro-proof-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.ro-proof-card {
+  background: var(--paper-2); border: 1px solid rgba(0,0,0,.08);
+  border-radius: var(--r-lg); padding: 26px;
+}
+.ro-proof-card h4 { font-size: 1.05rem; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.ro-proof-card p { font-size: .9rem; color: var(--on-light-mut); margin: 0 0 14px; }
+.ro-stage {
+  display: inline-block; font-size: .74rem; font-weight: 700;
+  padding: 4px 12px; border-radius: var(--r-pill);
+}
+.ro-stage--live {
+  color: #3B6D11; background: rgba(178,222,58,.16); border: 1px solid rgba(178,222,58,.4);
+}
+.ro-stage--intro {
+  color: #A17A0E; background: #FDF6E3; border: 1px solid #EAD9A0;
+}
+@media (max-width: 720px) { .ro-proof-cards { grid-template-columns: 1fr; } }
+
+.ro-proof-box { background: var(--ink); border-radius: var(--r-lg); padding: 32px 36px; }
+.ro-proof-box p {
+  border-left: 3px solid var(--lime); padding-left: 18px; margin: 0;
+  font-family: 'Arimo', sans-serif; font-weight: 600; font-style: italic;
+  font-size: 1.05rem; color: var(--white); line-height: 1.5;
+}

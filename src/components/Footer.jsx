@@ -3,6 +3,8 @@ import { navigate, navClick } from '../utils/nav.js';
 // Real paths that are full page routes (not home-page sections)
 const PAGE_ROUTES = new Set([
   '/solutions', '/careers', '/solutions/hardware', '/solutions/software', '/solutions/material-science', '/investors-page', '/blog', '/contact-us',
+  '/industries', '/industries/glass-manufacturers', '/industries/mining-minerals', '/industries/beverage-fmcg-brands',
+  '/industries/recycling-operators',
 ]);
 
 
@@ -88,11 +90,10 @@ const COLUMNS = [
   {
     title: 'Industries',
     items: [
-      ['Glass Manufacturers', null],
-      ['Municipalities & Government', null],
-      ['Beverage & FMCG Brands', null],
-      ['Construction & Real Estate', null],
-      ['Recycling Operators', null],
+      ['Glass Manufacturers', '/industries/glass-manufacturers'],
+      ['Mining & Minerals', '/industries/mining-minerals'],
+      ['Beverage & FMCG Brands', '/industries/beverage-fmcg-brands'],
+      ['Recycling Operators', '/industries/recycling-operators'],
     ],
   },
   {

@@ -45,8 +45,13 @@
   border: 1px solid rgba(178,222,58,.35);
   padding: 7px 14px; border-radius: 999px; margin: 0 0 18px;
 }
+/* This article's title runs noticeably longer than the other blog
+   articles' (~90 chars vs. ~65) — at the same size as their shared hero
+   h1 clamp it wraps to a 4th line and pushes the byline meta row past
+   the hero's viewport-height frame. Sized down so it holds to 2-3 lines
+   like the others instead. */
 .rr-hero h1 {
-  color: var(--white); font-size: clamp(2rem, 4.4vw, 3.2rem); line-height: 1.18;
+  color: var(--white); font-size: clamp(1.7rem, 3.4vw, 2.6rem); line-height: 1.22;
   margin: 0 0 18px;
 }
 /* Scoped under .rr-hero (not just .rr-hero__lead alone) so this beats

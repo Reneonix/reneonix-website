@@ -1,0 +1,347 @@
+/* ---------- Glass Manufacturers — industry page ---------- */
+.gm-page { overflow-x: clip; }
+
+/* ── Scroll reveal (page-local — see the useLayoutEffect/useEffect pair
+   in GlassManufacturersPage.jsx for why this can't reuse the site-wide
+   .reveal observer on a lazy-loaded page) ── */
+.gm-reveal { opacity: 0; filter: blur(12px); transform: translateY(24px); transition: opacity .7s ease, filter .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+.gm-reveal.gm-in { opacity: 1; filter: none; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .gm-reveal { opacity: 1; filter: none; transform: none; transition: none; }
+}
+
+/* ── Hero — same dark treatment used by every article page (shared
+   /article background.png + veil gradient + chip + breadcrumb) so this
+   industry page reads as part of the same visual family. ── */
+.gm-hero {
+  position: relative; overflow: hidden;
+  min-height: calc(100vh - 76px);
+  display: flex; align-items: center; justify-content: flex-start;
+  /* A notch shorter top/bottom than the plain article heroes (clamp
+     140-180 / 48-72) — this hero carries a tagline + lead + stats strip
+     on top of chip/h1/cta, so it needs the extra room back to keep the
+     whole block inside a laptop-height viewport. */
+  padding: clamp(88px, 9.5vw, 112px) 0 clamp(28px, 4vw, 44px);
+  background: var(--bg) url('/glass hero.png') center / cover no-repeat;
+}
+@media (max-width: 1024px) { .gm-hero { min-height: calc(100vh - 68px); } }
+@media (max-width: 480px) { .gm-hero { min-height: calc(100vh - 60px); } }
+.gm-hero__bg-veil {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    linear-gradient(100deg, rgba(4,8,4,.68) 0%, rgba(4,8,4,.52) 28%, rgba(4,8,4,.26) 52%, rgba(4,8,4,.08) 74%, rgba(4,8,4,.02) 100%),
+    linear-gradient(180deg, rgba(4,8,4,.22) 0%, transparent 20%, transparent 70%, rgba(4,8,4,.3) 100%),
+    radial-gradient(900px 480px at 8% -10%, rgba(178,222,58,.14), transparent 60%);
+}
+.gm-breadcrumb {
+  position: absolute; z-index: 1; top: 34px; left: 0; right: 0;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  font-size: .88rem; font-weight: 600; color: var(--on-dark-mut);
+  padding: 0 var(--gutter);
+}
+.gm-breadcrumb a { color: var(--on-dark-mut); text-decoration: none; transition: color .18s ease; }
+.gm-breadcrumb a:hover { color: var(--lime); }
+.gm-breadcrumb svg { color: rgba(255,255,255,.3); flex-shrink: 0; }
+.gm-breadcrumb .is-current { color: var(--on-dark); }
+.gm-hero__inner {
+  position: relative; z-index: 1; max-width: 860px;
+  padding: 0 var(--gutter);
+}
+.gm-hero__chip {
+  display: inline-block;
+  font-size: .8rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--lime); background: rgba(178,222,58,.14);
+  border: 1px solid rgba(178,222,58,.35);
+  padding: 7px 14px; border-radius: 999px; margin: 0 0 14px;
+}
+/* This hero carries a tagline + lead + stats strip that the other
+   industry-page heroes don't (see .gm-hero__stats below) — sized and
+   spaced a notch tighter throughout so the extra content still fits a
+   laptop-height viewport without pushing the stats row past the fold. */
+.gm-hero__inner h1 {
+  color: var(--white); font-size: clamp(2.1rem, 4.2vw, 3.1rem); line-height: 1.14;
+  margin: 0 0 16px;
+}
+.gm-hero__inner h1 em { font-style: normal; color: var(--lime); }
+.gm-hero__lead {
+  color: rgba(255,255,255,.72); text-shadow: 0 1px 4px rgba(0,0,0,.45);
+  font-size: clamp(1rem, 1.7vw, 1.15rem); line-height: 1.55;
+  max-width: 620px; margin: 0 0 20px;
+}
+.gm-hero__cta { display: flex; gap: 14px; flex-wrap: wrap; }
+.gm-hero__cta .btn-outline-light { border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.04); }
+.gm-hero__cta .btn-outline-light:hover { background: rgba(255,255,255,.1); border-color: var(--white); }
+
+/* ── Hero tagline (bold subhead between h1 and the lead paragraph) ── */
+.gm-hero__tagline {
+  color: var(--white); font-weight: 600;
+  font-size: clamp(1rem, 1.7vw, 1.2rem); line-height: 1.4;
+  max-width: 640px; margin: 0 0 12px;
+  text-shadow: 0 1px 8px rgba(0,0,0,.4);
+}
+
+/* ── Hero stats strip ── */
+.gm-hero__stats {
+  display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 24px; margin-top: 18px; padding-top: 16px; max-width: 760px;
+  border-top: 1px solid rgba(255,255,255,.14);
+}
+.gm-hero__stat strong {
+  display: block; font-family: 'Arimo', sans-serif;
+  font-size: clamp(1.4rem, 2.2vw, 1.9rem); font-weight: 800; color: var(--white);
+}
+.gm-hero__stat span { color: rgba(255,255,255,.62); font-size: .82rem; }
+@media (max-width: 720px) { .gm-hero__stats { grid-template-columns: 1fr 1fr; gap: 18px; } }
+
+/* Numbers hidden for now, but the block still occupies its layout space
+   (border-top rule + the row's own height) rather than collapsing — visibility
+   over display:none so nothing above/below reflows. */
+.gm-hero__stats--hidden { visibility: hidden; }
+
+/* ── The Problem — intro copy/media row + full-width pain-point cards ── */
+.gm-problem-grid {
+  display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: start;
+}
+.gm-problem-col { display: flex; flex-direction: column; }
+
+.gm-problem-side { display: flex; flex-direction: column; gap: 28px; margin-top: 32px; }
+.gm-problem-media {
+  position: relative; border-radius: var(--r-lg); overflow: hidden;
+  height: clamp(280px, 28vw, 380px);
+  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
+}
+.gm-problem-media img { width: 100%; height: 100%; object-fit: cover; }
+.gm-problem-media::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(0deg, rgba(4,8,4,.65) 0%, rgba(4,8,4,0) 45%);
+  pointer-events: none;
+}
+.gm-problem-media__caption {
+  position: absolute; left: 18px; right: 18px; bottom: 16px;
+  color: var(--white); font-size: .78rem; letter-spacing: .02em; opacity: .9;
+}
+
+.gm-problem-stats { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; }
+.gm-stat-card {
+  background: var(--ink); color: var(--paper); border-radius: var(--r-lg); padding: 18px 20px;
+}
+.gm-stat-card__big {
+  font-size: 1.7rem; font-weight: 800; font-family: 'Arimo', sans-serif;
+  color: var(--lime); line-height: 1; margin-bottom: 6px;
+}
+.gm-stat-card--sm .gm-stat-card__big { font-size: 1.4rem; }
+.gm-stat-card p { color: rgba(255,255,255,.68); font-size: .78rem; margin: 0; line-height: 1.5; }
+
+@media (max-width: 860px) {
+  .gm-problem-grid { grid-template-columns: 1fr; }
+  .gm-problem-media { height: clamp(220px, 60vw, 320px); }
+}
+@media (max-width: 480px) { .gm-problem-stats { grid-template-columns: 1fr; } }
+
+/* Pain-point cards — plain title + description, no icon, top accent
+   border. Sits in the narrower text column (not full page width), so
+   auto-fit settles at 2-up there and drops to 1-up once the column
+   itself goes narrow (mobile, where the grid stacks to one column). */
+.gm-problem-cards {
+  display: grid; gap: 16px; margin-top: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+}
+.gm-problem-card {
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-top: 3px solid var(--lime-deep);
+  border-radius: var(--r-md); padding: 22px 20px;
+}
+.gm-problem-card h4 { font-size: 1.05rem; font-weight: 800; color: var(--ink); margin: 0 0 8px; }
+.gm-problem-card p { font-size: .9rem; color: var(--on-light-mut); margin: 0; }
+
+/* ── Solutions — scroll rail with numbered, filling steps ── */
+.gm-rail-wrap { position: relative; }
+.gm-rail {
+  /* top/height are set inline by GlassManufacturersPage.jsx to span exactly
+     between the first and last step-circle centers - see positionRail(). */
+  position: absolute; left: 17px; width: 2px;
+  background: var(--line-light);
+}
+.gm-rail-fill {
+  position: absolute; left: 0; top: 0; width: 2px; height: 0%;
+  background: linear-gradient(180deg, var(--lime), var(--lime-deep));
+  box-shadow: 0 0 12px rgba(178,222,58,.35);
+  transition: height .1s linear;
+}
+
+.gm-step {
+  position: relative;
+  display: grid; grid-template-columns: 56px 1.2fr .9fr; gap: 20px;
+  padding: 56px 0;
+}
+.gm-step:first-child { padding-top: 8px; }
+.gm-step:last-child { padding-bottom: 8px; }
+
+.gm-step-num {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  font-family: 'Arimo', sans-serif; font-weight: 800; font-size: .9rem;
+  color: var(--on-light-mut); background: var(--paper); border: 2px solid var(--line-light);
+  transition: color .5s ease .1s, background .5s ease .1s, border-color .5s ease .1s, box-shadow .5s ease .1s;
+}
+.gm-step.gm-in .gm-step-num {
+  color: var(--ink); background: var(--lime); border-color: var(--lime);
+  box-shadow: 0 0 0 6px rgba(178,222,58,.28);
+}
+
+.gm-step-content { padding-top: 2px; }
+.gm-step-content h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); margin: 0 0 14px; color: var(--ink); line-height: 1.25; }
+.gm-step-content p { color: var(--on-light-mut); font-size: 1.05rem; line-height: 1.65; margin: 0 0 22px; max-width: 480px; }
+
+.gm-row__tag {
+  display: inline-block; font-family: 'Inter', sans-serif; font-weight: 700;
+  font-size: .74rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--lime-deep); margin-bottom: 12px;
+}
+
+.gm-step-visual { position: relative; }
+.gm-step-visual-card {
+  position: relative; border-radius: var(--r-lg); overflow: hidden;
+  height: 360px;
+  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 10px, rgba(0,0,0,.06) 10px, rgba(0,0,0,.06) 20px);
+  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
+  display: flex; align-items: flex-end;
+  transition: transform .3s ease;
+}
+.gm-step-visual-card:hover { transform: scale(1.015); }
+.gm-step-visual-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* For photos whose own aspect ratio doesn't match this card (e.g. a
+   portrait-ish product shot in this landscape slot) — shows the whole
+   image instead of cropping it, with a solid dark fill (not the diagonal
+   placeholder stripe) behind whatever letterbox gap that leaves. */
+.gm-step-visual-card--contain { background: var(--ink); }
+.gm-step-visual-card--contain img { object-fit: contain; }
+.gm-step-visual-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(4,8,4,0) 40%, rgba(4,8,4,.6));
+}
+.gm-step-visual-card__caption {
+  position: relative; z-index: 2; color: var(--white); font-size: .78rem;
+  padding: 18px; line-height: 1.5;
+}
+
+@media (max-width: 860px) {
+  .gm-rail { display: none; }
+  .gm-step { grid-template-columns: 1fr; gap: 18px; padding: 40px 0; }
+  .gm-step-visual { order: -1; }
+}
+
+/* Chips */
+.gm-chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.gm-chip {
+  background: var(--paper-2); border: 1px solid rgba(0,0,0,.08);
+  font-size: .92rem; padding: 8px 14px; border-radius: var(--r-pill);
+  font-weight: 500; color: var(--on-light);
+}
+.gm-chip b { color: var(--lime-deep); }
+
+/* Comparison table */
+.gm-table-wrap { overflow-x: auto; margin-bottom: 20px; max-width: 480px; }
+.gm-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.gm-table th {
+  background: var(--ink); color: var(--white); text-align: left;
+  padding: 10px 14px; font-weight: 600; font-size: .78rem;
+}
+.gm-table td { padding: 10px 14px; border-bottom: 1px solid var(--line-light); color: var(--on-light-mut); }
+.gm-table tr:nth-child(even) td { background: var(--paper-2); }
+.gm-table__hl { color: var(--lime-deep); font-weight: 700; }
+
+/* ── How It Works — click-to-select step tracker (stagger reveal on
+   scroll-into-view, pulsing active dot, swap-fade caption, manual
+   replay) — see HowItWorksFlow in the .jsx. ── */
+.gm-flow-anim__top { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+.gm-flow-anim__replay {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--ink); color: var(--paper); border: none;
+  font-family: 'Inter', sans-serif; font-size: .82rem; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase;
+  padding: 9px 18px; border-radius: var(--r-pill); cursor: pointer;
+  transition: background .2s ease;
+}
+.gm-flow-anim__replay:hover { background: var(--lime-deep); color: var(--white); }
+
+.gm-flow-anim__track { position: relative; padding-top: 26px; }
+.gm-flow-anim__rail { position: absolute; top: 43px; left: 0; right: 0; height: 2px; background: var(--line-light); }
+.gm-flow-anim__rail-fill {
+  height: 100%; width: 100%; background: var(--lime);
+  transform-origin: left center; transform: scaleX(0);
+  transition: transform .7s cubic-bezier(.65,0,.35,1);
+}
+
+.gm-flow-anim__steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; position: relative; list-style: none; margin: 0; padding: 0; }
+.gm-flow-anim__step {
+  display: flex; flex-direction: column; align-items: flex-start;
+  opacity: 0; transform: translateY(18px);
+  transition: opacity .55s ease, transform .55s ease;
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.gm-flow-anim__track--visible .gm-flow-anim__step { opacity: 1; transform: translateY(0); }
+
+.gm-flow-anim__node {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--paper); border: 2px solid var(--line-light);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Arimo', sans-serif; font-size: .92rem; font-weight: 800; color: var(--on-light-mut);
+  margin-bottom: 16px; cursor: pointer; position: relative; z-index: 2;
+  transition: border-color .35s ease, background-color .35s ease, color .35s ease, box-shadow .35s ease, transform .35s ease;
+}
+.gm-flow-anim__step.is-active .gm-flow-anim__node {
+  border-color: var(--lime); background: var(--lime); color: var(--ink);
+  box-shadow: 0 0 0 6px rgba(178,222,58,.25);
+  animation: gm-flow-pulse 2.2s ease-in-out infinite;
+}
+@keyframes gm-flow-pulse {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(178,222,58,.25); }
+  50%      { box-shadow: 0 0 0 10px rgba(178,222,58,.12); }
+}
+
+.gm-flow-anim__tag, .gm-flow-anim__step h5 { transition: opacity .35s ease; }
+.gm-flow-anim__step:not(.is-active) .gm-flow-anim__tag,
+.gm-flow-anim__step:not(.is-active) h5 { opacity: .45; }
+
+.gm-flow-anim__tag {
+  font-size: .78rem; color: var(--lime-deep); font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px;
+}
+.gm-flow-anim__step h5 { font-size: 1.06rem; font-weight: 700; color: var(--ink); margin: 0 0 6px; }
+.gm-flow-anim__step p { font-size: .92rem; color: var(--on-light-mut); line-height: 1.45; margin: 0; }
+
+.gm-flow-anim__caption {
+  margin-top: 28px; padding: 18px 20px;
+  background: var(--paper-2); border-radius: var(--r-md); border-left: 3px solid var(--lime);
+  font-size: 1rem; color: var(--on-light-mut); line-height: 1.55;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.gm-flow-anim__caption.is-swapping { opacity: 0; transform: translateY(6px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .gm-flow-anim__step, .gm-flow-anim__rail-fill, .gm-flow-anim__node, .gm-flow-anim__caption {
+    transition: none !important; animation: none !important;
+  }
+  .gm-flow-anim__step { opacity: 1; transform: none; }
+}
+
+@media (max-width: 960px) {
+  .gm-flow-anim__steps { grid-template-columns: repeat(3, 1fr); row-gap: 28px; }
+  .gm-flow-anim__rail { display: none; }
+}
+@media (max-width: 560px) { .gm-flow-anim__steps { grid-template-columns: 1fr 1fr; } }
+
+/* ── Why This Matters — reuses global .card, just needs the grid ── */
+.gm-why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+@media (max-width: 1080px) { .gm-why-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px)  { .gm-why-grid { grid-template-columns: 1fr; } }
+
+/* ── Proof in the Field ── */
+.gm-proof { background: var(--ink); color: var(--paper); border-radius: var(--r-lg); padding: 40px; max-width: 820px; }
+.gm-proof p { color: rgba(255,255,255,.72); font-size: .98rem; line-height: 1.7; margin-bottom: 22px; }
+.gm-proof__quote {
+  border-left: 3px solid var(--lime); padding-left: 18px;
+  font-family: 'Arimo', sans-serif; font-weight: 600; font-style: italic;
+  font-size: 1.05rem; color: var(--white); line-height: 1.5;
+}

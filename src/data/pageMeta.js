@@ -42,6 +42,31 @@ const PAGE_META = {
     description: "Reneonix's material science lab engineers high-performance materials from glass, plastic, textile and construction waste - from formulation to validation.",
     image: img('/material-science.png'),
   },
+  industries: {
+    title: `${SITE} | Industries - One Platform, Four Material Streams`,
+    description: "See where Reneonix's AI recovery hardware, traceability software and material science stack is deployed today - glass, recycling, beverage & FMCG packaging, and mining & minerals byproduct.",
+    image: img('/hardware-Sorter.jpg'),
+  },
+  'industry-glass-manufacturers': {
+    title: `${SITE} | Glass Manufacturers - AI Sorting & Verified Cullet`,
+    description: 'How Reneonix helps glass manufacturers cut contamination, verify recycled-content data and recover more value from cullet - AI vision sorting, traceability and material science.',
+    image: img('/amber-bottle.jpg'),
+  },
+  'industry-mining-minerals': {
+    title: `${SITE} | Minerals & Mining - Byproduct to Verified Feedstock`,
+    description: 'How Reneonix applies AI identification, batch traceability and material science to mineral and mining byproducts - turning residual fines, dust and tailings into verified industrial feedstock.',
+    image: img('/wireframe-retriaz.png'),
+  },
+  'industry-beverage-fmcg': {
+    title: `${SITE} | Beverage & FMCG Brands - Verified Recovery & EPR`,
+    description: 'How Reneonix gives beverage and FMCG brands verified packaging recovery, traceable recycled content, and audit-ready EPR reporting - backed by data, not estimates.',
+    image: img('/Sample dashboard .jpeg'),
+  },
+  'industry-recycling-operators': {
+    title: `${SITE} | Recycling Operators - AI Sorting & Traceability for MRFs`,
+    description: 'How Reneonix helps recycling operators and MRFs turn mixed, contaminated intake into clean, high-purity, buyer-ready material - with AI sorting hardware and Retraiz traceability.',
+    image: img('/hardware-Sorter.jpg'),
+  },
   policy: {
     title: `${SITE} | Privacy & Security Policy`,
     description: "Reneonix's privacy, information security, cookie, data retention, compliance and IP policies - how we protect your data and maintain transparency.",

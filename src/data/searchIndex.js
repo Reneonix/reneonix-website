@@ -60,6 +60,31 @@ export const SEARCH_PAGES = [
     href: '/policy',
   },
   {
+    title: 'Industries',
+    keywords: 'industries overview glass manufacturers recycling operators beverage fmcg brands mining minerals platform deployment pilot positioning material streams',
+    href: '/industries',
+  },
+  {
+    title: 'Glass Manufacturers',
+    keywords: 'industries glass manufacturers cullet furnace ai vision sorting colour separation flint amber green csp contamination ceramics stone porcelain traceos traceability epr compliance recycled content material science foam glass insulation sand blasting abrasive lightweight aggregate',
+    href: '/industries/glass-manufacturers',
+  },
+  {
+    title: 'Mining & Minerals',
+    keywords: 'industries mining minerals byproduct tailings fines dust silica dust glass-feed granulated material characterisation conversion pathway retraiz traceability ai vision sorting virgin silica sand processing cost compliance esg resource efficiency',
+    href: '/industries/mining-minerals',
+  },
+  {
+    title: 'Beverage & FMCG Brands',
+    keywords: 'industries beverage fmcg brands packaging recovery recycled content epr reporting retraiz traceos brand detection mrm ai coca-cola pernod ricard pilot refill reuse carbon attribution compliance audit-ready',
+    href: '/industries/beverage-fmcg-brands',
+  },
+  {
+    title: 'Recycling Operators',
+    keywords: 'industries recycling operators mrf material recovery facility ai sorting hardware retraiz traceos mrm ai vision sorting cercle x mini mines glass sorter battery sorting pilot deployment purity throughput buyer-ready material',
+    href: '/industries/recycling-operators',
+  },
+  {
     title: 'Contact',
     keywords: 'contact contact us get in touch talk to us enquiry inquiry email phone message reach out support',
     href: '/contact-us',

@@ -11,11 +11,10 @@ const TECH = [
   ['R&D Labs',               'Materials testing, formulation, and validation', '/solutions/material-science', null],
 ];
 const INDUSTRIES = [
-  ['Glass Manufacturers',         null, '#'],
-  ['Municipalities & Government', null, '#'],
-  ['Beverage & FMCG Brands',      null, '#'],
-  ['Construction & Real Estate',  null, '#'],
-  ['Recycling Operators',         null, '#'],
+  ['Glass Manufacturers',    null, '/industries/glass-manufacturers'],
+  ['Mining & Minerals',      null, '/industries/mining-minerals'],
+  ['Beverage & FMCG Brands', null, '/industries/beverage-fmcg-brands'],
+  ['Recycling Operators',    null, '/industries/recycling-operators'],
 ];
 const RESOURCES = [
   ['Blog',                   null, '/blog'],
@@ -152,10 +151,16 @@ function getEdgeLinks(route) {
       right: { label: 'Solutions', href: '/solutions' },
     };
   }
-  if (route === 'solutions') {
+  if (route === 'solutions' || route === 'industries') {
     return {
       left:  { label: 'Home',    href: '/' },
       right: { label: 'Careers', href: '/careers' },
+    };
+  }
+  if (route === 'industry-glass-manufacturers' || route === 'industry-mining-minerals' || route === 'industry-beverage-fmcg' || route === 'industry-recycling-operators') {
+    return {
+      left:  { label: 'Home',       href: '/' },
+      right: { label: 'Industries', href: '/industries' },
     };
   }
   if (route === 'hardware' || route === 'software' || route === 'material-science' || route === 'policy' || route === 'blog' || route === 'blog-article-mrm' || route === 'blog-article-vision-sorting') {
