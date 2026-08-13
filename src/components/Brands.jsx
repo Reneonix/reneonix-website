@@ -10,6 +10,7 @@ const BRANDS = [
   { src: '/anna-color.png', alt: 'Anna Incubator' },
   { src: '/nsrcel-color.png', alt: 'NSRCEL · IIMB' },
   { src: '/ciic-color.png', alt: 'Crescent Innovation Incubation Council' },
+  { src: '/nasscom-color.png', alt: 'NASSCOM' },
 ];
 
 export default function Brands() {
