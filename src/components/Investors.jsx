@@ -3,7 +3,7 @@ const ROW1 = [
   { src: '/dst-nidhi.jpg', alt: 'DST NIDHI' },
   { src: '/seed-fund-scheme.jpg', alt: 'Startup India Seed Fund Scheme' },
   { src: '/hdfc-bank.jpg', alt: 'HDFC Bank Parivartan' },
-  { src: '/nasscom.jpg', alt: 'NASSCOM' },
+  { src: '/nasscom.png', alt: 'NASSCOM DeepTech Club' },
 ];
 
 const ROW2 = [
