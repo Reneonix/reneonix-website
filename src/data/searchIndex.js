@@ -85,6 +85,11 @@ export const SEARCH_PAGES = [
     href: '/industries/recycling-operators',
   },
   {
+    title: 'Municipalities & Government',
+    keywords: 'industries municipalities government public sector waste management material recovery partnership traceos retraiz compliance esg',
+    href: '/industries/municipalities-government',
+  },
+  {
     title: 'Contact',
     keywords: 'contact contact us get in touch talk to us enquiry inquiry email phone message reach out support',
     href: '/contact-us',

@@ -4,7 +4,7 @@ import { navigate, navClick } from '../utils/nav.js';
 const PAGE_ROUTES = new Set([
   '/solutions', '/careers', '/solutions/hardware', '/solutions/software', '/solutions/material-science', '/investors-page', '/blog', '/contact-us',
   '/industries', '/industries/glass-manufacturers', '/industries/mining-minerals', '/industries/beverage-fmcg-brands',
-  '/industries/recycling-operators',
+  '/industries/recycling-operators', '/industries/municipalities-government',
 ]);
 
 
@@ -94,6 +94,7 @@ const COLUMNS = [
       ['Mining & Minerals', '/industries/mining-minerals'],
       ['Beverage & FMCG Brands', '/industries/beverage-fmcg-brands'],
       ['Recycling Operators', '/industries/recycling-operators'],
+      ['Municipalities & Government', '/industries/municipalities-government'],
     ],
   },
   {

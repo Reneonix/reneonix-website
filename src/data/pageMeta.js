@@ -67,6 +67,11 @@ const PAGE_META = {
     description: 'How Reneonix helps recycling operators and MRFs turn mixed, contaminated intake into clean, high-purity, buyer-ready material - with AI sorting hardware and Retraiz traceability.',
     image: img('/hardware-Sorter.jpg'),
   },
+  'industry-municipalities-government': {
+    title: `${SITE} | Municipalities & Government - Material Recovery Partnerships`,
+    description: "How Reneonix's AI recovery hardware, traceability software and material science stack supports municipalities and government material recovery programmes.",
+    image: img('/hardware-Sorter.jpg'),
+  },
   policy: {
     title: `${SITE} | Privacy & Security Policy`,
     description: "Reneonix's privacy, information security, cookie, data retention, compliance and IP policies - how we protect your data and maintain transparency.",

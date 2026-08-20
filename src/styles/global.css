@@ -233,6 +233,9 @@
     transition: color .15s ease;
   }
   .nav-link:hover, .has-dropdown:hover > button, .has-dropdown.open > button { color: var(--lime); }
+  /* Persistent "you're in this section" state — independent of hover/open,
+     e.g. Resources stays lime while browsing any blog article. */
+  .has-dropdown.current > button { color: var(--lime); font-weight: 600; }
   .has-dropdown { position: relative; }
   .has-dropdown > button .chev { width: 11px; height: 11px; transition: transform .2s ease; }
   .has-dropdown.open > button .chev { transform: rotate(180deg); }
@@ -254,6 +257,17 @@
   .dropdown a span { color: rgba(255,255,255,.45); font-size: .82rem; }
   .dropdown a:hover { background: rgba(178,222,58,.08); }
   .dropdown a:hover strong { color: var(--lime); }
+
+  /* Grouped variant (Resources) — several labeled columns instead of one
+     flat list, e.g. Insights / Impact / Company. */
+  .dropdown--grouped {
+    display: grid; grid-template-columns: repeat(3, minmax(150px, 1fr));
+    gap: 4px 8px; min-width: 460px; padding: 16px 12px;
+  }
+  .dropdown__col-label {
+    display: block; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--lime-deep); margin: 6px 14px 8px;
+  }
 
   .nav__cta { display: flex; align-items: center; gap: 12px; }
   .nav__cta .btn { padding: 10px 20px; font-size: .88rem; }
@@ -2660,7 +2674,7 @@
     .footer__grid { grid-template-columns: 1fr; }
   }
 
-  /* ========= Careers-page simplified nav links (Home | Careers) ========= */
+  /* ========= Plain-link nav items (Home | Solutions | Careers) ========= */
   .nav__link {
     background: transparent;
     border: 0;

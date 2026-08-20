@@ -10,20 +10,29 @@ const TECH = [
   ['TraceOS Platform',       'End-to-end material traceability software',      '/solutions/software',         null],
   ['R&D Labs',               'Materials testing, formulation, and validation', '/solutions/material-science', null],
 ];
-const INDUSTRIES = [
-  ['Glass Manufacturers',    null, '/industries/glass-manufacturers'],
-  ['Mining & Minerals',      null, '/industries/mining-minerals'],
-  ['Beverage & FMCG Brands', null, '/industries/beverage-fmcg-brands'],
-  ['Recycling Operators',    null, '/industries/recycling-operators'],
-];
 const RESOURCES = [
-  ['Blog',                   null, '/blog'],
-  ['Case Studies',           null, '#'],
-  ['Sustainability Reports', null, '#'],
-  ['Whitepapers',            null, '#'],
-  ['Press & Media',          null, '#'],
-  ['Investors Relations',    null, '/investors-page'],
-  ['FAQ',                    null, '#'],
+  {
+    group: 'Insights',
+    items: [
+      ['Blog',           null, '/blog'],
+      ['Case Studies',   null, '#'],
+      ['Whitepapers',    null, '#'],
+    ],
+  },
+  {
+    group: 'Impact',
+    items: [
+      ['Sustainability Reports', null, '#'],
+      ['Press & Media',          null, '#'],
+    ],
+  },
+  {
+    group: 'Company',
+    items: [
+      ['Investor Relations', null, '/investors-page'],
+      ['FAQ',                null, '#'],
+    ],
+  },
 ];
 
 function Chevron() {
@@ -39,7 +48,7 @@ function Chevron() {
  * No longer depends on SiteEffects DOM manipulation, so it works
  * correctly even when the Header remounts on route changes.
  */
-function Dropdown({ label, items, onItemClick }) {
+function Dropdown({ label, items, groups, current, onItemClick }) {
   const [open, setOpen] = useState(false);
   const wrapRef  = useRef(null);
   const closeTimer = useRef(null);
@@ -83,6 +92,20 @@ function Dropdown({ label, items, onItemClick }) {
     onItemClick?.();
   };
 
+  const renderLink = (title, sub, href, section) => (
+    href && href !== '#' ? (
+      <a key={title} href={href} onClick={(e) => handleNavItem(e, href, section)}>
+        <strong>{title}</strong>
+        {sub && <span>{sub}</span>}
+      </a>
+    ) : (
+      <a key={title} href="#" onClick={(e) => { e.preventDefault(); handleItemClick(); }}>
+        <strong>{title}</strong>
+        {sub && <span>{sub}</span>}
+      </a>
+    )
+  );
+
   const handleNavItem = (e, href, section) => {
     e.preventDefault();
     setOpen(false);
@@ -109,7 +132,7 @@ function Dropdown({ label, items, onItemClick }) {
 
   return (
     <div
-      className={`has-dropdown${open ? ' open' : ''}`}
+      className={`has-dropdown${open ? ' open' : ''}${current ? ' current' : ''}`}
       ref={wrapRef}
       onMouseEnter={show}
       onMouseLeave={hide}
@@ -118,68 +141,33 @@ function Dropdown({ label, items, onItemClick }) {
         {label}
         <Chevron />
       </button>
-      <div className="dropdown">
-        {items.map(([title, sub, href, section]) => (
-          href && href !== '#' ? (
-            <a key={title} href={href} onClick={(e) => handleNavItem(e, href, section)}>
-              <strong>{title}</strong>
-              {sub && <span>{sub}</span>}
-            </a>
-          ) : (
-            <a key={title} href="#" onClick={(e) => { e.preventDefault(); handleItemClick(); }}>
-              <strong>{title}</strong>
-              {sub && <span>{sub}</span>}
-            </a>
-          )
-        ))}
+      <div className={`dropdown${groups ? ' dropdown--grouped' : ''}`}>
+        {groups
+          ? groups.map(({ group, items: groupItems }) => (
+              <div className="dropdown__col" key={group}>
+                <span className="dropdown__col-label">{group}</span>
+                {groupItems.map(([title, sub, href, section]) => renderLink(title, sub, href, section))}
+              </div>
+            ))
+          : items.map(([title, sub, href, section]) => renderLink(title, sub, href, section))}
       </div>
     </div>
   );
 }
 
 /**
- * Dynamic left/right nav links based on current route:
- *   home                               → Solutions | … | Careers
- *   careers                            → Home      | … | Solutions
- *   solutions                          → Home      | … | Careers
- *   hardware / software / material-science / policy → Home | … | Solutions
+ * The navbar is now identical on every page (Home | Technology | Solutions |
+ * Industries We Serve | Resources | Careers) — only which item lights up
+ * lime as "current" changes, based on the route.
  */
-function getEdgeLinks(route) {
-  if (route === 'careers') {
-    return {
-      left:  { label: 'Home',      href: '/' },
-      right: { label: 'Solutions', href: '/solutions' },
-    };
-  }
-  if (route === 'solutions' || route === 'industries') {
-    return {
-      left:  { label: 'Home',    href: '/' },
-      right: { label: 'Careers', href: '/careers' },
-    };
-  }
-  if (route === 'industry-glass-manufacturers' || route === 'industry-mining-minerals' || route === 'industry-beverage-fmcg' || route === 'industry-recycling-operators') {
-    return {
-      left:  { label: 'Home',       href: '/' },
-      right: { label: 'Industries', href: '/industries' },
-    };
-  }
-  if (route === 'hardware' || route === 'software' || route === 'material-science' || route === 'policy' || route === 'blog' || route === 'blog-article-mrm' || route === 'blog-article-vision-sorting') {
-    return {
-      left:  { label: 'Home',      href: '/' },
-      right: { label: 'Solutions', href: '/solutions' },
-    };
-  }
-  if (route === 'investors-page') {
-    return {
-      left:  { label: 'Home',    href: '/' },
-      right: { label: 'Careers', href: '/careers' },
-    };
-  }
-  // home (default)
-  return {
-    left:  { label: 'Solutions', href: '/solutions' },
-    right: { label: 'Careers',   href: '/careers' },
-  };
+function getActiveSection(route) {
+  if (route === 'home') return 'home';
+  if (route === 'hardware' || route === 'software' || route === 'material-science') return 'technology';
+  if (route === 'solutions') return 'solutions';
+  if (route === 'industries' || route.startsWith('industry-')) return 'industries';
+  if (route === 'careers') return 'careers';
+  if (route === 'blog' || route.startsWith('blog-article-') || route === 'investors-page') return 'resources';
+  return null;
 }
 
 export default function Header({ route = 'home', animate = true }) {
@@ -192,7 +180,8 @@ export default function Header({ route = 'home', animate = true }) {
   // menu in the same click — every plain nav link below needs both.
   const withNav = (path) => (e) => { navClick(path)(e); closeNav(); };
 
-  const { left, right } = getEdgeLinks(route);
+  const active = getActiveSection(route);
+  const linkClass = (section) => `nav__link${active === section ? ' nav__link--active' : ''}`;
 
   return (
     <>
@@ -204,22 +193,27 @@ export default function Header({ route = 'home', animate = true }) {
           <img src="/reneonix-logo.svg" alt="Reneonix" className="brand__img" />
         </a>
 
-        {/* ── Nav ── */}
+        {/* ── Nav — identical on every page; only the active item lights up ── */}
         <nav className={`nav__menu${mobileOpen ? ' open' : ''}`} id="navMenu">
 
-          {/* 1st item — changes per page */}
-          <a className="nav__link" href={left.href} onClick={withNav(left.href)}>
-            {left.label}
+          <a className={linkClass('home')} href="/" onClick={withNav('/')}>
+            Home
           </a>
 
-          {/* Center 3 — always the same */}
-          <Dropdown label="Technology" items={TECH}       onItemClick={closeNav} />
-          <Dropdown label="Industries" items={INDUSTRIES} onItemClick={closeNav} />
-          <Dropdown label="Resources"  items={RESOURCES}  onItemClick={closeNav} />
+          <Dropdown label="Technology" items={TECH} current={active === 'technology'} onItemClick={closeNav} />
 
-          {/* 5th item — changes per page */}
-          <a className="nav__link" href={right.href} onClick={withNav(right.href)}>
-            {right.label}
+          <a className={linkClass('solutions')} href="/solutions" onClick={withNav('/solutions')}>
+            Solutions
+          </a>
+
+          <a className={linkClass('industries')} href="/industries" onClick={withNav('/industries')}>
+            Industries We Serve
+          </a>
+
+          <Dropdown label="Resources" groups={RESOURCES} current={active === 'resources'} onItemClick={closeNav} />
+
+          <a className={linkClass('careers')} href="/careers" onClick={withNav('/careers')}>
+            Careers
           </a>
 
           {/* Mobile only — sits below all dropdown links, like a footer CTA */}

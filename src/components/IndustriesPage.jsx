@@ -36,6 +36,14 @@ const INDUSTRIES = [
     tagline: "Byproduct isn't waste until you decide not to characterise it.",
     href: '/industries/mining-minerals',
   },
+  {
+    badge: 'Concept',
+    variant: 'position',
+    img: '/government hero.png',
+    title: 'Government & Municipalities',
+    tagline: 'Household-level waste visibility for the communities that need it most.',
+    href: '/industries/municipalities-government',
+  },
 ];
 
 export default function IndustriesPage() {
@@ -76,7 +84,6 @@ export default function IndustriesPage() {
           loop
           playsInline
           preload="auto"
-          poster="/hardware-Sorter.jpg"
           aria-hidden="true"
         >
           <source src="/industry bg video.mp4" type="video/mp4" />
@@ -103,7 +110,7 @@ export default function IndustriesPage() {
         </div>
       </section>
 
-      {/* ── THE FOUR INDUSTRIES ── */}
+      {/* ── THE INDUSTRIES ── */}
       <section className="section section-paper">
         <div className="container">
           <div className="section-head ind-reveal">

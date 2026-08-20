@@ -267,6 +267,20 @@ const FLOW_STEPS = [
   { tag: 'Extend',    title: 'Material Science',     body: 'Residual fines routed to foam glass R&D.' },
 ];
 
+const VP_BREAKDOWN = [
+  { label: 'Glass',   value: '42.6%', color: 'var(--lime)' },
+  { label: 'Plastic', value: '31.8%', color: '#5B9DF5' },
+  { label: 'Metal',   value: '14.2%', color: 'rgba(255,255,255,.55)' },
+  { label: 'Other',   value: '11.4%', color: 'rgba(255,255,255,.3)' },
+];
+
+const VP_FEATURES = [
+  { title: 'Object detection',   body: 'Identifies material instances' },
+  { title: 'Stream analysis',    body: 'Aggregates detections' },
+  { title: 'Confidence scoring', body: 'Model confidence per item' },
+  { title: 'Real-time insight',  body: 'Continuous monitoring' },
+];
+
 const WHY_ITEMS = [
   { Icon: ShieldCheck, title: 'De-Risk Recycled Content', body: 'Commit to recycled-input targets on evidence, not estimates.' },
   { Icon: FileCheck2,  title: 'Meet EPR Obligations in Real Time', body: 'Retraiz keeps compliance documentation audit-ready on demand.' },
@@ -278,6 +292,25 @@ export default function GlassManufacturersPage() {
   const railWrapRef = useRef(null);
   const railRef = useRef(null);
   const railFillRef = useRef(null);
+  const vpVideoRef = useRef(null);
+
+  // AI Vision Prototype demo video - plays while scrolled into view,
+  // pauses otherwise (matches the proof video on SolutionsPage).
+  useEffect(() => {
+    const video = vpVideoRef.current;
+    if (!video) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
 
   // The rail's track must span exactly from the first step-circle's center
   // to the last one's - not the wrap's full box - because the step rows
@@ -558,6 +591,81 @@ export default function GlassManufacturersPage() {
             </p>
             <div className="gm-proof__quote">
               Late-stage R&amp;D, validated at MRF sites, with production deployment underway.
+            </div>
+          </div>
+
+          {/* ── AI Vision Prototype demo ── */}
+          <div className="gm-vp gm-reveal">
+            <div className="gm-vp__head">
+              <span className="gm-vp-chip">AI Vision Prototype</span>
+              <h3>Turn incoming waste into <em>material intelligence.</em></h3>
+              <p>
+                A prototype demonstration of Reneonix AI vision analysing an incoming material
+                stream and estimating its composition in real time.
+              </p>
+            </div>
+
+            <div className="gm-vp__grid">
+              <div className="gm-vp__cam">
+                <span className="gm-vp-cam-badge">Live AI Analysis <i>· Prototype</i></span>
+                <video
+                  ref={vpVideoRef}
+                  className="gm-vp__cam-video"
+                  src="/prototype video.mp4"
+                  muted
+                  loop
+                  playsInline
+                  controls
+                  preload="metadata"
+                />
+              </div>
+
+              <div className="gm-vp__panel">
+                <div className="gm-vp__panel-head">
+                  <span>Incoming Material Stream</span>
+                  <span className="gm-vp-pill">POC / Demo</span>
+                </div>
+                <h4>AI composition analysis</h4>
+
+                <div className="gm-vp-stat">
+                  <div className="gm-vp-stat__row">
+                    <span>Estimated glass content</span>
+                    <span className="gm-vp-stat__tag">AI detected</span>
+                  </div>
+                  <div className="gm-vp-stat__value">42.6%<small>Glass</small></div>
+                  <div className="gm-vp-stat__bar"><div style={{ width: '42.6%' }} /></div>
+                </div>
+
+                <ul className="gm-vp-breakdown">
+                  {VP_BREAKDOWN.map(({ label, value, color }) => (
+                    <li key={label}>
+                      <span className="gm-vp-breakdown__dot" style={{ background: color }} />
+                      {label}
+                      <b>{value}</b>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="gm-vp-features">
+                  {VP_FEATURES.map(({ title, body }) => (
+                    <div className="gm-vp-features__item" key={title}>
+                      <h6>{title}</h6>
+                      <p>{body}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="gm-vp__foot">
+              <div>
+                <h5>How the prototype works</h5>
+                <p>Camera observes stream → AI detects material types → detections are aggregated → composition estimate.</p>
+              </div>
+              <div>
+                <h5>AGI pilot use case</h5>
+                <p>Demonstrates how Reneonix can help a recovery facility understand incoming material before downstream processing.</p>
+              </div>
             </div>
           </div>
         </div>

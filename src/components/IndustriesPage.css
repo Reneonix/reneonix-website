@@ -65,8 +65,12 @@
   font-size: clamp(1rem, 1.7vw, 1.15rem); line-height: 1.6; max-width: 600px;
 }
 
-/* ---------- THE FOUR INDUSTRIES ---------- */
-.ind-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+/* ---------- THE INDUSTRIES ---------- */
+.ind-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+
+/* A card left alone on the final row (4th, 7th, 10th…) spans the middle
+   column instead of sitting flush-left with empty space beside it. */
+.ind-grid > .ind-card:last-child:nth-child(3n+1) { grid-column: 2 / span 1; }
 
 .ind-card {
   background: #fff;
@@ -141,6 +145,7 @@
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 1100px) {
   .ind-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ind-grid > .ind-card:last-child { grid-column: auto; }
 }
 @media (max-width: 720px) {
   .ind-cta { padding: 36px 28px; flex-direction: column; align-items: flex-start; }

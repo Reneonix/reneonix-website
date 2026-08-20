@@ -27,6 +27,7 @@ const GlassManufacturersPage = lazy(() => import('./components/GlassManufacturer
 const MiningMineralsPage = lazy(() => import('./components/MiningMineralsPage.jsx'));
 const BeverageFmcgPage = lazy(() => import('./components/BeverageFmcgPage.jsx'));
 const RecyclingOperatorsPage = lazy(() => import('./components/RecyclingOperatorsPage.jsx'));
+const MunicipalitiesGovernmentPage = lazy(() => import('./components/MunicipalitiesGovernmentPage.jsx'));
 const PolicyPage       = lazy(() => import('./components/PolicyPage.jsx'));
 const InvestorsPage    = lazy(() => import('./components/InvestorsPage.jsx'));
 const BlogPage         = lazy(() => import('./components/BlogPage.jsx'));
@@ -83,6 +84,7 @@ function getRoute() {
   if (path === '/industries/mining-minerals') return 'industry-mining-minerals';
   if (path === '/industries/beverage-fmcg-brands') return 'industry-beverage-fmcg';
   if (path === '/industries/recycling-operators') return 'industry-recycling-operators';
+  if (path === '/industries/municipalities-government') return 'industry-municipalities-government';
   if (path === '/careers' || path.startsWith('/careers/')) return 'careers';
   if (path === '/policy') return 'policy';
   if (path === '/investors-page') return 'investors-page';
@@ -244,6 +246,8 @@ export default function App() {
     page = <BeverageFmcgPage />;
   } else if (route === 'industry-recycling-operators') {
     page = <RecyclingOperatorsPage />;
+  } else if (route === 'industry-municipalities-government') {
+    page = <MunicipalitiesGovernmentPage />;
   } else if (route === 'policy') {
     page = <PolicyPage />;
   } else if (route === 'investors-page') {
