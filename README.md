@@ -1,5 +1,9 @@
 # Reneonix · React (Vite)
 
+## Technical guide
+
+For a detailed explanation of the current architecture, routing, components, animations, forms, SEO, deployment, tradeoffs, and maintenance workflow, read [docs/reneonix-website-technical-guide.pdf](docs/reneonix-website-technical-guide.pdf).
+
 The original static `index.html` site converted into a React + Vite project.
 
 ## Run it

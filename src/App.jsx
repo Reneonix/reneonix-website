@@ -142,6 +142,12 @@ export default function App() {
   // event on its own — navigate() dispatches a synthetic 'popstate' right
   // after, so this one listener covers both that and real back/forward.
   useEffect(() => {
+    const forceScrollTop = () => {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    };
+
     const onRouteChange = () => {
       const next = getRoute();
       setRoute((prev) => {
@@ -149,9 +155,47 @@ export default function App() {
           setHasNavigated(true);
           // Scroll to top immediately — set scrollTop directly for Safari <15.4
           // which ignores behavior:'instant' and would let GSAP ScrollTrigger fight it
-          document.documentElement.scrollTop = 0;
-          document.body.scrollTop = 0;
-          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+          forceScrollTop();
+
+          // Re-assert for a couple of seconds after the swap. A single reset
+          // can lose a race against the global `scroll-behavior: smooth`
+          // (global.css) if anything nudges scroll while the incoming page
+          // is still mounting/loading its images and video - observed
+          // drifting scroll position up to ~2s after a route change in
+          // testing, well past a handful of animation frames. Skipped when a
+          // deliberate cross-page section jump is pending (sw_scroll_target,
+          // consumed further below) so it doesn't fight that intentional
+          // scroll.
+          //
+          // Bails out the moment it sees real user scroll intent (wheel,
+          // touch, or keyboard) instead of running the full 2s unconditionally
+          // - otherwise it was silently reverting the user's own early scroll
+          // attempts on the incoming page, which is exactly what made Hero
+          // sections feel like they needed several scroll gestures to leave.
+          if (!sessionStorage.getItem('sw_scroll_target')) {
+            const start = performance.now();
+            let userScrolling = false;
+            const markUserScroll = () => { userScrolling = true; };
+            window.addEventListener('wheel', markUserScroll, { passive: true });
+            window.addEventListener('touchstart', markUserScroll, { passive: true });
+            window.addEventListener('keydown', markUserScroll, { passive: true });
+            const stopWatching = () => {
+              window.removeEventListener('wheel', markUserScroll);
+              window.removeEventListener('touchstart', markUserScroll);
+              window.removeEventListener('keydown', markUserScroll);
+            };
+
+            const reassert = () => {
+              if (userScrolling) { stopWatching(); return; }
+              forceScrollTop();
+              if (performance.now() - start < 2000) {
+                requestAnimationFrame(reassert);
+              } else {
+                stopWatching();
+              }
+            };
+            requestAnimationFrame(reassert);
+          }
         }
         return next;
       });
@@ -199,12 +243,21 @@ export default function App() {
   // sessionStorage under 'sw_scroll_target'. Once the target route renders,
   // this effect picks it up and scrolls to the section — with retry logic
   // to handle lazy-loaded pages that take a frame or two to mount.
+  //
+  // Cleanup matters here: without it, a retry chain kicked off for one
+  // navigation can outlive it and fire against whatever page is mounted by
+  // the time a timer lands — e.g. Mining Minerals' deep-link into Material
+  // Science's granulation-process video landing on an unrelated later visit
+  // to that page (like arriving from Solutions) instead of its hero.
   useEffect(() => {
     const target = sessionStorage.getItem('sw_scroll_target');
-    if (!target) return;
+    if (!target) return undefined;
     sessionStorage.removeItem('sw_scroll_target');
+    let cancelled = false;
     let tries = 0;
+    let timeoutId;
     const attempt = () => {
+      if (cancelled) return;
       const el = document.getElementById(target);
       if (el) {
         const navH = document.querySelector('header')?.offsetHeight ?? 80;
@@ -212,10 +265,20 @@ export default function App() {
         window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
       } else if (tries < 20) {
         tries++;
-        setTimeout(attempt, 80);
+        timeoutId = setTimeout(attempt, 80);
       }
     };
-    requestAnimationFrame(() => requestAnimationFrame(attempt));
+    let rafId2;
+    const rafId1 = requestAnimationFrame(() => {
+      if (cancelled) return;
+      rafId2 = requestAnimationFrame(attempt);
+    });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(rafId1);
+      if (rafId2) cancelAnimationFrame(rafId2);
+      clearTimeout(timeoutId);
+    };
   }, [route]);
 
   // First mount = stable key + no animation. Subsequent navs remount

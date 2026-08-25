@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { navClick } from '../utils/nav.js';
+import MagicBento, { MagicBentoCard } from './MagicBento.jsx';
 import './IndustriesPage.css';
 
 const INDUSTRIES = [
@@ -111,16 +112,28 @@ export default function IndustriesPage() {
       </section>
 
       {/* ── THE INDUSTRIES ── */}
-      <section className="section section-paper">
+      <section className="section section-dark ind-industries-section">
         <div className="container">
           <div className="section-head ind-reveal">
             <h2>Where We <em>Operate</em></h2>
             <p>From live deployments to early-stage partnerships, this is where Reneonix's platform is headed.</p>
           </div>
 
-          <div className="ind-grid">
+          <MagicBento
+            className="ind-grid"
+            glowColor="156, 193, 48"
+            spotlightRadius={300}
+            particleCount={10}
+            enableTilt={false}
+            enableMagnetism
+            enableStars
+            enableSpotlight
+            enableBorderGlow
+            clickEffect
+          >
             {INDUSTRIES.map((ind, i) => (
-              <a
+              <MagicBentoCard
+                as="a"
                 className="ind-card ind-reveal"
                 href={ind.href}
                 onClick={navClick(ind.href)}
@@ -141,14 +154,14 @@ export default function IndustriesPage() {
                     <ChevronRight size={15} aria-hidden="true" />
                   </span>
                 </div>
-              </a>
+              </MagicBentoCard>
             ))}
-          </div>
+          </MagicBento>
         </div>
       </section>
 
       {/* ── DON'T SEE YOUR INDUSTRY? ── */}
-      <section className="section" style={{ padding: '80px 0' }}>
+      <section className="section section-dark ind-cta-section" style={{ padding: '80px 0' }}>
         <div className="container">
           <div className="ind-cta ind-reveal">
             <div className="ind-cta__copy">

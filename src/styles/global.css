@@ -120,6 +120,14 @@
 
   /* Sections (alternating dark / paper) */
   .section { padding: 110px 0; position: relative; }
+
+  /* Kills the hairline seam that can appear between two stacked <section>
+     elements on high-DPI mobile screens — sub-pixel height rounding at
+     device pixel ratios above 1 can leave a fractional gap where the body's
+     background peeks through, even though every section's own height adds
+     up cleanly at DPR 1. A 1px overlap is invisible against solid section
+     backgrounds but guarantees there's never a gap to round into. */
+  section + section { margin-top: -1px; }
   .section-dark { background: var(--panel); border-top: 1px solid var(--line-dark); border-bottom: 1px solid var(--line-dark); color: var(--white); }
   .section-paper { background: var(--paper); color: var(--on-light); }
   .section-paper-grad { background: linear-gradient(160deg, #f5f5f5 0%, #ebebeb 50%, #dedede 100%); color: var(--on-light); }

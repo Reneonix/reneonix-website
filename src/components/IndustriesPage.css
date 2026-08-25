@@ -4,6 +4,11 @@
 
 .ind-page { display: block; background: var(--bg); color: var(--on-dark); overflow-x: clip; }
 
+/* These two dark sections sit back-to-back with an identical background —
+   drop the shared seam so they read as one continuous block. */
+.ind-industries-section { border-bottom: none; }
+.ind-cta-section { border-top: none; }
+
 /* ── Scroll reveal (page-local — this page is lazy-loaded, so it mounts
    after SiteEffects' route-keyed IntersectionObserver has already run and
    can never see these nodes — same fix as the other industry pages) ── */
@@ -25,6 +30,13 @@
 }
 @media (max-width: 1024px) { .ind-hero { min-height: calc(100vh - 68px); } }
 @media (max-width: 480px) { .ind-hero { min-height: calc(100vh - 60px); } }
+
+/* Mobile — compact content-height layout, matching the Hardware page's
+   mobile hero (.hw2-hero at max-width:600px): the hero shrinks to fit its
+   copy instead of forcing full viewport height. */
+@media (max-width: 600px) {
+  .ind-hero { height: auto; min-height: 0; }
+}
 
 .ind-hero__video {
   position: absolute; inset: 0; z-index: -2; pointer-events: none;
@@ -73,51 +85,68 @@
 .ind-grid > .ind-card:last-child:nth-child(3n+1) { grid-column: 2 / span 1; }
 
 .ind-card {
-  background: #fff;
-  border: 1px solid rgba(0,0,0,.08);
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border: 1px solid rgba(255,255,255,.10);
   border-radius: var(--r-md);
   overflow: hidden;
-  display: flex; flex-direction: column;
   text-decoration: none; color: inherit;
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 .ind-card:hover {
-  transform: translateY(-6px);
-  border-color: rgba(178,222,58,.45);
-  box-shadow: 0 22px 48px rgba(0,0,0,.12), 0 0 0 1px rgba(178,222,58,.18);
+  border-color: rgba(178,222,58,.55);
+  box-shadow: 0 22px 48px rgba(0,0,0,.45), 0 0 0 1px rgba(178,222,58,.22);
 }
 
-.ind-card__media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--paper-2); }
+.ind-card__media { position: absolute; inset: 0; overflow: hidden; background: var(--panel); }
 .ind-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
 .ind-card:hover .ind-card__media img { transform: scale(1.06); }
 .ind-card__media::after {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(0deg, rgba(4,8,4,.55) 0%, rgba(4,8,4,0) 45%);
+  background: linear-gradient(
+    to bottom,
+    rgba(4,8,4,.60) 0%,
+    rgba(4,8,4,.10) 22%,
+    rgba(4,8,4,.20) 40%,
+    rgba(4,8,4,.68) 58%,
+    rgba(4,8,4,.97) 100%
+  );
   pointer-events: none;
 }
 .ind-badge {
-  position: absolute; z-index: 1; bottom: 12px; left: 12px;
+  position: absolute; z-index: 2; top: 14px; left: 14px;
   font-size: .72rem; font-weight: 700; letter-spacing: .02em;
   padding: 5px 11px; border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
 }
 .ind-badge--live     { background: rgba(178,222,58,.92); color: var(--ink); }
 .ind-badge--pilot    { background: rgba(156,193,48,.92); color: var(--white); }
 .ind-badge--position { background: rgba(74,90,40,.92); color: var(--white); }
 
-.ind-card__body { padding: 20px; display: flex; flex-direction: column; flex: 1; }
-.ind-card__body h3 { color: var(--ink); font-size: 1.15rem; font-weight: 800; margin: 0 0 8px; }
-.ind-card__tagline { color: var(--on-light-mut); font-size: .88rem; line-height: 1.5; margin: 0 0 18px; flex: 1; }
+.ind-card__body {
+  position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
+  padding: 20px;
+  display: flex; flex-direction: column;
+}
+.ind-card__body h3 {
+  color: #fff; font-size: 1.15rem; font-weight: 800; margin: 0 0 8px;
+  text-shadow: 0 1px 6px rgba(0,0,0,.55);
+}
+.ind-card__tagline {
+  color: rgba(255,255,255,.86); font-size: .88rem; line-height: 1.5; margin: 0 0 18px;
+  text-shadow: 0 1px 5px rgba(0,0,0,.65);
+}
 
 .ind-card__more {
   display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
   font-weight: 700; font-size: .86rem;
-  padding: 8px 14px; border-radius: 999px; border: 1.5px solid;
-  transition: background .2s, color .2s, transform .2s;
+  padding: 8px 14px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,.40);
+  background: rgba(255,255,255,.08);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  transition: background .2s, color .2s, border-color .2s, transform .2s;
 }
 .ind-card:hover .ind-card__more { transform: translateX(3px); }
-.ind-card__more--live,
-.ind-card__more--pilot,
-.ind-card__more--position { color: var(--lime-deep); border-color: rgba(178,222,58,.5); }
 .ind-card:hover .ind-card__more--live,
 .ind-card:hover .ind-card__more--pilot,
 .ind-card:hover .ind-card__more--position { background: var(--lime); color: var(--ink); border-color: var(--lime); }
@@ -141,6 +170,17 @@
 .ind-cta__copy h2 { color: var(--white); font-size: clamp(1.4rem, 2.4vw, 1.9rem); margin: 0 0 10px; }
 .ind-cta__copy p { color: var(--on-dark-mut); margin: 0; line-height: 1.6; }
 .ind-cta__actions { position: relative; display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* "Explore the Technology" — the site-wide .btn-outline-light hover (a
+   translucent glass tint, forced via !important in global.css) leaves its
+   text unreadably dark against this card's dark panel background. Match
+   the green fill the industry cards above already use on hover instead —
+   needs !important of its own to actually beat that global rule. */
+.ind-cta__actions .btn-outline-light:hover {
+  background: var(--lime) !important;
+  color: var(--ink);
+  border-color: var(--lime) !important;
+}
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 1100px) {

@@ -3,11 +3,6 @@ import {
   Cpu,
   FlaskConical,
   Wrench,
-  Truck,
-  Factory,
-  Package,
-  HardHat,
-  ClipboardCheck,
   Zap,
   Database,
   BarChart2,
@@ -56,25 +51,25 @@ const TRAD_STEPS = [
 ];
 
 const REN_STEPS = [
-  { Icon: Database,  label: 'Data Collection',               time: 'Real-time' },
-  { Icon: Cpu,       label: 'AI Analysis & Decision Making', time: 'Minutes' },
-  { Icon: Zap,       label: 'Smart Reporting',               time: 'Instant' },
-  { Icon: Shield,    label: 'Issue Detection & Action',      time: 'Proactive & Predictive' },
+  { Icon: Database, label: 'Live Data Collection',           time: 'Real-time',              status: 'Real-Time' },
+  { Icon: Cpu,      label: 'AI Analysis & Decision Making',  time: 'Instant',                 status: 'Minutes' },
+  { Icon: Zap,      label: 'Smart Reporting',                time: 'Instant',                 status: 'Instant' },
+  { Icon: Shield,   label: 'Issue Detection & Action',       time: 'Proactive & Predictive',  status: 'Predictive' },
 ];
 
 const COMPARE_STATS = [
-  { Icon: Gauge,    value: '92%',     label: 'Time Saved',            desc: 'Reduce manual effort and process time.' },
-  { Icon: Rocket,   value: '15x',     label: 'Faster Decisions',      desc: 'AI-powered insights for quick, confident actions.' },
-  { Icon: FileText, value: 'Instant', label: 'Smart Reporting',       desc: 'Automated reports, generated in real-time.' },
-  { Icon: Shield,   value: '24/7',    label: 'Continuous Monitoring', desc: 'Always-on intelligence with predictive issue detection.' },
+  { Icon: Gauge,    value: '92%',      label: 'Time Saved',            desc: 'Reduce manual effort and process time.' },
+  { Icon: Rocket,   value: '15x',      label: 'Faster Decisions',      desc: 'AI-powered insights for quick, confident actions.' },
+  { Icon: FileText, value: 'Real-Time', label: 'Smart Reporting',      desc: 'Automated reports, generated in real-time.' },
+  { Icon: Shield,   value: '24/7',     label: 'Continuous Monitoring', desc: 'Always-on intelligence with predictive issue detection.' },
 ];
 
 const INDUSTRIES = [
-  { Icon: Truck,          label: 'Waste Management',     img: '/industry-waste-management.png' },
-  { Icon: Factory,        label: 'Manufacturing',        img: '/industry-manufacturing.png' },
-  { Icon: Package,        label: 'FMCG & Packaging',     img: '/industry-fmcg-packaging.png' },
-  { Icon: HardHat,        label: 'Cement & Construction',img: '/industry-cement-construction.png' },
-  { Icon: ClipboardCheck, label: 'EPR & Compliance',     img: '/industry-epr-compliance.png' },
+  { label: 'Glass Manufacturers',          img: '/glass hero.png' },
+  { label: 'Recycling Operators',          img: '/recycling - main.png' },
+  { label: 'Beverage & FMCG Brands',       img: '/fmcg main.png' },
+  { label: 'Minerals & Mining',            img: '/mining-hero.png' },
+  { label: 'Government & Municipalities',  img: '/government hero.png' },
 ];
 
 const PROOF_BEFORE = [
@@ -149,7 +144,7 @@ export default function SolutionsPage() {
         <div className="container">
           <div className="sol-hero__inner">
             <div className="sol-hero__copy">
-              <span className="eyebrow on-dark">Solutions</span>
+              <span className="eyebrow">Solutions</span>
               <h1 className="sol-hero__title">
                 Engineering Circularity through <em>Hardware, Software, Material Science</em>
               </h1>
@@ -159,18 +154,15 @@ export default function SolutionsPage() {
               </p>
             </div>
 
-            <div className="sol-hero__media">
-              <div className="sol-hero__frame">
-                <img
-                  className="sol-hero__image"
-                  src="/solutions-hero.jpeg"
-                  alt="Reneonix circular economy — recycling ecosystem"
-                  loading="eager"
-                  decoding="async"
-                  fetchpriority="high"
-                />
-              </div>
-
+            <div className="sol-hero__orbit-wrap">
+              <img
+                className="sol-hero__orbit-img"
+                src="/solutions hero.png"
+                alt="Reneonix AI-powered circular ecosystem: collection, AI vision sorting, processing, material recovery, new life"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+              />
             </div>
           </div>
         </div>
@@ -219,31 +211,32 @@ export default function SolutionsPage() {
       <div className="section section-dark sol-compare-section">
         <div className="container">
           <div className="section-head">
-            <h2>How Much Time <em>AI Saves</em></h2>
-            <p>From slow, manual processes to real-time intelligence.</p>
+            <span className="sol-cmp-pill">Time Saved, Impact Delivered</span>
+            <h2>From Weeks of Work to <em>Minutes of Intelligence</em></h2>
+            <p>AI transforms slow processes into real-time, actionable intelligence.</p>
           </div>
 
           <div className="sol-compare">
             {/* Traditional card */}
             <div className="sol-compare__col sol-compare__col--trad">
-              <div className="sol-cmp-tag sol-cmp-tag--trad">Traditional (Without AI)</div>
+              <div className="sol-cmp-tag sol-cmp-tag--trad">Traditional Process</div>
               <p className="sol-cmp-tagline">Manual steps. Delayed insights. Lost time.</p>
-              <div className="sol-flow">
-                {TRAD_STEPS.flatMap(({ Icon, label, time }, i) => {
-                  const items = [
-                    <div key={`ts-${i}`} className="sol-flow__step">
-                      <div className="sol-flow__node sol-flow__node--trad"><Icon size={20} /></div>
-                      <p className="sol-flow__label">{label}</p>
-                      <p className="sol-flow__time sol-flow__time--trad">{time}</p>
-                    </div>,
-                  ];
-                  if (i < TRAD_STEPS.length - 1)
-                    items.push(<div key={`ta-${i}`} className="sol-flow__arrow sol-flow__arrow--trad" />);
-                  return items;
-                })}
+              <div className="sol-cmp-steps">
+                {TRAD_STEPS.map(({ Icon, label, time }, i) => (
+                  <div className="sol-cmp-step-wrap" key={label}>
+                    <div className="sol-cmp-step">
+                      <div className="sol-cmp-step__icon sol-cmp-step__icon--trad"><Icon size={22} /></div>
+                      <div className="sol-cmp-step__text">
+                        <p className="sol-cmp-step__label">{label}</p>
+                        <p className="sol-cmp-step__time">{time}</p>
+                      </div>
+                    </div>
+                    {i < TRAD_STEPS.length - 1 && <div className="sol-cmp-step__connector" aria-hidden="true" />}
+                  </div>
+                ))}
               </div>
               <div className="sol-cmp-summary sol-cmp-summary--trad">
-                <div className="sol-cmp-summary__icon"><Clock size={16} /></div>
+                <div className="sol-cmp-summary__icon"><Clock size={18} /></div>
                 <div>
                   <p className="sol-cmp-summary__label">Overall Turnaround Time</p>
                   <p className="sol-cmp-summary__val">Weeks</p>
@@ -251,11 +244,25 @@ export default function SolutionsPage() {
               </div>
             </div>
 
-            {/* AI chip */}
+            {/* AI hub */}
             <div className="sol-compare__center" aria-hidden="true">
-              <div className="sol-compare__chip">
-                <Zap size={22} />
-                <span>AI</span>
+              <svg className="sol-compare__lines" viewBox="0 0 200 400" preserveAspectRatio="none">
+                <path d="M0,50 Q60,50 100,200" className="sol-compare__line sol-compare__line--trad" />
+                <path d="M0,150 Q60,150 100,200" className="sol-compare__line sol-compare__line--trad" />
+                <path d="M0,250 Q60,250 100,200" className="sol-compare__line sol-compare__line--trad" />
+                <path d="M0,350 Q60,350 100,200" className="sol-compare__line sol-compare__line--trad" />
+                <path d="M100,200 Q140,50 200,50" className="sol-compare__line sol-compare__line--ren" />
+                <path d="M100,200 Q140,150 200,150" className="sol-compare__line sol-compare__line--ren" />
+                <path d="M100,200 Q140,250 200,250" className="sol-compare__line sol-compare__line--ren" />
+                <path d="M100,200 Q140,350 200,350" className="sol-compare__line sol-compare__line--ren" />
+                <circle cx="200" cy="50"  r="3" className="sol-compare__dot" />
+                <circle cx="200" cy="150" r="3" className="sol-compare__dot" />
+                <circle cx="200" cy="250" r="3" className="sol-compare__dot" />
+                <circle cx="200" cy="350" r="3" className="sol-compare__dot" />
+              </svg>
+              <div className="sol-compare__hub">
+                <Zap size={28} />
+                <span>AI Engine</span>
               </div>
             </div>
 
@@ -263,25 +270,26 @@ export default function SolutionsPage() {
             <div className="sol-compare__col sol-compare__col--ren">
               <div className="sol-cmp-tag sol-cmp-tag--ren">Reneonix AI-Powered</div>
               <p className="sol-cmp-tagline sol-cmp-tagline--ren">Automated steps. Instant insights. Real impact.</p>
-              <div className="sol-flow">
-                {REN_STEPS.flatMap(({ Icon, label, time }, i) => {
-                  const items = [
-                    <div key={`rs-${i}`} className="sol-flow__step">
-                      <div className="sol-flow__node sol-flow__node--ren"><Icon size={20} /></div>
-                      <p className="sol-flow__label sol-flow__label--ren">{label}</p>
-                      <p className="sol-flow__time sol-flow__time--ren">{time}</p>
-                    </div>,
-                  ];
-                  if (i < REN_STEPS.length - 1)
-                    items.push(<div key={`ra-${i}`} className="sol-flow__arrow sol-flow__arrow--ren" />);
-                  return items;
-                })}
+              <div className="sol-cmp-steps">
+                {REN_STEPS.map(({ Icon, label, time, status }, i) => (
+                  <div className="sol-cmp-step-wrap" key={label}>
+                    <div className="sol-cmp-step">
+                      <div className="sol-cmp-step__icon sol-cmp-step__icon--ren"><Icon size={22} /></div>
+                      <div className="sol-cmp-step__text">
+                        <p className="sol-cmp-step__label">{label}</p>
+                        <p className="sol-cmp-step__time">{time}</p>
+                      </div>
+                      <span className="sol-cmp-step__status">{status}</span>
+                    </div>
+                    {i < REN_STEPS.length - 1 && <div className="sol-cmp-step__connector sol-cmp-step__connector--ren" aria-hidden="true" />}
+                  </div>
+                ))}
               </div>
               <div className="sol-cmp-summary sol-cmp-summary--ren">
-                <div className="sol-cmp-summary__icon sol-cmp-summary__icon--ren"><Clock size={16} /></div>
+                <div className="sol-cmp-summary__icon sol-cmp-summary__icon--ren"><Clock size={18} /></div>
                 <div>
                   <p className="sol-cmp-summary__label sol-cmp-summary__label--ren">Overall Turnaround Time</p>
-                  <p className="sol-cmp-summary__val sol-cmp-summary__val--ren">Minutes to Hours</p>
+                  <p className="sol-cmp-summary__val sol-cmp-summary__val--ren">Minutes – Hours</p>
                 </div>
               </div>
             </div>
@@ -291,17 +299,12 @@ export default function SolutionsPage() {
           <div className="sol-cmp-stats">
             {COMPARE_STATS.map(({ Icon, value, label, desc }) => (
               <div className="sol-cmp-stat" key={label}>
-                <div className="sol-cmp-stat__icon"><Icon size={20} /></div>
+                <div className="sol-cmp-stat__icon"><Icon size={22} /></div>
                 <p className="sol-cmp-stat__value">{value}</p>
                 <p className="sol-cmp-stat__label">{label}</p>
                 <p className="sol-cmp-stat__desc">{desc}</p>
               </div>
             ))}
-          </div>
-
-          <div className="sol-compare__banner">
-            <Zap size={18} aria-hidden="true" />
-            <span>From Weeks of Manual Effort to <em>Minutes of AI Intelligence.</em></span>
           </div>
         </div>
       </div>
@@ -333,7 +336,7 @@ export default function SolutionsPage() {
       <div className="section section-dark">
         <div className="container">
           <div className="section-head">
-            <span className="eyebrow on-dark">Industries</span>
+            <span className="eyebrow">Industries</span>
             <h2>
               Industries we <em>serve</em>
             </h2>

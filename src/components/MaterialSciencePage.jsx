@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import {
   ArrowRight, ChevronRight, ChevronDown,
   Recycle, Microscope, FlaskConical, Package, ShieldCheck, Factory,
-  BarChart2, Layers, Zap, MapPin, Truck, TestTube,
+  BarChart2, Layers, Zap, Truck,
   Shirt, Building2, Sun, Leaf, Globe, Sparkles,
   Landmark, HardHat, Lightbulb,
   Users, TrendingUp, CheckCircle,
+  ArrowLeft,
 } from 'lucide-react';
 import { navClick } from '../utils/nav.js';
 import './MaterialSciencePage.css';
@@ -20,75 +21,69 @@ const GlassBottleIcon = ({ size = 24, ...props }) => (
 
 const RESEARCH_STEPS = [
   {
-    Icon: Recycle,
     num: '01',
     title: 'Sample Collection',
     body: 'We source and collect representative samples from post-consumer and industrial waste streams, ensuring a diverse and comprehensive dataset for material research and analysis.',
     img: '/step1.png',
     outputs: [
-      { Icon: MapPin,      label: 'Waste Stream Sourcing' },
-      { Icon: Layers,      label: 'Sample Classification' },
-      { Icon: ShieldCheck, label: 'Quality Assessment' },
+      { label: 'Waste Stream Sourcing' },
+      { label: 'Sample Classification' },
+      { label: 'Quality Assessment' },
     ],
   },
   {
-    Icon: Microscope,
     num: '02',
     title: 'Material Characterization',
     body: 'Physical, chemical, and thermal analysis of collected waste materials to evaluate their composition and performance potential.',
     img: '/step2.jpg',
     outputs: [
-      { Icon: FlaskConical, label: 'Composition Analysis' },
-      { Icon: Zap,          label: 'Particle Size Distribution' },
-      { Icon: ShieldCheck,  label: 'Purity Assessment' },
+      { label: 'Composition Analysis' },
+      { label: 'Particle Size Distribution' },
+      { label: 'Purity Assessment' },
     ],
   },
   {
-    Icon: FlaskConical,
     num: '03',
     title: 'Material Formulation & Engineering',
     body: 'Designing and developing precise material compositions for targeted mechanical, thermal, and functional performance.',
     img: '/step3.jpg',
     outputs: [
-      { Icon: Layers,      label: 'Formula Development' },
-      { Icon: Microscope,  label: 'Property Optimisation' },
-      { Icon: Zap,         label: 'Performance Targets' },
+      { label: 'Formula Development' },
+      { label: 'Property Optimisation' },
+      { label: 'Performance Targets' },
     ],
   },
   {
-    Icon: Package,
     num: '04',
     title: 'Prototype Development',
     body: 'Transforming engineered formulations into lab-scale prototypes and physical specimens for evaluation.',
     img: '/step4.jpg',
     outputs: [
-      { Icon: Package,      label: 'Lab Samples' },
-      { Icon: TestTube,     label: 'Test Specimens' },
-      { Icon: Factory,      label: 'Scale Prototypes' },
+      { label: 'Lab Samples' },
+      { label: 'Test Specimens' },
+      { label: 'Scale Prototypes' },
     ],
   },
   {
-    Icon: ShieldCheck,
     num: '05',
     title: 'Performance Validation',
     body: 'Rigorous testing for strength, durability, thermal stability, and environmental compliance against industry benchmarks.',
     img: '/step5.jpg',
     outputs: [
-      { Icon: ShieldCheck, label: 'Strength Testing' },
-      { Icon: BarChart2,   label: 'Durability Report' },
-      { Icon: Factory,     label: 'Certification Data' },
+      { label: 'Strength Testing' },
+      { label: 'Durability Report' },
+      { label: 'Certification Data' },
     ],
   },
   {
-    Icon: Factory,
     num: '06',
     title: 'Industrial Application',
     body: 'Scaling validated materials into full production and deploying them across real-world industrial applications.',
     img: '/step6.jpg',
     outputs: [
-      { Icon: Factory,   label: 'Scale-up Plan' },
-      { Icon: Truck,     label: 'Distribution Setup' },
-      { Icon: BarChart2, label: 'Market Deployment' },
+      { label: 'Scale-up Plan' },
+      { label: 'Distribution Setup' },
+      { label: 'Market Deployment' },
     ],
   },
 ];
@@ -269,12 +264,58 @@ const BANNER_ITEMS = [
   'Building a cleaner, smarter and more sustainable future',
 ];
 
+const QZ_STEPS = [
+  { num: '01', img: '/powder.png',    tag: 'Powder',    title: 'Fine Quartz Powder',          body: 'Ultra-fine quartz powder with particle size <150 µm.' },
+  { num: '02', img: '/binder.png',    tag: 'Binder',    title: 'Binder Preparation',          body: 'Binder system prepared by controlled mixing with water under heating and agitation.' },
+  { num: '03', img: '/mix.png',       tag: 'Mix',       title: 'Controlled Mixing',           body: 'Binder is uniformly mixed with quartz powder for even distribution and a wet mixture.' },
+  { num: '04', img: '/granulate.png', tag: 'Granulate', title: 'Pelletization / Granulation', body: 'Wet mixture is subjected to mechanical pressure to form compact granules.' },
+  { num: '05', img: '/dry.png',       tag: 'Dry',       title: 'Controlled Drying',           body: 'Wet granules dried at 120°C for 1 hour to remove moisture and strengthen granules.' },
+  { num: '06', img: '/screen.png',    tag: 'Screen',    title: 'Screening & Classification',  body: 'Dried granules screened to 600–1000 µm (ASTM No. 18–30).' },
+];
+
+const QZ_SPEC_ROWS = [
+  { key: 'Particle size range',       val: '600–1000 µm' },
+  { key: 'ASTM classification',       val: 'No. 18–30' },
+  { key: 'Nominal midpoint (D50)',    val: '~800 µm' },
+  { key: 'Granule form',              val: 'Pelletized / Granulated' },
+  { key: 'Starting material',         val: '<150 µm Quartz Powder' },
+  { key: 'Dust generation',           val: 'Low / Dust-free' },
+];
+
+const QZ_CHECKLIST = [
+  'Direct furnace observation at 500°C showed no visible carbon residue.',
+  'TGA–DSC analysis shows the processing additive decomposes and burns off in a defined temperature region.',
+  'Quartz remained thermally stable, with no significant change in colour or integrity.',
+];
+
+const QZ_OBSERVATIONS = [
+  { key: 'Carbon burn-off',                     val: 'Passed' },
+  { key: 'Visible carbon at 500°C',             val: 'Nil' },
+  { key: 'Quartz colour after 500°C',           val: 'No significant change' },
+  { key: 'Quartz phase / chemical integrity',   val: 'Maintained' },
+  { key: 'Thermal stability of quartz base',    val: 'Stable' },
+  { key: 'Granule size',                        val: '600–1000 µm' },
+];
+
 export default function MaterialSciencePage() {
   const [activeIdx, setActiveIdx] = useState(0);
   const active = RESEARCH_STEPS[activeIdx];
   const [activeWaste, setActiveWaste] = useState(0);
   const wt = WASTE_TYPES[activeWaste];
   const videoRef = useRef(null);
+  const [qzView, setQzView] = useState('process');
+  const qzVideoRef = useRef(null);
+  const qzFrameRef = useRef(null);
+  const qzViewMounted = useRef(false);
+
+  // Part A / Part B swap inside .ms-qz__frame changes the frame's height,
+  // which shifts the sections below it under a fixed scrollY - re-anchor
+  // to the frame's top on every toggle so the page doesn't appear to jump
+  // to Research Approach. Skipped on first mount (nothing to re-anchor to).
+  useEffect(() => {
+    if (!qzViewMounted.current) { qzViewMounted.current = true; return; }
+    qzFrameRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [qzView]);
 
   useEffect(() => {
     const hero = document.querySelector('.ms-hero');
@@ -290,6 +331,24 @@ export default function MaterialSciencePage() {
       videoRef.current.poster = '/material-science-bg.png';
     }
   }, []);
+
+  // Granulation process video - plays while scrolled into view, pauses
+  // otherwise (matches the walkthrough video on MunicipalitiesGovernmentPage).
+  useEffect(() => {
+    const video = qzVideoRef.current;
+    if (!video) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [qzView]);
 
   return (
     <div className="ms-page">
@@ -424,6 +483,231 @@ export default function MaterialSciencePage() {
         </div>
       </section>
 
+      {/* ── QUARTZ GRANULATION ── */}
+      <section className="ms-qz">
+        <div className="container">
+
+          {/* Header */}
+          <div className="ms-qz__header">
+            <div>
+              <span className="ms-qz__eyebrow">Material Innovation</span>
+              <h2 className="ms-qz__heading">
+                From Fine Quartz Dust<br />to <em>Engineered Granules</em>
+              </h2>
+            </div>
+            <p className="ms-qz__lead">
+              A controlled granulation process that converts ultra-fine quartz powder (&lt;150 µm) into
+              stable, low-dust granules with a defined particle-size range for easier handling and
+              potential industrial applications.
+            </p>
+          </div>
+
+          {/* Before / after specimen */}
+          <div className="ms-qz__transform">
+            <div className="ms-qz__specimen">
+              <img
+                src="/starting material.png"
+                alt="Ultra-fine quartz powder"
+                className="ms-qz__specimen-art"
+                draggable="false"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="ms-qz__specimen-tag">
+                <span className="ms-qz__specimen-tag-label">Starting Material</span>
+                <span className="ms-qz__specimen-tag-name">Ultra-fine Quartz Powder</span>
+                <span className="ms-qz__specimen-tag-spec">&lt;150 µm</span>
+              </div>
+            </div>
+            <span className="ms-qz__arrow" aria-hidden="true">
+              <svg viewBox="0 0 64 32">
+                <defs>
+                  <linearGradient id="msArrow3dFace" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" style={{ stopColor: 'var(--lime)' }} />
+                    <stop offset="100%" style={{ stopColor: 'var(--lime-deep)' }} />
+                  </linearGradient>
+                </defs>
+                <path
+                  className="ms-qz__arrow-body"
+                  d="M3 12 H33 V3 L61 16 L33 29 V20 H3 Z"
+                  fill="url(#msArrow3dFace)"
+                />
+                <path
+                  className="ms-qz__arrow-shine"
+                  d="M4 12.6 H33.6 L34.3 4 L58 16"
+                />
+              </svg>
+            </span>
+            <div className="ms-qz__specimen">
+              <img
+                src="/final product.png"
+                alt="Engineered quartz granules"
+                className="ms-qz__specimen-art"
+                draggable="false"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="ms-qz__specimen-tag">
+                <span className="ms-qz__specimen-tag-label">Final Product</span>
+                <span className="ms-qz__specimen-tag-name">Engineered Quartz Granules</span>
+                <span className="ms-qz__specimen-tag-spec">600–1000 µm</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Part A / Part B — single frame, toggled */}
+          <div className="ms-qz__frame" ref={qzFrameRef} id="granulation-process">
+            {qzView === 'process' ? (
+              <div key="process" className="ms-qz__view">
+                <div className="ms-qz__part-head">
+                  <h3 className="ms-qz__part-title">The Granulation Process</h3>
+                </div>
+                <p className="ms-qz__part-sub">From fine powder to engineered granules through controlled science and processing.</p>
+
+                <div className="ms-qz__video">
+                  <video
+                    ref={qzVideoRef}
+                    className="ms-qz__video-player"
+                    src="/granulation video.mp4"
+                    muted
+                    loop
+                    playsInline
+                    controls
+                    preload="metadata"
+                  />
+                </div>
+
+                <div className="ms-qz__nums" aria-hidden="true">
+                  {QZ_STEPS.map(({ num }, i) => (
+                    <div className="ms-qz__nums-cell" key={num}>
+                      <span className="ms-qz__nums-num">{num}</span>
+                      {i < QZ_STEPS.length - 1 && <ChevronRight size={16} className="ms-qz__nums-chevron" />}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="ms-qz__flow">
+                  {QZ_STEPS.map(({ num, img, tag, title, body }) => (
+                    <div className="ms-qz__flow-step" key={num} style={{ backgroundImage: `url(${img})` }}>
+                      <div className="ms-qz__flow-step-scrim" aria-hidden="true" />
+                      <div className="ms-qz__flow-step-content">
+                        <span className="ms-qz__flow-step-tag">{tag}</span>
+                        <h4 className="ms-qz__flow-step-title">{title}</h4>
+                        <p className="ms-qz__flow-step-body">{body}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button type="button" className="ms-qz__cta-banner" onClick={() => setQzView('details')}>
+                  Explore Process Details &amp; Results
+                  <ArrowRight size={16} aria-hidden="true" />
+                </button>
+              </div>
+            ) : (
+              <div key="details" className="ms-qz__view">
+                <div className="ms-qz__part-head ms-qz__part-head--details">
+                  <div>
+                    <h3 className="ms-qz__part-title">Process Details &amp; Results</h3>
+                  </div>
+                  <button type="button" className="ms-qz__back-btn" onClick={() => setQzView('process')}>
+                    <ArrowLeft size={15} aria-hidden="true" />
+                    Back to Process
+                  </button>
+                </div>
+
+                <div className="ms-qz__cards">
+
+                  {/* Card 1 — Granule size & classification */}
+                  <div className="ms-qz__card">
+                    <span className="ms-qz__card-title">Granule Size &amp; Classification</span>
+                    <img
+                      src="/final product.png"
+                      alt="Engineered quartz granules"
+                      className="ms-qz__spec-photo"
+                      draggable="false"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <div className="ms-qz__spec-table">
+                      {QZ_SPEC_ROWS.map(({ key, val }) => (
+                        <div key={key} className="ms-qz__spec-row">
+                          <span className="ms-qz__spec-key">{key}</span>
+                          <span className="ms-qz__spec-val">{val}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Card 2 — Thermal behaviour */}
+                  <div className="ms-qz__card">
+                    <span className="ms-qz__card-title">Thermal Behaviour &amp; Additive Burn-Off</span>
+                    <div className="ms-qz__checklist">
+                      {QZ_CHECKLIST.map(item => (
+                        <div key={item} className="ms-qz__check-item">
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="ms-qz__callout">
+                      <div>
+                        <div className="ms-qz__callout-title">Tested at 500°C</div>
+                        <div className="ms-qz__callout-sub">No visible carbon residue</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 3 — Process conditions */}
+                  <div className="ms-qz__card">
+                    <span className="ms-qz__card-title">Process Conditions</span>
+                    <div className="ms-qz__tiles">
+                      <div className="ms-qz__tile">
+                        <div className="ms-qz__tile-value">120°C</div>
+                        <div className="ms-qz__tile-label">Drying Temperature</div>
+                      </div>
+                      <div className="ms-qz__tile">
+                        <div className="ms-qz__tile-value">1 Hour</div>
+                        <div className="ms-qz__tile-label">Drying Duration</div>
+                      </div>
+                    </div>
+                    <p className="ms-qz__insight"><b>TGA–DSC Insight —</b> additive decomposition occurs before any significant thermal change in the silica/quartz base material.</p>
+                    <div className="ms-qz__chart">
+                      <div className="ms-qz__chart-legend">
+                        <span><i className="ms-qz__chart-dot--tga" />TGA</span>
+                        <span><i className="ms-qz__chart-dot--dsc" />DSC</span>
+                      </div>
+                      <svg viewBox="0 0 260 90" width="100%" height="90" preserveAspectRatio="none" aria-label="TGA-DSC curve, additive mass loss between 250 and 400 degrees Celsius">
+                        <line x1="0" y1="88" x2="260" y2="88" stroke="rgba(0,0,0,0.12)" strokeWidth="1" />
+                        <path d="M0,14 L100,15 C130,20 150,55 170,66 C200,76 230,79 260,80" fill="none" stroke="#9CC130" strokeWidth="2" />
+                        <path d="M0,50 C90,50 110,50 135,20 C155,0 175,40 200,52 C225,60 245,58 260,58" fill="none" stroke="rgba(0,0,0,0.35)" strokeWidth="1.6" strokeDasharray="3 3" />
+                      </svg>
+                      <div className="ms-qz__chart-axis">
+                        <span>100°C</span><span>300°C</span><span>500°C</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 4 — Post-treatment observations */}
+                  <div className="ms-qz__card">
+                    <span className="ms-qz__card-title">Post-Treatment Observations</span>
+                    <div className="ms-qz__obs">
+                      {QZ_OBSERVATIONS.map(({ key, val }) => (
+                        <div key={key} className="ms-qz__obs-row">
+                          <span className="ms-qz__obs-key">{key}</span>
+                          <span className="ms-qz__obs-val">{val}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            )}
+          </div>
+
+        </div>
+      </section>
+
       {/* ── RESEARCH APPROACH ── */}
       <section className="ms-ra">
         <div className="container">
@@ -465,7 +749,7 @@ export default function MaterialSciencePage() {
 
               {/* Accordion */}
               <div className="ms-ra__accordion">
-                {RESEARCH_STEPS.map(({ Icon, num, title, body, outputs }, i) => (
+                {RESEARCH_STEPS.map(({ num, title, body, outputs }, i) => (
                   <div
                     key={num}
                     className={`ms-ra__acc-item${i === activeIdx ? ' ms-ra__acc-item--active' : ''}`}
@@ -483,7 +767,6 @@ export default function MaterialSciencePage() {
                         onMouseEnter={() => setActiveIdx(i)}
                       >
                         <span className="ms-ra__acc-title">{title}</span>
-                        <Icon size={16} className="ms-ra__acc-icon" aria-hidden="true" />
                         <ChevronDown
                           size={14}
                           className={`ms-ra__acc-chevron${i === activeIdx ? ' ms-ra__acc-chevron--open' : ''}`}
@@ -497,9 +780,8 @@ export default function MaterialSciencePage() {
                           <div className="ms-ra__acc-outputs">
                             <span className="ms-ra__acc-out-label">Key Outputs</span>
                             <div className="ms-ra__acc-out-grid">
-                              {outputs.map(({ Icon: OIcon, label }) => (
+                              {outputs.map(({ label }) => (
                                 <div className="ms-ra__acc-out-item" key={label}>
-                                  <OIcon size={14} aria-hidden="true" />
                                   <span>{label}</span>
                                 </div>
                               ))}

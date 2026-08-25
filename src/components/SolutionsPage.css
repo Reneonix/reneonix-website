@@ -4,25 +4,38 @@
 
 .sol-page {
   display: block;
-  background: var(--bg);
-  color: var(--on-dark);
+  background: #fff;
+  color: var(--ink);
   overflow-x: hidden;
 }
+
+/* Scoped overrides so the shared .section-dark / .section-paper-grad
+   classes render as plain white on this page only - other pages that
+   use those global classes are untouched. */
+.sol-page .section-dark {
+  background: #fff;
+  color: var(--ink);
+}
+.sol-page .section-dark h1,
+.sol-page .section-dark h2,
+.sol-page .section-dark h3,
+.sol-page .section-dark h4 { color: var(--ink); }
+.sol-page .section-dark .section-head h2 em { color: var(--lime-deep); }
+.sol-page .section-paper-grad { background: #fff; }
 
 /* ---------- HERO ---------- */
 .sol-hero {
   position: relative;
   padding: clamp(24px, 3vw, 48px) 0 clamp(56px, 7vw, 88px);
   background:
-    radial-gradient(900px 500px at 10% 10%, rgba(178,222,58,.06), transparent 60%),
-    radial-gradient(700px 400px at 90% 0%, rgba(178,222,58,.04), transparent 60%),
-    var(--bg);
-  border-bottom: 1px solid var(--line-dark);
+    radial-gradient(900px 500px at 10% 10%, rgba(178,222,58,.08), transparent 60%),
+    radial-gradient(700px 400px at 90% 0%, rgba(178,222,58,.05), transparent 60%),
+    #fff;
   overflow: hidden;
 }
 .sol-hero__inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.25fr);
   gap: clamp(24px, 4vw, 56px);
   align-items: center;
 }
@@ -31,79 +44,34 @@
   font-family: 'Arimo', sans-serif;
   font-size: clamp(2.2rem, 4.4vw, 3.4rem);
   line-height: 1.05;
-  color: var(--white);
+  color: var(--ink);
   margin: 0 0 18px;
   font-weight: 900;
   letter-spacing: -.01em;
 }
 .sol-hero__title em {
   font-style: normal;
-  color: var(--lime);
+  color: var(--lime-deep);
   font-weight: 900;
 }
 .sol-hero__lead {
   margin: 0 0 28px;
-  color: var(--on-dark);
+  color: var(--on-light-mut);
   font-size: 1.05rem;
   max-width: 540px;
 }
-.sol-hero__cta { display: flex; gap: 12px; flex-wrap: wrap; }
-
-.sol-hero__media { display: flex; flex-direction: column; gap: 16px; position: relative; }
-.sol-hero__frame {
-  position: relative;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  aspect-ratio: 1600 / 877;
-  background: var(--panel-2);
-  border: 1px solid var(--line-dark);
-  box-shadow: 0 30px 60px rgba(0,0,0,.45);
-  isolation: isolate;
-}
-.sol-hero__video { width: 100%; height: 100%; object-fit: cover; display: block; }
-.sol-hero__image {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.sol-hero__play {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  color: rgba(255,255,255,.85);
-  pointer-events: none;
-  text-shadow: 0 8px 24px rgba(0,0,0,.6);
-}
-
-.sol-hero__pills {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-}
-.sol-pill {
+/* ── Circular ecosystem image ── */
+.sol-hero__orbit-wrap {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: var(--r-md);
-  background: rgba(255,255,255,.04);
-  border: 1px solid var(--line-dark);
+  justify-content: center;
 }
-.sol-pill__icon {
-  width: 36px; height: 36px;
-  flex: 0 0 36px;
-  border-radius: var(--r-sm);
-  display: inline-flex;
-  align-items: center; justify-content: center;
-  background: rgba(178,222,58,.12);
-  color: var(--lime);
-  border: 1px solid rgba(178,222,58,.25);
+.sol-hero__orbit-img {
+  display: block;
+  width: 100%;
+  max-width: 860px;
+  height: auto;
 }
-.sol-pill__text { display: flex; flex-direction: column; line-height: 1.25; }
-.sol-pill__text strong { color: var(--white); font-size: .9rem; font-weight: 700; }
-.sol-pill__text span { color: var(--on-dark-mut); font-size: .76rem; }
 
 /* ---------- INTEGRATED SOLUTIONS ---------- */
 .sol-grid {
@@ -213,155 +181,151 @@
    COMPARE — How Much Time AI Saves (flow diagram design)
    ══════════════════════════════════════════════════════ */
 .sol-compare-section {
-  background: #252628 !important;
+  background: #fff !important;
 }
 .section.sol-compare-section {
   padding-top: 12px !important;
   padding-bottom: clamp(28px, 3.5vw, 44px) !important;
 }
 .sol-compare-section .section-head { margin-bottom: 24px !important; }
-.sol-compare-section .section-head h2 em { color: var(--lime); font-style: normal; font-weight: 900; }
-.sol-compare-section .section-head p     { color: rgba(255,255,255,.65); }
+.sol-compare-section .section-head h2 em { color: var(--lime-deep); font-style: normal; font-weight: 900; }
+.sol-compare-section .section-head p     { color: var(--on-light-mut); }
+
+/* ── Eyebrow pill ── */
+.sol-cmp-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(178,222,58,.10);
+  border: 1px solid rgba(178,222,58,.28);
+  color: var(--lime-deep);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
 
 /* ── Grid shell ── */
 .sol-compare {
   display: grid;
-  grid-template-columns: 1fr 72px 1fr;
-  gap: 0 6px;
+  grid-template-columns: 1fr 180px 1fr;
+  gap: 0;
   align-items: stretch;
 }
 
 /* ── Column cards ── */
 .sol-compare__col {
-  border-radius: var(--r-md);
-  padding: 18px 20px;
-  border: 1px solid;
+  background: #fff;
+  border-radius: var(--r-lg);
+  padding: 26px 28px;
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 4px 20px rgba(0,0,0,.05);
   display: flex;
   flex-direction: column;
 }
-.sol-compare__col--trad {
-  background: #0E1112;
-  border-color: rgba(255,255,255,.10);
-}
-.sol-compare__col--ren {
-  background: rgba(31,110,74,.14);
-  border-color: rgba(31,110,74,.38);
-}
+.sol-compare__col--ren { border-color: rgba(178,222,58,.32); }
 
 /* ── Tag badges ── */
 .sol-cmp-tag {
   display: inline-flex;
   align-items: center;
-  padding: 4px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
-  font-size: .60rem;
+  font-size: .68rem;
   font-weight: 800;
   letter-spacing: .09em;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   width: fit-content;
 }
 .sol-cmp-tag--trad {
-  background: rgba(255,255,255,.09);
-  color: rgba(255,255,255,.68);
-  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.05);
+  color: rgba(0,0,0,.60);
+  border: 1px solid rgba(0,0,0,.14);
 }
 .sol-cmp-tag--ren {
-  background: rgba(31,110,74,.28);
-  color: var(--lime);
-  border: 1px solid rgba(178,222,58,.28);
+  background: rgba(31,110,74,.14);
+  color: var(--lime-deep);
+  border: 1px solid rgba(31,110,74,.32);
 }
 
 /* ── Card tagline ── */
 .sol-cmp-tagline {
-  font-size: .78rem;
-  color: rgba(255,255,255,.65);
-  margin: 0 0 12px;
+  font-size: .92rem;
+  color: var(--on-light-mut);
+  margin: 0 0 20px;
   line-height: 1.4;
 }
-.sol-cmp-tagline--ren { color: rgba(255,255,255,.68); }
+.sol-cmp-tagline--ren { color: var(--on-light-mut); }
 
-/* ── Flow diagram ── */
-.sol-flow {
-  display: flex;
-  align-items: flex-start;
-  flex: 1;
-  margin-bottom: 12px;
-}
-.sol-flow__step {
-  flex: 1;
+/* ── Vertical step list ── */
+.sol-cmp-steps {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 6px;
+  flex: 1;
+  margin-bottom: 14px;
 }
-.sol-flow__node {
-  width: 42px;
-  height: 42px;
+.sol-cmp-step-wrap { display: flex; flex-direction: column; }
+.sol-cmp-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sol-cmp-step__icon {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
-.sol-flow__node--trad {
-  background: rgba(255,255,255,.09);
-  border: 1.5px solid rgba(255,255,255,.18);
-  color: rgba(255,255,255,.72);
+.sol-cmp-step__icon--trad {
+  background: rgba(0,0,0,.04);
+  color: rgba(0,0,0,.55);
 }
-.sol-flow__node--ren {
-  background: rgba(31,110,74,.22);
-  border: 1.5px solid rgba(178,222,58,.35);
-  color: var(--lime);
-  box-shadow: 0 0 14px rgba(178,222,58,.12);
+.sol-cmp-step__icon--ren {
+  background: rgba(31,110,74,.14);
+  color: var(--lime-deep);
 }
-.sol-flow__label {
-  font-size: .66rem;
+.sol-cmp-step__text { flex: 1; min-width: 0; }
+.sol-cmp-step__label {
+  font-size: 1rem;
   font-weight: 700;
-  color: rgba(255,255,255,.85);
+  color: var(--ink);
   margin: 0;
   line-height: 1.3;
 }
-.sol-flow__label--ren { color: rgba(255,255,255,.90); }
-.sol-flow__time {
-  font-size: .62rem;
-  font-weight: 600;
-  color: rgba(255,255,255,.62);
-  margin: 0;
+.sol-cmp-step__time {
+  font-size: .86rem;
+  font-weight: 500;
+  color: var(--on-light-mut);
+  margin: 3px 0 0;
 }
-.sol-flow__time--ren { color: rgba(255,255,255,.68); }
+.sol-cmp-step__status {
+  flex-shrink: 0;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--lime-deep);
+}
 
-/* Dashed arrows between steps */
-.sol-flow__arrow {
-  flex: 0 0 24px;
-  height: 2px;
-  margin-top: 20px; /* (42px node / 2) - 1px */
-  position: relative;
+/* Connector between step rows */
+.sol-cmp-step__connector {
+  width: 1.5px;
+  height: 26px;
+  margin: 4px 0 4px 23px;
+  background: repeating-linear-gradient(
+    to bottom, rgba(0,0,0,.20) 0 4px, transparent 4px 8px
+  );
 }
-.sol-flow__arrow--trad {
-  border-top: 2px dashed rgba(255,255,255,.28);
-}
-.sol-flow__arrow--trad::after {
-  content: '';
-  position: absolute;
-  right: -3px;
-  top: -4px;
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-  border-left: 6px solid rgba(255,255,255,.35);
-}
-.sol-flow__arrow--ren {
-  border-top: 2px dashed rgba(178,222,58,.40);
-}
-.sol-flow__arrow--ren::after {
-  content: '';
-  position: absolute;
-  right: -3px;
-  top: -4px;
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-  border-left: 6px solid rgba(178,222,58,.50);
+.sol-cmp-step__connector--ren {
+  background: repeating-linear-gradient(
+    to bottom, rgba(178,222,58,.55) 0 4px, transparent 4px 8px
+  );
 }
 
 /* ── Summary row (overall turnaround) ── */
@@ -369,64 +333,81 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  border-top: 1px solid rgba(255,255,255,.10);
-  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,.10);
+  padding-top: 14px;
   margin-top: auto;
 }
-.sol-cmp-summary--ren { border-top-color: rgba(255,255,255,.12); }
+.sol-cmp-summary--ren { border-top-color: rgba(0,0,0,.08); }
 .sol-cmp-summary__icon {
-  width: 34px; height: 34px;
+  width: 40px; height: 40px;
   border-radius: 50%;
-  background: rgba(255,255,255,.09);
-  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.14);
   display: flex; align-items: center; justify-content: center;
-  color: rgba(255,255,255,.68);
+  color: rgba(0,0,0,.55);
   flex-shrink: 0;
 }
 .sol-cmp-summary__icon--ren {
-  background: rgba(31,110,74,.22);
-  border-color: rgba(178,222,58,.28);
-  color: var(--lime);
+  background: rgba(31,110,74,.14);
+  border-color: rgba(178,222,58,.32);
+  color: var(--lime-deep);
 }
 .sol-cmp-summary__label {
-  font-size: .66rem;
-  color: rgba(255,255,255,.62);
-  margin: 0 0 2px;
+  font-size: .76rem;
+  color: var(--on-light-mut);
+  margin: 0 0 3px;
 }
-.sol-cmp-summary__label--ren { color: rgba(255,255,255,.65); }
+.sol-cmp-summary__label--ren { color: var(--on-light-mut); }
 .sol-cmp-summary__val {
   font-family: 'Arimo', sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   font-weight: 900;
-  color: rgba(255,255,255,.92);
+  color: var(--ink);
   margin: 0;
   line-height: 1;
+  text-transform: uppercase;
 }
-.sol-cmp-summary__val--ren { color: var(--lime); }
+.sol-cmp-summary__val--ren { color: var(--lime-deep); }
 
-/* ── Center AI chip ── */
+/* ── Center AI hub — converging/diverging line diagram ── */
 .sol-compare__center {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.sol-compare__chip {
-  width: 64px; height: 64px;
+.sol-compare__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.sol-compare__line { fill: none; stroke-width: 1.5; stroke-dasharray: 3 4; }
+.sol-compare__line--trad { stroke: rgba(0,0,0,.16); }
+.sol-compare__line--ren  { stroke: rgba(178,222,58,.55); }
+.sol-compare__dot { fill: var(--lime-deep); }
+.sol-compare__hub {
+  position: relative;
+  z-index: 1;
+  width: 124px; height: 124px;
   border-radius: 50%;
-  background: #08100c;
-  border: 2px solid rgba(178,222,58,.55);
-  box-shadow:
-    0 0 0 4px rgba(178,222,58,.06),
-    0 0 20px rgba(178,222,58,.16);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 8px 28px rgba(0,0,0,.10), 0 0 0 10px rgba(178,222,58,.06);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  color: var(--lime);
-  font-weight: 900;
-  font-size: .72rem;
+  gap: 4px;
+  color: var(--lime-deep);
+}
+.sol-compare__hub span {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 800;
+  font-size: .78rem;
   letter-spacing: .04em;
+  color: var(--ink);
+  text-transform: uppercase;
 }
 
 /* ── Stats row ── */
@@ -437,109 +418,70 @@
   margin-top: 10px;
 }
 .sol-cmp-stat {
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.09);
-  border-radius: var(--r-md);
-  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: var(--r-lg);
+  box-shadow: 0 2px 12px rgba(0,0,0,.04);
+  padding: 18px 18px 20px;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 .sol-cmp-stat__icon {
-  width: 32px; height: 32px;
+  width: 38px; height: 38px;
   border-radius: 50%;
   background: rgba(178,222,58,.10);
   border: 1px solid rgba(178,222,58,.20);
   color: var(--lime);
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 .sol-cmp-stat__value {
   font-family: 'Arimo', sans-serif;
-  font-size: 1.45rem;
+  font-size: 1.75rem;
   font-weight: 900;
   color: var(--lime);
   margin: 0;
   line-height: 1;
 }
 .sol-cmp-stat__label {
-  font-size: .72rem;
+  font-size: .82rem;
   font-weight: 700;
-  color: rgba(255,255,255,.90);
-  margin: 3px 0 1px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 4px 0 2px;
 }
 .sol-cmp-stat__desc {
-  font-size: .64rem;
-  color: rgba(255,255,255,.62);
+  font-size: .76rem;
+  color: var(--on-light-mut);
   line-height: 1.4;
   margin: 0;
 }
 
-/* ── Bottom banner ── */
-.sol-compare__banner {
-  position: relative;
-  overflow: hidden;
-  margin-top: 10px;
-  padding: 14px 24px;
-  border-radius: var(--r-md);
-  background: #050d07;
-  border: 1px solid rgba(178,222,58,.45);
-  box-shadow: 0 0 18px rgba(178,222,58,.06) inset;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: .92rem;
-}
-.sol-compare__banner em {
-  font-style: normal;
-  color: var(--lime);
-}
-/* Speed lines — glowing streaks + bright endpoint dots */
-.sol-compare__banner::after {
-  content: '';
-  position: absolute;
-  right: 0; top: 0; bottom: 0;
-  width: 55%;
-  pointer-events: none;
-  background:
-    /* Glow dots at line tips */
-    radial-gradient(circle 3px at 97% 22%, rgba(220,255,180,1)   0%, rgba(178,222,58,.6) 50%, transparent 100%),
-    radial-gradient(circle 4px at 99% 44%, rgba(240,255,200,1)   0%, rgba(178,222,58,.7) 50%, transparent 100%),
-    radial-gradient(circle 3px at 95% 62%, rgba(200,255,160,.95) 0%, rgba(178,222,58,.5) 50%, transparent 100%),
-    radial-gradient(circle 2px at 92% 76%, rgba(178,222,58,.9)   0%, transparent 100%),
-    radial-gradient(circle 2px at 98% 55%, rgba(210,255,170,.9)  0%, rgba(178,222,58,.5) 50%, transparent 100%),
-    /* Horizontal streaks (flat ellipses) */
-    radial-gradient(ellipse 70% 1px   at 78% 22%, rgba(178,222,58,.65) 0%, transparent 100%),
-    radial-gradient(ellipse 85% 1.5px at 84% 44%, rgba(178,222,58,.80) 0%, transparent 100%),
-    radial-gradient(ellipse 60% 1px   at 72% 62%, rgba(178,222,58,.55) 0%, transparent 100%),
-    radial-gradient(ellipse 45% 1px   at 68% 76%, rgba(178,222,58,.40) 0%, transparent 100%),
-    radial-gradient(ellipse 55% 1px   at 74% 55%, rgba(178,222,58,.50) 0%, transparent 100%);
-}
-
 /* ── Responsive ── */
 @media (max-width: 1100px) {
-  /* Reduce the fixed 72px centre column so it doesn't eat into narrow card space */
-  .sol-compare { grid-template-columns: 1fr 56px 1fr; }
+  /* Reduce the centre hub column so it doesn't eat into narrow card space */
+  .sol-compare { grid-template-columns: 1fr 130px 1fr; }
+  .sol-compare__hub { width: 88px; height: 88px; }
 }
 @media (max-width: 900px) {
-  .sol-compare { grid-template-columns: 1fr; }
-  .sol-compare__center { padding: 8px 0; }
+  .sol-compare { grid-template-columns: 1fr; gap: 8px; }
+  .sol-compare__center { padding: 4px 0; min-height: 72px; }
+  .sol-compare__lines { display: none; }
   .sol-cmp-stats { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 600px) {
-  .sol-flow__arrow { flex: 0 0 18px; }
-  .sol-flow__node { width: 42px; height: 42px; }
-  .sol-flow__arrow { margin-top: 20px; }
-  .sol-flow__label { font-size: .62rem; }
-  .sol-flow__time  { font-size: .60rem; }
+  .sol-cmp-step__icon { width: 36px; height: 36px; }
+  .sol-cmp-step__label { font-size: .78rem; }
+  .sol-cmp-step__time  { font-size: .70rem; }
+  .sol-cmp-step__status { font-size: .62rem; }
   .sol-compare__col { padding: 18px 16px; }
   .sol-cmp-stat__value { font-size: 1.5rem; }
 }
 @media (max-width: 480px) {
   .sol-cmp-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .sol-compare__banner { font-size: .88rem; padding: 14px 18px; }
+  .sol-cmp-step__status { display: none; }
 }
 
 /* ---------- INDUSTRIES — RIGHT-TO-LEFT INFINITE MARQUEE ---------- */
@@ -601,9 +543,9 @@
   aspect-ratio: 3 / 2;
   border-radius: var(--r-md);
   overflow: hidden;
-  background: var(--panel-2);
-  border: 1px solid var(--line-dark);
-  box-shadow: 0 14px 30px rgba(0,0,0,.45);
+  background: var(--paper-2);
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 10px 26px rgba(0,0,0,.14);
   transition: transform .3s ease, border-color .3s ease;
 }
 .sol-industry-card:hover .sol-industry-card__media {
@@ -643,7 +585,7 @@
 }
 
 .sol-industry-card__label {
-  color: var(--white);
+  color: var(--ink);
   font-weight: 700;
   font-size: .95rem;
   text-align: left;
@@ -652,7 +594,7 @@
 
 /* ---------- PROOF VIDEO ---------- */
 .sol-proof-video {
-  max-width: 900px;
+  max-width: 1089px;
   margin: 0 auto;
   border-radius: 16px;
   overflow: hidden;
@@ -704,7 +646,6 @@
   .sol-compare__title { font-size: 1rem; }
   .sol-compare__row { grid-template-columns: 1fr; gap: 2px; padding: 8px 0; }
   .sol-compare__value { text-align: left; font-size: .85rem; }
-  .sol-compare__banner { font-size: .88rem; padding: 12px 16px; }
   .sol-industry-card { width: 88vw; }
   .sol-proof-video { border-radius: 8px; }
   .sol-card__title,

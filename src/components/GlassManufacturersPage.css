@@ -26,6 +26,13 @@
 }
 @media (max-width: 1024px) { .gm-hero { min-height: calc(100vh - 68px); } }
 @media (max-width: 480px) { .gm-hero { min-height: calc(100vh - 60px); } }
+
+/* Mobile — compact content-height layout, matching the Hardware page's
+   mobile hero (.hw2-hero at max-width:600px): the hero shrinks to fit its
+   copy instead of forcing full viewport height. */
+@media (max-width: 600px) {
+  .gm-hero { min-height: 0; }
+}
 .gm-hero__bg-veil {
   position: absolute; inset: 0; z-index: 0;
   background:
@@ -98,19 +105,25 @@
    over display:none so nothing above/below reflows. */
 .gm-hero__stats--hidden { visibility: hidden; }
 
-/* ── The Problem — intro copy/media row + full-width pain-point cards ── */
-.gm-problem-grid {
-  display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: start;
+/* ── The Problem — plain accent-top cards + image side (matches
+   MiningMineralsPage's .mm-problem-card treatment) ── */
+.gm-problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.gm-problem-cards {
+  display: grid; gap: 16px; align-content: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
 }
-.gm-problem-col { display: flex; flex-direction: column; }
+.gm-problem-card {
+  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-top: 3px solid var(--lime-deep);
+  border-radius: var(--r-md); padding: 22px 20px;
+}
+.gm-problem-card h4 { font-size: 1.05rem; font-weight: 800; color: var(--ink); margin: 0 0 8px; }
+.gm-problem-card p { font-size: .9rem; color: var(--on-light-mut); margin: 0; }
 
-.gm-problem-side { display: flex; flex-direction: column; gap: 28px; margin-top: 32px; }
 .gm-problem-media {
-  position: relative; border-radius: var(--r-lg); overflow: hidden;
-  height: clamp(280px, 28vw, 380px);
+  position: relative; min-height: 340px; border-radius: var(--r-lg); overflow: hidden;
   border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
 }
-.gm-problem-media img { width: 100%; height: 100%; object-fit: cover; }
+.gm-problem-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .gm-problem-media::before {
   content: ''; position: absolute; inset: 0;
   background: linear-gradient(0deg, rgba(4,8,4,.65) 0%, rgba(4,8,4,0) 45%);
@@ -121,135 +134,108 @@
   color: var(--white); font-size: .78rem; letter-spacing: .02em; opacity: .9;
 }
 
-.gm-problem-stats { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; }
-.gm-stat-card {
-  background: var(--ink); color: var(--paper); border-radius: var(--r-lg); padding: 18px 20px;
-}
-.gm-stat-card__big {
-  font-size: 1.7rem; font-weight: 800; font-family: 'Arimo', sans-serif;
-  color: var(--lime); line-height: 1; margin-bottom: 6px;
-}
-.gm-stat-card--sm .gm-stat-card__big { font-size: 1.4rem; }
-.gm-stat-card p { color: rgba(255,255,255,.68); font-size: .78rem; margin: 0; line-height: 1.5; }
-
 @media (max-width: 860px) {
   .gm-problem-grid { grid-template-columns: 1fr; }
-  .gm-problem-media { height: clamp(220px, 60vw, 320px); }
-}
-@media (max-width: 480px) { .gm-problem-stats { grid-template-columns: 1fr; } }
-
-/* Pain-point cards — plain title + description, no icon, top accent
-   border. Sits in the narrower text column (not full page width), so
-   auto-fit settles at 2-up there and drops to 1-up once the column
-   itself goes narrow (mobile, where the grid stacks to one column). */
-.gm-problem-cards {
-  display: grid; gap: 16px; margin-top: 18px;
-  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
-}
-.gm-problem-card {
-  background: var(--white); border: 1px solid rgba(0,0,0,.07); border-top: 3px solid var(--lime-deep);
-  border-radius: var(--r-md); padding: 22px 20px;
-}
-.gm-problem-card h4 { font-size: 1.05rem; font-weight: 800; color: var(--ink); margin: 0 0 8px; }
-.gm-problem-card p { font-size: .9rem; color: var(--on-light-mut); margin: 0; }
-
-/* ── Solutions — scroll rail with numbered, filling steps ── */
-.gm-rail-wrap { position: relative; }
-.gm-rail {
-  /* top/height are set inline by GlassManufacturersPage.jsx to span exactly
-     between the first and last step-circle centers - see positionRail(). */
-  position: absolute; left: 17px; width: 2px;
-  background: var(--line-light);
-}
-.gm-rail-fill {
-  position: absolute; left: 0; top: 0; width: 2px; height: 0%;
-  background: linear-gradient(180deg, var(--lime), var(--lime-deep));
-  box-shadow: 0 0 12px rgba(178,222,58,.35);
-  transition: height .1s linear;
+  .gm-problem-media { order: -1; min-height: clamp(220px, 60vw, 320px); }
 }
 
-.gm-step {
-  position: relative;
-  display: grid; grid-template-columns: 56px 1.2fr .9fr; gap: 20px;
-  padding: 56px 0;
+/* ── The Reneonix Solution — interactive left step-list driving a shared
+   right-side media panel. Same pattern as MiningMineralsPage's
+   .mm-approach (which itself matches MaterialSciencePage's .ms-ra
+   accordion) — numbered circle in its own column linked by a dashed line,
+   next to a collapsible content box that highlights lime when open. ── */
+.gm-approach {
+  display: grid; grid-template-columns: .85fr 1fr; gap: 48px; align-items: center;
+  margin-bottom: 28px;
 }
-.gm-step:first-child { padding-top: 8px; }
-.gm-step:last-child { padding-bottom: 8px; }
+.gm-approach__left .eyebrow { margin-bottom: 12px; }
+.gm-approach__left h2 { font-size: clamp(1.6rem, 2.8vw, 2.1rem); line-height: 1.16; color: var(--ink); margin: 0 0 14px; }
+.gm-approach__left h2 em { font-style: normal; color: var(--lime-deep); }
+.gm-approach__lead { color: var(--on-light-mut); font-size: .98rem; line-height: 1.65; margin: 0 0 28px; max-width: 480px; }
 
-.gm-step-num {
-  position: relative; z-index: 2;
+.gm-approach__steps { display: flex; flex-direction: column; gap: 4px; }
+.gm-approach__step { display: grid; grid-template-columns: 36px 1fr; gap: 0 10px; }
+
+.gm-approach__step-circle-col { display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
+.gm-approach__step:not(:last-child) .gm-approach__step-circle-col::after {
+  content: ''; flex: 1; min-height: 8px; width: 0;
+  border-left: 1.5px dashed rgba(156,193,48,.28); margin-top: 3px;
+}
+.gm-approach__step-circle {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border-radius: 50%;
-  font-family: 'Arimo', sans-serif; font-weight: 800; font-size: .9rem;
-  color: var(--on-light-mut); background: var(--paper); border: 2px solid var(--line-light);
-  transition: color .5s ease .1s, background .5s ease .1s, border-color .5s ease .1s, box-shadow .5s ease .1s;
+  font-family: 'Arimo', sans-serif; font-weight: 900; font-size: .72rem;
+  color: var(--lime-deep); background: var(--white);
+  border: 2px solid rgba(156,193,48,.40); box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  transition: color .2s ease, background .2s ease, border-color .2s ease;
 }
-.gm-step.gm-in .gm-step-num {
-  color: var(--ink); background: var(--lime); border-color: var(--lime);
-  box-shadow: 0 0 0 6px rgba(178,222,58,.28);
-}
-
-.gm-step-content { padding-top: 2px; }
-.gm-step-content h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); margin: 0 0 14px; color: var(--ink); line-height: 1.25; }
-.gm-step-content p { color: var(--on-light-mut); font-size: 1.05rem; line-height: 1.65; margin: 0 0 22px; max-width: 480px; }
-
-.gm-row__tag {
-  display: inline-block; font-family: 'Inter', sans-serif; font-weight: 700;
-  font-size: .74rem; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--lime-deep); margin-bottom: 12px;
+.gm-approach__step.is-active .gm-approach__step-circle {
+  color: var(--white); background: var(--lime-deep); border-color: var(--lime-deep);
 }
 
-.gm-step-visual { position: relative; }
-.gm-step-visual-card {
-  position: relative; border-radius: var(--r-lg); overflow: hidden;
-  height: 360px;
-  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 10px, rgba(0,0,0,.06) 10px, rgba(0,0,0,.06) 20px);
-  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
-  display: flex; align-items: flex-end;
-  transition: transform .3s ease;
+.gm-approach__step-content {
+  background: rgba(0,0,0,.02); border: 1.5px solid rgba(0,0,0,.08); border-radius: 10px;
+  overflow: hidden; transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
-.gm-step-visual-card:hover { transform: scale(1.015); }
-.gm-step-visual-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-/* For photos whose own aspect ratio doesn't match this card (e.g. a
-   portrait-ish product shot in this landscape slot) — shows the whole
-   image instead of cropping it, with a solid dark fill (not the diagonal
-   placeholder stripe) behind whatever letterbox gap that leaves. */
-.gm-step-visual-card--contain { background: var(--ink); }
-.gm-step-visual-card--contain img { object-fit: contain; }
-.gm-step-visual-card::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(4,8,4,0) 40%, rgba(4,8,4,.6));
+.gm-approach__step.is-active .gm-approach__step-content {
+  background: rgba(178,222,58,.07); border-color: var(--lime-deep);
+  box-shadow: 0 4px 20px rgba(178,222,58,.14);
 }
-.gm-step-visual-card__caption {
-  position: relative; z-index: 2; color: var(--white); font-size: .78rem;
-  padding: 18px; line-height: 1.5;
+.gm-approach__step-header {
+  width: 100%; min-height: 52px; display: flex; align-items: center; gap: 8px;
+  padding: 0 14px; background: transparent; border: none; cursor: pointer; text-align: left; font: inherit;
 }
+.gm-approach__step.is-active .gm-approach__step-header { min-height: unset; padding: 14px 14px 8px; }
+.gm-approach__step-title {
+  flex: 1; min-width: 0; font-family: 'Arimo', sans-serif; font-weight: 700; font-size: .96rem;
+  color: var(--ink); line-height: 1.3;
+}
+.gm-approach__step-chevron { color: rgba(0,0,0,.30); flex-shrink: 0; transition: transform .25s ease; }
+.gm-approach__step-chevron.is-open { transform: rotate(180deg); }
+.gm-approach__step-desc { padding: 0 14px 14px; border-top: 1px solid rgba(0,0,0,.08); }
+.gm-approach__step-desc p { margin: 10px 0 10px; color: var(--on-light-mut); font-size: .86rem; line-height: 1.6; }
 
-@media (max-width: 860px) {
-  .gm-rail { display: none; }
-  .gm-step { grid-template-columns: 1fr; gap: 18px; padding: 40px 0; }
-  .gm-step-visual { order: -1; }
-}
-
-/* Chips */
-.gm-chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-.gm-chip {
+/* Extra content types some steps carry — chips, a comparison table, and
+   the per-step "Explore" link — preserved from the original section. */
+.gm-approach__step-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.gm-approach__step-chip {
   background: var(--paper-2); border: 1px solid rgba(0,0,0,.08);
-  font-size: .92rem; padding: 8px 14px; border-radius: var(--r-pill);
+  font-size: .78rem; padding: 6px 12px; border-radius: var(--r-pill);
   font-weight: 500; color: var(--on-light);
 }
-.gm-chip b { color: var(--lime-deep); }
-
-/* Comparison table */
-.gm-table-wrap { overflow-x: auto; margin-bottom: 20px; max-width: 480px; }
-.gm-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
-.gm-table th {
+.gm-approach__step-chip b { color: var(--lime-deep); }
+.gm-approach__step-table-wrap { overflow-x: auto; margin: 10px 0; }
+.gm-approach__step-table { width: 100%; border-collapse: collapse; font-size: .78rem; }
+.gm-approach__step-table th {
   background: var(--ink); color: var(--white); text-align: left;
-  padding: 10px 14px; font-weight: 600; font-size: .78rem;
+  padding: 8px 10px; font-weight: 600; font-size: .7rem;
 }
-.gm-table td { padding: 10px 14px; border-bottom: 1px solid var(--line-light); color: var(--on-light-mut); }
-.gm-table tr:nth-child(even) td { background: var(--paper-2); }
-.gm-table__hl { color: var(--lime-deep); font-weight: 700; }
+.gm-approach__step-table td { padding: 8px 10px; border-bottom: 1px solid var(--line-light); color: var(--on-light-mut); }
+.gm-approach__step-table tr:nth-child(even) td { background: var(--paper-2); }
+.gm-approach__step-table-hl { color: var(--lime-deep); font-weight: 700; }
+.gm-approach__step-desc .btn-text-link { margin-top: 4px; }
+
+.gm-approach__right { display: flex; flex-direction: column; gap: 20px; }
+.gm-approach__media {
+  position: relative; aspect-ratio: 16/10; border-radius: var(--r-lg); overflow: hidden;
+  background: var(--ink); border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.14);
+}
+.gm-approach__media-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity .4s ease;
+}
+.gm-approach__media-img.is-active { opacity: 1; }
+.gm-approach__media-img--contain { object-fit: contain; }
+.gm-approach__media-dots {
+  position: absolute; z-index: 2; right: 16px; bottom: 14px;
+  display: flex; gap: 6px;
+}
+.gm-approach__media-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .25s ease, transform .25s ease; }
+.gm-approach__media-dot.is-active { background: var(--lime); transform: scale(1.2); }
+
+@media (max-width: 900px) {
+  .gm-approach { grid-template-columns: 1fr; gap: 32px; }
+}
 
 /* ── How It Works — click-to-select step tracker (stagger reveal on
    scroll-into-view, pulsing active dot, swap-fade caption, manual
@@ -372,15 +358,14 @@
 .gm-vp__head h3 em { font-style: normal; color: var(--lime); }
 .gm-vp__head p { color: rgba(255,255,255,.62); font-size: .98rem; line-height: 1.6; margin: 0; }
 
-/* Not stretch — the camera panel is sized to the video's own 16:9
-   aspect ratio (below), so forcing it to match the taller analysis
-   panel would only add letterboxing. */
-.gm-vp__grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.15fr 1fr; gap: 28px; align-items: start; }
+/* Stretch — the camera panel matches the analysis panel's height (which
+   varies with its content) rather than the video's own 16:9 ratio, so the
+   grid never leaves empty space under the shorter column. */
+.gm-vp__grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.6fr 1fr; gap: 28px; align-items: stretch; }
 
 /* Camera panel */
 .gm-vp__cam {
   position: relative; border-radius: var(--r-md); overflow: hidden;
-  aspect-ratio: 16 / 9;
   border: 1px solid rgba(255,255,255,.08);
 }
 .gm-vp-cam-badge {
@@ -394,10 +379,37 @@
 .gm-vp-cam-badge i { font-style: normal; color: rgba(255,255,255,.55); font-weight: 500; }
 
 .gm-vp__cam-video {
-  display: block; width: 100%; height: 100%;
-  /* contain, not cover — the source footage may not be 16:9 (e.g. a
-     portrait phone shot), and cropping it loses most of the frame. */
-  background: #000; object-fit: contain; border-radius: inherit;
+  display: block; width: 100%; height: 100%; cursor: pointer;
+  /* cover — the panel's height now follows the analysis panel next to it,
+     not the video's own ratio, so cover fills that box with no letterboxing. */
+  background: #000; object-fit: cover; border-radius: inherit;
+}
+
+.gm-vp__cam-controls {
+  position: absolute; z-index: 2; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  background: linear-gradient(0deg, rgba(0,0,0,.65), transparent);
+}
+.gm-vp__cam-play, .gm-vp__cam-expand {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(4,8,4,.6); border: 1px solid rgba(255,255,255,.18);
+  color: var(--white); cursor: pointer; padding: 0;
+}
+.gm-vp__cam-play:hover, .gm-vp__cam-expand:hover { background: rgba(4,8,4,.85); border-color: var(--lime); color: var(--lime); }
+.gm-vp__cam-time { font-size: .76rem; font-weight: 600; color: rgba(255,255,255,.8); white-space: nowrap; flex-shrink: 0; }
+.gm-vp__cam-seek {
+  flex: 1; appearance: none; -webkit-appearance: none; height: 4px; border-radius: 999px;
+  background: rgba(255,255,255,.25); outline: none; cursor: pointer;
+}
+.gm-vp__cam-seek::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--lime); border: none; box-shadow: 0 0 0 3px rgba(178,222,58,.25);
+}
+.gm-vp__cam-seek::-moz-range-thumb {
+  width: 12px; height: 12px; border-radius: 50%; background: var(--lime); border: none;
+  box-shadow: 0 0 0 3px rgba(178,222,58,.25);
 }
 
 /* Analysis panel */
@@ -439,23 +451,41 @@
 .gm-vp-breakdown__dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .gm-vp-breakdown li b { margin-left: auto; color: var(--white); font-weight: 700; }
 
-.gm-vp-features { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; }
-.gm-vp-features__item {
+/* How the prototype works — flow steps */
+.gm-vp__flow {
+  position: relative; z-index: 1; margin-top: 28px;
   background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
-  border-radius: var(--r-sm); padding: 13px 14px;
+  border-radius: var(--r-md); padding: 22px 24px;
 }
-.gm-vp-features__item h6 { font-size: .84rem; font-weight: 700; color: var(--white); margin: 0 0 4px; }
-.gm-vp-features__item p { font-size: .74rem; color: rgba(255,255,255,.48); margin: 0; line-height: 1.4; }
+.gm-vp__flow-label {
+  display: block; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(255,255,255,.42); margin-bottom: 18px;
+}
+.gm-vp__flow-steps { display: flex; align-items: flex-start; gap: 14px; }
+.gm-vp__flow-step { display: flex; align-items: flex-start; gap: 14px; flex: 1; min-width: 0; }
+.gm-vp__flow-step-inner { display: flex; align-items: flex-start; gap: 12px; min-width: 0; }
+.gm-vp__flow-icon {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 38px; height: 38px; border-radius: 10px;
+  background: rgba(178,222,58,.08); border: 1px solid rgba(178,222,58,.25); color: var(--lime);
+}
+.gm-vp__flow-step h6 { font-size: .88rem; font-weight: 700; color: var(--white); margin: 0 0 4px; }
+.gm-vp__flow-step p { font-size: .78rem; color: rgba(255,255,255,.5); margin: 0; line-height: 1.4; }
+.gm-vp__flow-arrow { color: rgba(255,255,255,.25); flex-shrink: 0; margin-top: 10px; }
 
-.gm-vp__foot { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 28px; }
-.gm-vp__foot > div { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07); border-radius: var(--r-md); padding: 22px 24px; }
-.gm-vp__foot h5 { color: var(--white); font-size: 1rem; margin: 0 0 8px; }
-.gm-vp__foot p { color: rgba(255,255,255,.55); font-size: .86rem; line-height: 1.55; margin: 0; }
+/* Closing banner */
+.gm-vp__banner {
+  position: relative; z-index: 1; margin-top: 20px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  text-align: center; color: rgba(255,255,255,.6); font-size: .88rem;
+}
+.gm-vp__banner svg { color: var(--lime); flex-shrink: 0; }
 
 @media (max-width: 900px) {
   .gm-vp__grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 560px) {
-  .gm-vp__foot { grid-template-columns: 1fr; }
-  .gm-vp-features { grid-template-columns: 1fr; }
+  /* Stacked layout: the cam panel no longer sits next to the analysis
+     panel to stretch against, so it needs its own ratio again. */
+  .gm-vp__cam { aspect-ratio: 16 / 9; }
+  .gm-vp__flow-steps { flex-direction: column; }
+  .gm-vp__flow-arrow { display: none; }
 }

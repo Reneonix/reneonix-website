@@ -138,7 +138,7 @@ const SOLUTION_BLOCKS = [
     num: '01',
     tag: 'Hardware',
     title: 'MRM (AI) - Smarter Intake, Before Contamination Begins',
-    body: 'Identifies, classifies, and verifies materials the moment they enter your facility — colour, material type, condition, and contamination.',
+    body: 'Identifies, classifies, and verifies materials the moment they enter your facility - colour, material type, condition, and contamination.',
     imgLabel: "MRM (AI) unit installed at a facility's intake point, integrated with the existing conveyor line",
     img: '/recycling hardware.png',
     href: '/solutions/hardware',
@@ -174,7 +174,7 @@ const SOLUTION_BLOCKS = [
     num: '03',
     tag: 'Software',
     title: 'Retraiz (TraceOS) - Turn Your Operation Into a Documented, Auditable Asset',
-    body: 'Live operational dashboards, AI decision support, and buyer-ready documentation — generated automatically, no manual work.',
+    body: 'Live operational dashboards, AI decision support, and buyer-ready documentation - generated automatically, no manual work.',
     imgLabel: 'Retraiz operator dashboard — live recovery rate, quality grade, and uptime for the facility',
     img: '/recycling - software.png',
     // Dashboard screenshot with content flush to every edge (sidebar, top
@@ -195,7 +195,7 @@ const HOW_STEPS = [
   {
     tag: 'Intake',
     stepLabel: 'Scan on Entry',
-    body: 'MRM classifies material — colour, type, and contamination — the moment it enters your facility, before it mixes with the rest of the intake stream.',
+    body: 'MRM classifies material - colour, type, and contamination - the moment it enters your facility, before it mixes with the rest of the intake stream.',
     features: [
       { Icon: ScanLine, title: 'Edge AI Scan', body: 'High-speed scan captures colour, material type and condition at intake.' },
       { Icon: FileCheck2, title: 'Digital Registration', body: 'Every load logged with a timestamped digital record.' },
@@ -215,7 +215,7 @@ const HOW_STEPS = [
   {
     tag: 'Route',
     stepLabel: 'Highest-Value Path',
-    body: 'Every item is routed automatically to the pathway that recovers the most value — reuse, recycling, or flagged for manual review.',
+    body: 'Every item is routed automatically to the pathway that recovers the most value - reuse, recycling, or flagged for manual review.',
     features: [
       { Icon: Repeat, title: 'Reuse Priority', body: 'Intact, high-value items protected for reuse first.' },
       { Icon: PackageCheck, title: 'Automated Pathway', body: 'Recycling route assigned without manual handling.' },
@@ -225,7 +225,7 @@ const HOW_STEPS = [
   {
     tag: 'Trace',
     stepLabel: 'Logged to Retraiz',
-    body: 'Every batch gets a unique, immutable digital record in Retraiz — source to dispatch, fully auditable.',
+    body: 'Every batch gets a unique, immutable digital record in Retraiz - source to dispatch, fully auditable.',
     features: [
       { Icon: Fingerprint, title: 'Unique Batch ID', body: 'Every batch is uniquely identified and sealed.' },
       { Icon: Lock, title: 'Immutable Record', body: "Data can't be altered once verified and logged." },
@@ -235,7 +235,7 @@ const HOW_STEPS = [
   {
     tag: 'Report',
     stepLabel: 'Docs Generated',
-    body: 'Live operational dashboards and buyer-ready documentation, generated automatically — no manual work.',
+    body: 'Live operational dashboards and buyer-ready documentation, generated automatically - no manual work.',
     features: [
       { Icon: BarChart3, title: 'Live Dashboards', body: 'Recovery rate, purity, and uptime updated in real time.' },
       { Icon: FileCheck2, title: 'Buyer-Ready Docs', body: 'Documentation generated automatically, no manual work.' },
@@ -257,53 +257,7 @@ const PROOF_CARDS = [
 ];
 
 export default function RecyclingOperatorsPage() {
-  const railWrapRef = useRef(null);
-  const railRef = useRef(null);
-  const railFillRef = useRef(null);
-
-  // The rail's track must span exactly from the first step-circle's center
-  // to the last one's — not the wrap's full box — because the step rows
-  // don't share a height (the image column can be taller than the text),
-  // so a fixed CSS top/bottom offset overshoots past the last circle.
-  useEffect(() => {
-    const wrap = railWrapRef.current;
-    const rail = railRef.current;
-    const fill = railFillRef.current;
-    if (!wrap || !rail || !fill) return;
-
-    function positionRail() {
-      const nums = wrap.querySelectorAll('.ro-step-num');
-      if (nums.length < 2) return;
-      const wrapRect = wrap.getBoundingClientRect();
-      const firstRect = nums[0].getBoundingClientRect();
-      const lastRect = nums[nums.length - 1].getBoundingClientRect();
-      const top = (firstRect.top + firstRect.height / 2) - wrapRect.top;
-      const bottom = (lastRect.top + lastRect.height / 2) - wrapRect.top;
-      rail.style.top = `${top}px`;
-      rail.style.height = `${bottom - top}px`;
-    }
-
-    function updateRail() {
-      // Re-measure every tick, not just once — the step circles start
-      // offset by the scroll-reveal's translateY(24px) (they're below the
-      // fold at mount) and settle into their true position later, which
-      // would otherwise leave the rail's cached end point stale.
-      positionRail();
-      const rect = rail.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const total = rect.height;
-      const scrolled = Math.min(Math.max(vh * 0.5 - rect.top, 0), total);
-      fill.style.height = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
-    }
-
-    updateRail();
-    window.addEventListener('scroll', updateRail, { passive: true });
-    window.addEventListener('resize', updateRail);
-    return () => {
-      window.removeEventListener('scroll', updateRail);
-      window.removeEventListener('resize', updateRail);
-    };
-  }, []);
+  const [activeStep, setActiveStep] = useState(0);
 
   // Page-local reveal — this page is lazy-loaded, so it mounts after
   // SiteEffects' route-keyed IntersectionObserver has already run and can
@@ -346,7 +300,6 @@ export default function RecyclingOperatorsPage() {
         </nav>
 
         <div className="ro-hero__inner">
-          <span className="ro-hero__chip">Industry · Recycling Operators</span>
           <h1>
             Your Facility's Output Is Only as Good as <em>the First Ten Minutes</em>
           </h1>
@@ -355,7 +308,7 @@ export default function RecyclingOperatorsPage() {
           </p>
           <p className="ro-hero__lead">
             Reneonix turns mixed, contaminated intake into clean, high-purity, buyer-ready
-            material — with the data to prove it, deployed inside real material recovery
+            material - with the data to prove it, deployed inside real material recovery
             facilities.
           </p>
           <div className="ro-hero__cta">
@@ -407,68 +360,102 @@ export default function RecyclingOperatorsPage() {
       {/* ── THE RENEONIX SOLUTION ── */}
       <section className="section section-paper">
         <div className="container">
-          <div className="section-head ro-reveal" style={{ margin: '0 0 48px', textAlign: 'left', maxWidth: 720 }}>
-            <span className="eyebrow">The Reneonix Solution</span>
-            <h2>The Same Hardware and Software Stack That's Already <em>Validated at MRF Sites</em></h2>
-            <p>
-              Built and proven inside real material recovery facilities, not designed in a lab
-              and handed to operators afterward.
-            </p>
-          </div>
+          <div className="ro-approach ro-reveal">
 
-          <div className="ro-rail-wrap" ref={railWrapRef}>
-            <div className="ro-rail" ref={railRef}><div className="ro-rail-fill" ref={railFillRef} /></div>
+            <div className="ro-approach__left">
+              <span className="eyebrow">The Reneonix Solution</span>
+              <h2>The Same Hardware and Software Stack That's Already <em>Validated at MRF Sites</em></h2>
+              <p className="ro-approach__lead">
+                Built and proven inside real material recovery facilities, not designed in a lab
+                and handed to operators afterward.
+              </p>
 
-            {SOLUTION_BLOCKS.map((block) => (
-              <div className="ro-step ro-reveal" key={block.num}>
-                <div className="ro-step-num">{block.num}</div>
-
-                <div className="ro-step-content">
-                  <span className="ro-row__tag">{block.tag}</span>
-                  <h3>{block.title}</h3>
-                  <p>{block.body}</p>
-
-                  {block.type === 'chips' && (
-                    <div className="ro-chip-row">
-                      {block.chips.map(({ b, label }) => (
-                        <span className="ro-chip" key={label}><b>{b}</b> {label}</span>
-                      ))}
+              <div className="ro-approach__steps">
+                {SOLUTION_BLOCKS.map((block, i) => (
+                  <div
+                    key={block.num}
+                    className={`ro-approach__step${i === activeStep ? ' is-active' : ''}`}
+                  >
+                    <div className="ro-approach__step-circle-col">
+                      <span className="ro-approach__step-circle">{block.num}</span>
                     </div>
-                  )}
 
-                  {block.type === 'table' && (
-                    <div className="ro-table-wrap">
-                      <table className="ro-table">
-                        <thead>
-                          <tr>{block.table.head.map((h) => <th key={h}>{h}</th>)}</tr>
-                        </thead>
-                        <tbody>
-                          {block.table.rows.map((row) => (
-                            <tr key={row[0]}>
-                              <td>{row[0]}</td>
-                              <td>{row[1]}</td>
-                              <td className="ro-table__hl">{row[2]}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="ro-approach__step-content">
+                      <button
+                        type="button"
+                        className="ro-approach__step-header"
+                        onClick={() => setActiveStep(i)}
+                        onMouseEnter={() => setActiveStep(i)}
+                      >
+                        <span className="ro-approach__step-title">{block.title}</span>
+                        <ChevronDown
+                          size={16}
+                          className={`ro-approach__step-chevron${i === activeStep ? ' is-open' : ''}`}
+                          aria-hidden="true"
+                        />
+                      </button>
+
+                      {i === activeStep && (
+                        <div className="ro-approach__step-desc">
+                          <p>{block.body}</p>
+
+                          {block.type === 'chips' && (
+                            <div className="ro-approach__step-chips">
+                              {block.chips.map(({ b, label }) => (
+                                <span className="ro-approach__step-chip" key={label}><b>{b}</b> {label}</span>
+                              ))}
+                            </div>
+                          )}
+
+                          {block.type === 'table' && (
+                            <div className="ro-approach__step-table-wrap">
+                              <table className="ro-approach__step-table">
+                                <thead>
+                                  <tr>{block.table.head.map((h) => <th key={h}>{h}</th>)}</tr>
+                                </thead>
+                                <tbody>
+                                  {block.table.rows.map((row) => (
+                                    <tr key={row[0]}>
+                                      <td>{row[0]}</td>
+                                      <td>{row[1]}</td>
+                                      <td className="ro-approach__step-table-hl">{row[2]}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  )}
-
-                  <a href={block.href} onClick={navClick(block.href)} className="btn-text-link">
-                    Explore {block.tag}
-                    <ChevronRight size={16} aria-hidden="true" />
-                  </a>
-                </div>
-
-                <div className="ro-step-visual">
-                  <div className={`ro-step-visual-card${block.imgFit === 'contain' ? ' ro-step-visual-card--contain' : ''}`}>
-                    {block.img && <img src={block.img} alt={block.imgLabel} loading="lazy" decoding="async" />}
-                    <span className="ro-step-visual-card__caption">{block.imgLabel}</span>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="ro-approach__right">
+              <div className="ro-approach__media">
+                {SOLUTION_BLOCKS.map((block, i) => (
+                  <img
+                    key={block.num}
+                    src={block.img}
+                    alt={block.imgLabel}
+                    className={`ro-approach__media-img${i === activeStep ? ' is-active' : ''}${block.imgFit === 'contain' ? ' ro-approach__media-img--contain' : ''}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ))}
+                <div className="ro-approach__media-dots" aria-hidden="true">
+                  {SOLUTION_BLOCKS.map((block, i) => (
+                    <span
+                      key={block.num}
+                      className={`ro-approach__media-dot${i === activeStep ? ' is-active' : ''}`}
+                    />
+                  ))}
                 </div>
               </div>
-            ))}
+            </div>
+
           </div>
         </div>
       </section>
@@ -548,9 +535,6 @@ export default function RecyclingOperatorsPage() {
               >
                 Get in touch
                 <ChevronRight size={16} aria-hidden="true" />
-              </a>
-              <a href="/contact-us" onClick={navClick('/contact-us')} className="btn btn-outline-dark">
-                Download capability overview
               </a>
             </div>
           </div>

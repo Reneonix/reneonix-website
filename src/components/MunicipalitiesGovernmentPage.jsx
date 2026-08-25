@@ -1,6 +1,6 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
-  ChevronRight, CheckCircle2, Eye, Mountain, BarChart3, Image as ImageIcon,
+  ChevronRight, ChevronDown, CheckCircle2, Eye, Mountain, BarChart3, Image as ImageIcon,
   Home, Trash2, Truck, QrCode, LayoutDashboard,
 } from 'lucide-react';
 import { navClick } from '../utils/nav.js';
@@ -90,9 +90,7 @@ function ImagePlaceholder({ label, flag }) {
 }
 
 export default function MunicipalitiesGovernmentPage() {
-  const railWrapRef = useRef(null);
-  const railRef = useRef(null);
-  const railFillRef = useRef(null);
+  const [activeStep, setActiveStep] = useState(0);
   const flowVideoRef = useRef(null);
 
   // How It Works walkthrough video - plays while scrolled into view,
@@ -112,50 +110,6 @@ export default function MunicipalitiesGovernmentPage() {
     );
     observer.observe(video);
     return () => observer.disconnect();
-  }, []);
-
-  // The rail's track must span exactly from the first step-circle's center
-  // to the last one's — not the wrap's full box — because the step rows
-  // don't share a height (the image column can be taller than the text),
-  // so a fixed CSS top/bottom offset overshoots past the last circle.
-  useEffect(() => {
-    const wrap = railWrapRef.current;
-    const rail = railRef.current;
-    const fill = railFillRef.current;
-    if (!wrap || !rail || !fill) return;
-
-    function positionRail() {
-      const nums = wrap.querySelectorAll('.mg-step-num');
-      if (nums.length < 2) return;
-      const wrapRect = wrap.getBoundingClientRect();
-      const firstRect = nums[0].getBoundingClientRect();
-      const lastRect = nums[nums.length - 1].getBoundingClientRect();
-      const top = (firstRect.top + firstRect.height / 2) - wrapRect.top;
-      const bottom = (lastRect.top + lastRect.height / 2) - wrapRect.top;
-      rail.style.top = `${top}px`;
-      rail.style.height = `${bottom - top}px`;
-    }
-
-    function updateRail() {
-      // Re-measure every tick, not just once - the step circles start
-      // offset by the scroll-reveal's translateY(24px) (they're below the
-      // fold at mount) and settle into their true position later, which
-      // would otherwise leave the rail's cached end point stale.
-      positionRail();
-      const rect = rail.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const total = rect.height;
-      const scrolled = Math.min(Math.max(vh * 0.5 - rect.top, 0), total);
-      fill.style.height = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
-    }
-
-    updateRail();
-    window.addEventListener('scroll', updateRail, { passive: true });
-    window.addEventListener('resize', updateRail);
-    return () => {
-      window.removeEventListener('scroll', updateRail);
-      window.removeEventListener('resize', updateRail);
-    };
   }, []);
 
   // Page-local reveal — this page is lazy-loaded, so it mounts after
@@ -199,8 +153,7 @@ export default function MunicipalitiesGovernmentPage() {
         </nav>
 
         <div className="mg-hero__inner">
-          <span className="mg-hero__chip">Industry · Government &amp; Municipalities</span>
-          <h1>A Household-First Model for <em>Hill-Station Waste</em></h1>
+          <h1>A Household-First Model for <em>Hill- Station Waste</em></h1>
           <p className="mg-hero__tagline">
             Household-level waste visibility for the communities that need it most.
           </p>
@@ -258,46 +211,92 @@ export default function MunicipalitiesGovernmentPage() {
       {/* ── THE RENEONIX PROPOSAL ── */}
       <section className="section section-paper">
         <div className="container">
-          <div className="section-head mg-reveal" style={{ margin: '0 0 48px', textAlign: 'left', maxWidth: 720 }}>
-            <span className="eyebrow">The Reneonix Proposal</span>
-            <h2>Collect at the Household, Segregate at the Source <em>Make It Visible to Everyone</em></h2>
-            <p>
-              This model adapts Reneonix's existing recovery and traceability stack - proven on
-              packaging materials - into a household-level civic waste program.
-            </p>
-          </div>
+          <div className="mg-approach mg-reveal">
 
-          <div className="mg-rail-wrap" ref={railWrapRef}>
-            <div className="mg-rail" ref={railRef}><div className="mg-rail-fill" ref={railFillRef} /></div>
+            <div className="mg-approach__left">
+              <span className="eyebrow">The Reneonix Proposal</span>
+              <h2>Collect at the Household, Segregate at the Source <em>Make It Visible to Everyone</em></h2>
+              <p className="mg-approach__lead">
+                This model adapts Reneonix's existing recovery and traceability stack - proven on
+                packaging materials - into a household-level civic waste program.
+              </p>
 
-            {SOLUTION_BLOCKS.map((block) => (
-              <div className="mg-step mg-reveal" key={block.num}>
-                <div className="mg-step-num">{block.num}</div>
-
-                <div className="mg-step-content">
-                  <span className="mg-step__tag">{block.tag}</span>
-                  <h3>{block.title}</h3>
-                  <p>{block.body}</p>
-                  {block.chips && (
-                    <div className="mg-chip-row">
-                      {block.chips.map(({ b, label }) => (
-                        <span className="mg-chip" key={label}><b>{b}</b> {label}</span>
-                      ))}
+              <div className="mg-approach__steps">
+                {SOLUTION_BLOCKS.map((block, i) => (
+                  <div
+                    key={block.num}
+                    className={`mg-approach__step${i === activeStep ? ' is-active' : ''}`}
+                  >
+                    <div className="mg-approach__step-circle-col">
+                      <span className="mg-approach__step-circle">{block.num}</span>
                     </div>
-                  )}
-                </div>
 
-                <div className="mg-step-visual">
-                  <div className="mg-step-visual-card">
-                    {block.img ? (
-                      <img src={block.img} alt={block.imgLabel} loading="lazy" decoding="async" />
-                    ) : (
-                      <ImagePlaceholder label={block.imgLabel} flag={block.imgFlag} />
-                    )}
+                    <div className="mg-approach__step-content">
+                      <button
+                        type="button"
+                        className="mg-approach__step-header"
+                        onClick={() => setActiveStep(i)}
+                        onMouseEnter={() => setActiveStep(i)}
+                      >
+                        <span className="mg-approach__step-title">{block.title}</span>
+                        <ChevronDown
+                          size={16}
+                          className={`mg-approach__step-chevron${i === activeStep ? ' is-open' : ''}`}
+                          aria-hidden="true"
+                        />
+                      </button>
+
+                      {i === activeStep && (
+                        <div className="mg-approach__step-desc">
+                          <p>{block.body}</p>
+
+                          {block.chips && (
+                            <div className="mg-approach__step-chips">
+                              {block.chips.map(({ b, label }) => (
+                                <span className="mg-approach__step-chip" key={label}><b>{b}</b> {label}</span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mg-approach__right">
+              <div className="mg-approach__media">
+                {SOLUTION_BLOCKS.map((block, i) => (
+                  block.img ? (
+                    <img
+                      key={block.num}
+                      src={block.img}
+                      alt={block.imgLabel}
+                      className={`mg-approach__media-img${i === activeStep ? ' is-active' : ''}`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div
+                      key={block.num}
+                      className={`mg-approach__media-img mg-approach__media-img--placeholder${i === activeStep ? ' is-active' : ''}`}
+                    >
+                      <ImagePlaceholder label={block.imgLabel} flag={block.imgFlag} />
+                    </div>
+                  )
+                ))}
+                <div className="mg-approach__media-dots" aria-hidden="true">
+                  {SOLUTION_BLOCKS.map((block, i) => (
+                    <span
+                      key={block.num}
+                      className={`mg-approach__media-dot${i === activeStep ? ' is-active' : ''}`}
+                    />
+                  ))}
                 </div>
               </div>
-            ))}
+            </div>
+
           </div>
         </div>
       </section>
@@ -404,9 +403,6 @@ export default function MunicipalitiesGovernmentPage() {
               >
                 Get in touch
                 <ChevronRight size={16} aria-hidden="true" />
-              </a>
-              <a href="/contact-us" onClick={navClick('/contact-us')} className="btn btn-outline-dark">
-                Download program overview
               </a>
             </div>
           </div>

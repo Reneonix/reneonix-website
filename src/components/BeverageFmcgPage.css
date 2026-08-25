@@ -25,6 +25,13 @@
 }
 @media (max-width: 1024px) { .bf-hero { min-height: calc(100vh - 68px); } }
 @media (max-width: 480px) { .bf-hero { min-height: calc(100vh - 60px); } }
+
+/* Mobile — compact content-height layout, matching the Hardware page's
+   mobile hero (.hw2-hero at max-width:600px): the hero shrinks to fit its
+   copy instead of forcing full viewport height. */
+@media (max-width: 600px) {
+  .bf-hero { min-height: 0; }
+}
 .bf-hero__bg-veil {
   position: absolute; inset: 0; z-index: 0;
   background:
@@ -105,102 +112,106 @@
 .bf-problem-card h4 { font-size: 1.05rem; font-weight: 800; color: var(--ink); margin: 0 0 8px; }
 .bf-problem-card p { font-size: .9rem; color: var(--on-light-mut); margin: 0; }
 .bf-problem-media {
-  min-height: 340px; border-radius: var(--r-lg); overflow: hidden;
+  position: relative; min-height: 340px; border-radius: var(--r-lg); overflow: hidden;
   border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
 }
-.bf-problem-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-@media (max-width: 860px) { .bf-problem-grid { grid-template-columns: 1fr; } }
-
-/* ── The Solution — scroll rail with numbered, filling steps (matches
-   GlassManufacturersPage's .gm-rail treatment) ── */
-.bf-rail-wrap { position: relative; }
-.bf-rail {
-  /* top/height are set inline by BeverageFmcgPage.jsx to span exactly
-     between the first and last step-circle centers - see positionRail(). */
-  position: absolute; left: 17px; width: 2px;
-  background: var(--line-light);
-}
-.bf-rail-fill {
-  position: absolute; left: 0; top: 0; width: 2px; height: 0%;
-  background: linear-gradient(180deg, var(--lime), var(--lime-deep));
-  box-shadow: 0 0 12px rgba(178,222,58,.35);
-  transition: height .1s linear;
-}
-
-.bf-step {
-  position: relative;
-  display: grid; grid-template-columns: 56px 1.2fr .9fr; gap: 20px;
-  padding: 56px 0;
-}
-.bf-step:first-child { padding-top: 8px; }
-.bf-step:last-child { padding-bottom: 8px; }
-
-.bf-step-num {
-  position: relative; z-index: 2;
-  display: flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px; border-radius: 50%;
-  font-family: 'Arimo', sans-serif; font-weight: 800; font-size: .9rem;
-  color: var(--on-light-mut); background: var(--paper); border: 2px solid var(--line-light);
-  transition: color .5s ease .1s, background .5s ease .1s, border-color .5s ease .1s, box-shadow .5s ease .1s;
-}
-.bf-step.bf-in .bf-step-num {
-  color: var(--ink); background: var(--lime); border-color: var(--lime);
-  box-shadow: 0 0 0 6px rgba(178,222,58,.28);
-}
-
-.bf-step-content { padding-top: 2px; }
-.bf-step-content h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); margin: 0 0 14px; color: var(--ink); line-height: 1.25; }
-.bf-step-content p { color: var(--on-light-mut); font-size: 1.05rem; line-height: 1.65; margin: 0 0 22px; max-width: 480px; }
-.bf-quote-inline {
-  border-left: 3px solid var(--lime); padding-left: 16px;
-  font-style: italic; font-size: .95rem; color: var(--on-light-mut); margin-bottom: 16px; line-height: 1.6;
-}
-
-.bf-row__tag {
-  display: inline-block; font-family: 'Inter', sans-serif; font-weight: 700;
-  font-size: .74rem; letter-spacing: .16em; text-transform: uppercase;
-  color: var(--lime-deep); margin-bottom: 12px;
-}
-
-.bf-step-visual { position: relative; }
-.bf-step-visual-card {
-  position: relative; border-radius: var(--r-lg); overflow: hidden;
-  height: 360px;
-  background: repeating-linear-gradient(135deg, rgba(0,0,0,.03), rgba(0,0,0,.03) 10px, rgba(0,0,0,.06) 10px, rgba(0,0,0,.06) 20px);
-  border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.12);
-  display: flex; align-items: flex-end;
-  transition: transform .3s ease;
-}
-.bf-step-visual-card:hover { transform: scale(1.015); }
-.bf-step-visual-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-/* For photos whose own aspect ratio doesn't match this card - shows the
-   whole image instead of cropping it, with a solid dark fill (not the
-   diagonal placeholder stripe) behind whatever letterbox gap that leaves. */
-.bf-step-visual-card--contain { background: var(--ink); }
-.bf-step-visual-card--contain img { object-fit: contain; }
-.bf-step-visual-card::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(4,8,4,0) 40%, rgba(4,8,4,.6));
-}
-.bf-step-visual-card__caption {
-  position: relative; z-index: 2; color: var(--white); font-size: .78rem;
-  padding: 18px; line-height: 1.5;
-}
-
+.bf-problem-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 @media (max-width: 860px) {
-  .bf-rail { display: none; }
-  .bf-step { grid-template-columns: 1fr; gap: 18px; padding: 40px 0; }
-  .bf-step-visual { order: -1; }
+  .bf-problem-grid { grid-template-columns: 1fr; }
+  .bf-problem-media { order: -1; }
 }
 
-/* Chips */
-.bf-chip-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-.bf-chip {
+/* ── The Reneonix Solution — interactive left step-list driving a shared
+   right-side media panel. Same pattern as MiningMineralsPage's
+   .mm-approach — numbered circle in its own column linked by a dashed
+   line, next to a collapsible content box that highlights lime when open. ── */
+.bf-approach {
+  display: grid; grid-template-columns: .85fr 1fr; gap: 48px; align-items: center;
+  margin-bottom: 28px;
+}
+.bf-approach__left .eyebrow { margin-bottom: 12px; }
+.bf-approach__left h2 { font-size: clamp(1.6rem, 2.8vw, 2.1rem); line-height: 1.16; color: var(--ink); margin: 0 0 14px; }
+.bf-approach__left h2 em { font-style: normal; color: var(--lime-deep); }
+.bf-approach__lead { color: var(--on-light-mut); font-size: .98rem; line-height: 1.65; margin: 0 0 28px; max-width: 480px; }
+
+.bf-approach__steps { display: flex; flex-direction: column; gap: 4px; }
+.bf-approach__step { display: grid; grid-template-columns: 36px 1fr; gap: 0 10px; }
+
+.bf-approach__step-circle-col { display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
+.bf-approach__step:not(:last-child) .bf-approach__step-circle-col::after {
+  content: ''; flex: 1; min-height: 8px; width: 0;
+  border-left: 1.5px dashed rgba(156,193,48,.28); margin-top: 3px;
+}
+.bf-approach__step-circle {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Arimo', sans-serif; font-weight: 900; font-size: .72rem;
+  color: var(--lime-deep); background: var(--white);
+  border: 2px solid rgba(156,193,48,.40); box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  transition: color .2s ease, background .2s ease, border-color .2s ease;
+}
+.bf-approach__step.is-active .bf-approach__step-circle {
+  color: var(--white); background: var(--lime-deep); border-color: var(--lime-deep);
+}
+
+.bf-approach__step-content {
+  background: rgba(0,0,0,.02); border: 1.5px solid rgba(0,0,0,.08); border-radius: 10px;
+  overflow: hidden; transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.bf-approach__step.is-active .bf-approach__step-content {
+  background: rgba(178,222,58,.07); border-color: var(--lime-deep);
+  box-shadow: 0 4px 20px rgba(178,222,58,.14);
+}
+.bf-approach__step-header {
+  width: 100%; min-height: 52px; display: flex; align-items: center; gap: 8px;
+  padding: 0 14px; background: transparent; border: none; cursor: pointer; text-align: left; font: inherit;
+}
+.bf-approach__step.is-active .bf-approach__step-header { min-height: unset; padding: 14px 14px 8px; }
+.bf-approach__step-title {
+  flex: 1; min-width: 0; font-family: 'Arimo', sans-serif; font-weight: 700; font-size: .96rem;
+  color: var(--ink); line-height: 1.3;
+}
+.bf-approach__step-chevron { color: rgba(0,0,0,.30); flex-shrink: 0; transition: transform .25s ease; }
+.bf-approach__step-chevron.is-open { transform: rotate(180deg); }
+.bf-approach__step-desc { padding: 0 14px 14px; border-top: 1px solid rgba(0,0,0,.08); }
+.bf-approach__step-desc p { margin: 10px 0 10px; color: var(--on-light-mut); font-size: .86rem; line-height: 1.6; }
+
+/* Extra content types some steps carry — an inline quote, chips, and the
+   per-step "Explore" link — preserved from the original section. */
+.bf-approach__step-quote {
+  border-left: 3px solid var(--lime); padding-left: 14px; margin: 10px 0;
+  font-style: italic; font-size: .86rem; color: var(--on-light-mut); line-height: 1.6;
+}
+.bf-approach__step-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.bf-approach__step-chip {
   background: var(--paper-2); border: 1px solid rgba(0,0,0,.08);
-  font-size: .92rem; padding: 8px 14px; border-radius: var(--r-pill);
+  font-size: .78rem; padding: 6px 12px; border-radius: var(--r-pill);
   font-weight: 500; color: var(--on-light);
 }
-.bf-chip b { color: var(--lime-deep); }
+.bf-approach__step-chip b { color: var(--lime-deep); }
+.bf-approach__step-desc .btn-text-link { margin-top: 4px; }
+
+.bf-approach__right { display: flex; flex-direction: column; gap: 20px; }
+.bf-approach__media {
+  position: relative; aspect-ratio: 16/10; border-radius: var(--r-lg); overflow: hidden;
+  background: var(--ink); border: 1px solid rgba(0,0,0,.06); box-shadow: 0 24px 48px rgba(10,15,5,.14);
+}
+.bf-approach__media-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transition: opacity .4s ease;
+}
+.bf-approach__media-img.is-active { opacity: 1; }
+.bf-approach__media-img--contain { object-fit: contain; }
+.bf-approach__media-dots {
+  position: absolute; z-index: 2; right: 16px; bottom: 14px;
+  display: flex; gap: 6px;
+}
+.bf-approach__media-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .25s ease, transform .25s ease; }
+.bf-approach__media-dot.is-active { background: var(--lime); transform: scale(1.2); }
+
+@media (max-width: 900px) {
+  .bf-approach { grid-template-columns: 1fr; gap: 32px; }
+}
 
 /* ── How It Works — "Journey" card: a vertical accordion (numbered rail +
    one row expanded into a highlighted panel, the rest collapsed to a

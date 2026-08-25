@@ -1,6 +1,9 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
-import { ChevronRight, ShieldCheck, Wallet, FileCheck2, Users, Image as ImageIcon } from 'lucide-react';
-import { navClick } from '../utils/nav.js';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import {
+  ChevronRight, ChevronDown, ShieldCheck, Wallet, FileCheck2, Users, Image as ImageIcon,
+  FlaskConical,
+} from 'lucide-react';
+import { navClick, navigate } from '../utils/nav.js';
 import './MiningMineralsPage.css';
 
 const PROBLEM_ITEMS = [
@@ -36,10 +39,6 @@ const SOLUTION_BLOCKS = [
     tag: 'Conversion',
     title: 'Engineer a Conversion Pathway',
     body: 'Our clearest proof point today: converting silica dust - a mining/processing byproduct - into granulated, glass-feed-grade material, targeting a processing cost around ₹3,000/ton against virgin silica sand at ₹6,000/ton.',
-    chips: [
-      { b: '₹6,000/ton', label: 'virgin silica sand' },
-      { b: '₹3,000/ton', label: 'target processing cost' },
-    ],
     imgLabel: 'Granulated silica dust byproduct, converted to glass-feed-grade material — in development with an industrial partner',
     img: '/conversion.png',
   },
@@ -104,54 +103,45 @@ const WHY_ITEMS = [
   { Icon: Users,       title: 'One Partner Across the Value Chain', body: 'Identification, conversion, and traceability under a single stack.' },
 ];
 
+const MATERIAL_STEPS = [
+  {
+    num: '01',
+    title: 'Fine Mineral Stream',
+    sub: 'Ultra-fine quartz material',
+    body: 'Mineral operations generate ultra-fine quartz content typically below 150 µm. This fine material is prone to dusting, handling losses and is difficult to utilise directly.',
+  },
+  {
+    num: '02',
+    title: 'Controlled Conversion',
+    sub: 'Engineered into a defined form',
+    body: 'Through a controlled material conversion pathway, the fine quartz stream is transformed into compact granules with improved handling characteristics.',
+  },
+  {
+    num: '03',
+    title: 'Defined Material Output',
+    sub: '600–1000 µm granules',
+    body: 'Laboratory trials have produced granules within the 600–1000 µm range, equivalent to ASTM No. 18–30 classification, enabling easier handling and integration for further industrial evaluation.',
+  },
+];
+
+const MATERIAL_STATS = [
+  { value: '<150 µm',     label: 'Starting particle size' },
+  { value: '600–1000 µm', label: 'Granule size range' },
+  { value: 'Low dust',    label: 'Observed during laboratory evaluation' },
+  { value: '500°C',       label: 'Thermal evaluation conducted' },
+];
+
+// Cross-page nav to the Material Science page's Granulation Process
+// section — same sessionStorage handoff pattern used elsewhere on the site
+// (see BlogArticleResourceRecovery.jsx's goToBlogLatest).
+function goToGranulationProcess(e) {
+  e.preventDefault();
+  sessionStorage.setItem('sw_scroll_target', 'granulation-process');
+  navigate('/solutions/material-science');
+}
+
 export default function MiningMineralsPage() {
-  const railWrapRef = useRef(null);
-  const railRef = useRef(null);
-  const railFillRef = useRef(null);
-
-  // The rail's track must span exactly from the first step-circle's center
-  // to the last one's — not the wrap's full box — because the step rows
-  // don't share a height (the image column can be taller than the text),
-  // so a fixed CSS top/bottom offset overshoots past the last circle.
-  useEffect(() => {
-    const wrap = railWrapRef.current;
-    const rail = railRef.current;
-    const fill = railFillRef.current;
-    if (!wrap || !rail || !fill) return;
-
-    function positionRail() {
-      const nums = wrap.querySelectorAll('.mm-step-num');
-      if (nums.length < 2) return;
-      const wrapRect = wrap.getBoundingClientRect();
-      const firstRect = nums[0].getBoundingClientRect();
-      const lastRect = nums[nums.length - 1].getBoundingClientRect();
-      const top = (firstRect.top + firstRect.height / 2) - wrapRect.top;
-      const bottom = (lastRect.top + lastRect.height / 2) - wrapRect.top;
-      rail.style.top = `${top}px`;
-      rail.style.height = `${bottom - top}px`;
-    }
-
-    function updateRail() {
-      // Re-measure every tick, not just once - the step circles start
-      // offset by the scroll-reveal's translateY(24px) (they're below the
-      // fold at mount) and settle into their true position later, which
-      // would otherwise leave the rail's cached end point stale.
-      positionRail();
-      const rect = rail.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const total = rect.height;
-      const scrolled = Math.min(Math.max(vh * 0.5 - rect.top, 0), total);
-      fill.style.height = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
-    }
-
-    updateRail();
-    window.addEventListener('scroll', updateRail, { passive: true });
-    window.addEventListener('resize', updateRail);
-    return () => {
-      window.removeEventListener('scroll', updateRail);
-      window.removeEventListener('resize', updateRail);
-    };
-  }, []);
+  const [activeStep, setActiveStep] = useState(0);
 
   // Page-local reveal — this page is lazy-loaded, so it mounts after
   // SiteEffects' route-keyed IntersectionObserver has already run and can
@@ -194,7 +184,6 @@ export default function MiningMineralsPage() {
         </nav>
 
         <div className="mm-hero__inner">
-          <span className="mm-hero__chip">Industry · Minerals &amp; Mining</span>
           <h1>
             Byproduct Streams Are Raw Material, <em>If You Can Prove It</em>
           </h1>
@@ -253,47 +242,180 @@ export default function MiningMineralsPage() {
         </div>
       </section>
 
-      {/* ── THE RENEONIX APPROACH ── */}
+      {/* ── FROM BYPRODUCT TO ENGINEERED FEEDSTOCK ── */}
       <section className="section section-paper">
         <div className="container">
-          <div className="section-head mm-reveal" style={{ margin: '0 0 48px', textAlign: 'left', maxWidth: 720 }}>
-            <span className="eyebrow">The Reneonix Approach</span>
-            <h2>The Same Stack, <em>Pointed at a Different Feedstock</em></h2>
-            <p>
-              Reneonix's core platform - AI-powered identification, batch-level traceability, and
-              material science - was engineered to turn overlooked residual streams into
-              buyer-ready raw material.
-            </p>
-          </div>
+          <div className="mm-material-frame mm-reveal">
 
-          <div className="mm-rail-wrap" ref={railWrapRef}>
-            <div className="mm-rail" ref={railRef}><div className="mm-rail-fill" ref={railFillRef} /></div>
+            <div className="mm-material-top">
+              <div className="mm-material-top__copy">
+                <span className="eyebrow">From Byproduct to Engineered Feedstock</span>
+                <h2>Turning Fine Mineral Streams Into <em>Controlled Material Forms</em></h2>
+                <p>
+                  Mineral processing generates fine quartz-rich streams that are difficult to
+                  handle and challenging to integrate directly into downstream processes. Reneonix
+                  develops material conversion pathways that transform these fine streams into
+                  controlled granular forms, creating a more manageable and evaluable feedstock.
+                </p>
+              </div>
 
-            {SOLUTION_BLOCKS.map((block) => (
-              <div className="mm-step mm-reveal" key={block.num}>
-                <div className="mm-step-num">{block.num}</div>
-
-                <div className="mm-step-content">
-                  <span className="mm-step__tag">{block.tag}</span>
-                  <h3>{block.title}</h3>
-                  <p>{block.body}</p>
-                  {block.chips && (
-                    <div className="mm-chip-row">
-                      {block.chips.map(({ b, label }) => (
-                        <span className="mm-chip" key={label}><b>{b}</b> {label}</span>
-                      ))}
-                    </div>
-                  )}
+              <div className="mm-material-transform">
+                <div className="mm-material-specimen">
+                  <img
+                    src="/starting material.png"
+                    alt="Fine quartz stream, the byproduct starting material"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="mm-material-specimen__tag">
+                    <span className="mm-material-specimen__tag-label">Fine Quartz Stream</span>
+                    <span className="mm-material-specimen__tag-spec">&lt;150 µm</span>
+                  </div>
                 </div>
 
-                <div className="mm-step-visual">
-                  <div className={`mm-step-visual-card${block.imgFit === 'contain' ? ' mm-step-visual-card--contain' : ''}`}>
-                    {block.img && <img src={block.img} alt={block.imgLabel} loading="lazy" decoding="async" />}
-                    <span className="mm-step-visual-card__caption">{block.imgLabel}</span>
+                <span className="mm-material-dash" aria-hidden="true" />
+
+                <div className="mm-material-center" aria-hidden="true">
+                  <span className="mm-material-center__icon"><FlaskConical size={20} aria-hidden="true" /></span>
+                  <span className="mm-material-center__label">Material<br />Engineering</span>
+                </div>
+
+                <span className="mm-material-dash mm-material-dash--arrow" aria-hidden="true" />
+
+                <div className="mm-material-specimen">
+                  <img
+                    src="/final product.png"
+                    alt="Controlled quartz granules, the engineered material output"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div className="mm-material-specimen__tag">
+                    <span className="mm-material-specimen__tag-label">Controlled Granules</span>
+                    <span className="mm-material-specimen__tag-spec">600–1000 µm</span>
+                    <span className="mm-material-specimen__tag-spec mm-material-specimen__tag-spec--accent">ASTM No. 18–30</span>
                   </div>
                 </div>
               </div>
-            ))}
+            </div>
+
+            <div className="mm-material-cards">
+              {MATERIAL_STEPS.map(({ num, title, sub, body }) => (
+                <div className="mm-material-card" key={num}>
+                  <h4>{title}</h4>
+                  <span className="mm-material-card__sub">{sub}</span>
+                  <span className="mm-material-card__rule" aria-hidden="true" />
+                  <p>{body}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mm-material-stats">
+              <div className="mm-material-stats__lead">
+                From a difficult-to-handle <em>fine stream</em> to a <em>controlled material feedstock.</em>
+              </div>
+              <div className="mm-material-stats__grid">
+                {MATERIAL_STATS.map(({ value, label }) => (
+                  <div className="mm-material-stat" key={label}>
+                    <span className="mm-material-stat__value">{value}</span>
+                    <span className="mm-material-stat__label">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <a
+              href="/solutions/material-science"
+              onClick={goToGranulationProcess}
+              className="mm-material-callout mm-material-callout--link"
+            >
+              <p>
+                This material innovation demonstrates how mining and mineral byproducts can be
+                re-engineered into controlled forms, unlocking new possibilities for internal
+                reuse and advanced industrial applications.
+              </p>
+              <span className="mm-material-callout__btn">
+                Watch the Granulation Process
+                <ChevronRight size={16} aria-hidden="true" />
+              </span>
+            </a>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── THE RENEONIX APPROACH ── */}
+      <section className="section section-paper">
+        <div className="container">
+          <div className="mm-approach mm-reveal">
+
+            <div className="mm-approach__left">
+              <span className="eyebrow">The Reneonix Approach</span>
+              <h2>From Byproduct to <em>Industrial Input</em></h2>
+              <p className="mm-approach__lead">
+                We combine material science, process engineering, traceability and AI to convert
+                complex byproduct streams into valuable, consistent and traceable industrial
+                materials.
+              </p>
+
+              <div className="mm-approach__steps">
+                {SOLUTION_BLOCKS.map((block, i) => (
+                  <div
+                    key={block.num}
+                    className={`mm-approach__step${i === activeStep ? ' is-active' : ''}`}
+                  >
+                    <div className="mm-approach__step-circle-col">
+                      <span className="mm-approach__step-circle">{block.num}</span>
+                    </div>
+
+                    <div className="mm-approach__step-content">
+                      <button
+                        type="button"
+                        className="mm-approach__step-header"
+                        onClick={() => setActiveStep(i)}
+                        onMouseEnter={() => setActiveStep(i)}
+                      >
+                        <span className="mm-approach__step-title">{block.title}</span>
+                        <ChevronDown
+                          size={16}
+                          className={`mm-approach__step-chevron${i === activeStep ? ' is-open' : ''}`}
+                          aria-hidden="true"
+                        />
+                      </button>
+
+                      {i === activeStep && (
+                        <div className="mm-approach__step-desc">
+                          <p>{block.body}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mm-approach__right">
+              <div className="mm-approach__media">
+                {SOLUTION_BLOCKS.map((block, i) => (
+                  <img
+                    key={block.num}
+                    src={block.img}
+                    alt={block.imgLabel}
+                    className={`mm-approach__media-img${i === activeStep ? ' is-active' : ''}${block.imgFit === 'contain' ? ' mm-approach__media-img--contain' : ''}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ))}
+                <div className="mm-approach__media-dots" aria-hidden="true">
+                  {SOLUTION_BLOCKS.map((block, i) => (
+                    <span
+                      key={block.num}
+                      className={`mm-approach__media-dot${i === activeStep ? ' is-active' : ''}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -307,30 +429,31 @@ export default function MiningMineralsPage() {
           </div>
 
           <div className="mm-flow-rail mm-reveal" aria-hidden="true">
-            <span className="mm-flow-rail__endcap mm-flow-rail__endcap--start" />
             {FLOW_STEPS.map((step, i) => (
-              <span className="mm-flow-rail__dot" key={step.tag}>{String(i + 1).padStart(2, '0')}</span>
+              <div className="mm-flow-rail__cell" key={step.tag}>
+                <span className="mm-flow-rail__num">{String(i + 1).padStart(2, '0')}</span>
+                {i < FLOW_STEPS.length - 1 && <ChevronRight size={16} className="mm-flow-rail__chevron" />}
+              </div>
             ))}
-            <span className="mm-flow-rail__endcap mm-flow-rail__endcap--end" />
           </div>
 
           <div className="mm-flow-cards">
             {FLOW_STEPS.map(({ tag, title, body, imgLabel, img }, i) => (
               <div className="mm-flow-card mm-reveal" key={tag} style={{ transitionDelay: `${i * 0.08}s` }}>
-                <span className="mm-flow-card__tag">{tag}</span>
                 <div className="mm-flow-card__media">
                   {img ? (
                     <img src={img} alt={imgLabel} loading="lazy" decoding="async" />
                   ) : (
                     <div className="mm-flow-card__placeholder" role="img" aria-label={imgLabel}>
                       <ImageIcon size={18} aria-hidden="true" />
-                      <span>{imgLabel}</span>
                     </div>
                   )}
                 </div>
-                <h5>{title}</h5>
-                <p>{body}</p>
-                <span className="mm-flow-card__accent" aria-hidden="true" />
+                <div className="mm-flow-card__body">
+                  <span className="mm-flow-card__tag">{tag}</span>
+                  <h5>{title}</h5>
+                  <p>{body}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -392,9 +515,6 @@ export default function MiningMineralsPage() {
               >
                 Get in touch
                 <ChevronRight size={16} aria-hidden="true" />
-              </a>
-              <a href="/contact-us" onClick={navClick('/contact-us')} className="btn btn-outline-dark">
-                Download capability overview
               </a>
             </div>
           </div>

@@ -152,8 +152,8 @@ const SOLUTION_BLOCKS = [
   {
     num: '02',
     tag: 'Software',
-    title: 'Retraiz (TraceOS) — Your Recycled-Content Proof, on Demand',
-    quote: "The batch doesn't just move through the facility. Its story is written, verified and sealed — automatically, at every step.",
+    title: 'Retraiz (TraceOS) - Your Recycled-Content Proof, on Demand',
+    quote: "The batch doesn't just move through the facility. Its story is written, verified and sealed - automatically, at every step.",
     imgLabel: 'Retraiz recycled-content traceability dashboard — batch overview, recovery score, packaging composition, and EPR-compliant grade classification',
     img: '/fmcg software.png',
     // Dashboard screenshot with content flush to every edge (sidebar, top
@@ -171,7 +171,7 @@ const SOLUTION_BLOCKS = [
     num: '03',
     tag: 'Full-Stack',
     title: 'Full-Stack Recovery, Not a Single Point Solution',
-    body: 'Most vendors serving brands operate in one slice — hardware, or software, or MRF operations. Reneonix runs the full stack, integrated, so one partner is accountable for the whole chain from collection to verified output.',
+    body: 'Most vendors serving brands operate in one slice - hardware, or software, or MRF operations. Reneonix runs the full stack, integrated, so one partner is accountable for the whole chain from collection to verified output.',
     imgLabel: 'Full-stack recovery infrastructure — AI scanning hardware, technician dashboards, and baled recycled material in one facility',
     img: '/fmcg fullstack.png',
     href: '/solutions',
@@ -202,7 +202,7 @@ const HOW_STEPS = [
   {
     tag: 'Route',
     stepLabel: 'Intelligent Routing',
-    body: 'AI decides the highest-value recovery pathway for every container — refill, recycle, secondary recovery or reject.',
+    body: 'AI decides the highest-value recovery pathway for every container - refill, recycle, secondary recovery or reject.',
     features: [
       { Icon: Repeat, title: 'Refill Priority', body: 'Intact containers are protected for reuse first.' },
       { Icon: Split, title: 'Material Sorting', body: 'PET, aluminium, and cartons separated automatically.' },
@@ -252,53 +252,7 @@ const WHY_ITEMS = [
 ];
 
 export default function BeverageFmcgPage() {
-  const railWrapRef = useRef(null);
-  const railRef = useRef(null);
-  const railFillRef = useRef(null);
-
-  // The rail's track must span exactly from the first step-circle's center
-  // to the last one's - not the wrap's full box - because the step rows
-  // don't share a height (the image column can be taller than the text),
-  // so a fixed CSS top/bottom offset overshoots past the last circle.
-  useEffect(() => {
-    const wrap = railWrapRef.current;
-    const rail = railRef.current;
-    const fill = railFillRef.current;
-    if (!wrap || !rail || !fill) return;
-
-    function positionRail() {
-      const nums = wrap.querySelectorAll('.bf-step-num');
-      if (nums.length < 2) return;
-      const wrapRect = wrap.getBoundingClientRect();
-      const firstRect = nums[0].getBoundingClientRect();
-      const lastRect = nums[nums.length - 1].getBoundingClientRect();
-      const top = (firstRect.top + firstRect.height / 2) - wrapRect.top;
-      const bottom = (lastRect.top + lastRect.height / 2) - wrapRect.top;
-      rail.style.top = `${top}px`;
-      rail.style.height = `${bottom - top}px`;
-    }
-
-    function updateRail() {
-      // Re-measure every tick, not just once - the step circles start
-      // offset by the scroll-reveal's translateY(24px) (they're below the
-      // fold at mount) and settle into their true position later, which
-      // would otherwise leave the rail's cached end point stale.
-      positionRail();
-      const rect = rail.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const total = rect.height;
-      const scrolled = Math.min(Math.max(vh * 0.5 - rect.top, 0), total);
-      fill.style.height = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
-    }
-
-    updateRail();
-    window.addEventListener('scroll', updateRail, { passive: true });
-    window.addEventListener('resize', updateRail);
-    return () => {
-      window.removeEventListener('scroll', updateRail);
-      window.removeEventListener('resize', updateRail);
-    };
-  }, []);
+  const [activeStep, setActiveStep] = useState(0);
 
   // Page-local reveal — this page is lazy-loaded, so it mounts after
   // SiteEffects' route-keyed IntersectionObserver has already run and can
@@ -341,7 +295,6 @@ export default function BeverageFmcgPage() {
         </nav>
 
         <div className="bf-hero__inner">
-          <span className="bf-hero__chip">Industry · Beverage &amp; FMCG Brands</span>
           <h1>
             Your Packaging Doesn't Stop Being Your Responsibility <em>at the Point of Sale</em>
           </h1>
@@ -411,51 +364,85 @@ export default function BeverageFmcgPage() {
       {/* ── THE RENEONIX SOLUTION ── */}
       <section className="section section-paper">
         <div className="container">
-          <div className="section-head bf-reveal" style={{ margin: '0 0 48px', textAlign: 'left', maxWidth: 720 }}>
-            <span className="eyebrow">The Reneonix Solution</span>
-            <h2>Recovery Infrastructure That Reports Back to You, <em>Not Just to a Recycler</em></h2>
-            <p>
-              Reneonix isn't a recycling vendor you hand packaging to and lose sight of. We
-              identify, sort, and trace your packaging from the moment it re-enters the recovery
-              chain - and hand the data back to you.
-            </p>
-          </div>
+          <div className="bf-approach bf-reveal">
 
-          <div className="bf-rail-wrap" ref={railWrapRef}>
-            <div className="bf-rail" ref={railRef}><div className="bf-rail-fill" ref={railFillRef} /></div>
+            <div className="bf-approach__left">
+              <span className="eyebrow">The Reneonix Solution</span>
+              <h2>Recovery Infrastructure That Reports Back to You, <em>Not Just to a Recycler</em></h2>
+              <p className="bf-approach__lead">
+                Reneonix isn't a recycling vendor you hand packaging to and lose sight of. We
+                identify, sort, and trace your packaging from the moment it re-enters the recovery
+                chain - and hand the data back to you.
+              </p>
 
-            {SOLUTION_BLOCKS.map((block) => (
-              <div className="bf-step bf-reveal" key={block.num}>
-                <div className="bf-step-num">{block.num}</div>
-
-                <div className="bf-step-content">
-                  <span className="bf-row__tag">{block.tag}</span>
-                  <h3>{block.title}</h3>
-                  {block.quote && <div className="bf-quote-inline">"{block.quote}"</div>}
-                  {block.body && <p>{block.body}</p>}
-
-                  {block.chips && (
-                    <div className="bf-chip-row">
-                      {block.chips.map(({ b, label }) => (
-                        <span className="bf-chip" key={label}><b>{b}</b> {label}</span>
-                      ))}
+              <div className="bf-approach__steps">
+                {SOLUTION_BLOCKS.map((block, i) => (
+                  <div
+                    key={block.num}
+                    className={`bf-approach__step${i === activeStep ? ' is-active' : ''}`}
+                  >
+                    <div className="bf-approach__step-circle-col">
+                      <span className="bf-approach__step-circle">{block.num}</span>
                     </div>
-                  )}
 
-                  <a href={block.href} onClick={navClick(block.href)} className="btn-text-link">
-                    Explore {block.tag}
-                    <ChevronRight size={16} aria-hidden="true" />
-                  </a>
-                </div>
+                    <div className="bf-approach__step-content">
+                      <button
+                        type="button"
+                        className="bf-approach__step-header"
+                        onClick={() => setActiveStep(i)}
+                        onMouseEnter={() => setActiveStep(i)}
+                      >
+                        <span className="bf-approach__step-title">{block.title}</span>
+                        <ChevronDown
+                          size={16}
+                          className={`bf-approach__step-chevron${i === activeStep ? ' is-open' : ''}`}
+                          aria-hidden="true"
+                        />
+                      </button>
 
-                <div className="bf-step-visual">
-                  <div className={`bf-step-visual-card${block.imgFit === 'contain' ? ' bf-step-visual-card--contain' : ''}`}>
-                    {block.img && <img src={block.img} alt={block.imgLabel} loading="lazy" decoding="async" />}
-                    <span className="bf-step-visual-card__caption">{block.imgLabel}</span>
+                      {i === activeStep && (
+                        <div className="bf-approach__step-desc">
+                          {block.quote && <div className="bf-approach__step-quote">"{block.quote}"</div>}
+                          {block.body && <p>{block.body}</p>}
+
+                          {block.chips && (
+                            <div className="bf-approach__step-chips">
+                              {block.chips.map(({ b, label }) => (
+                                <span className="bf-approach__step-chip" key={label}><b>{b}</b> {label}</span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bf-approach__right">
+              <div className="bf-approach__media">
+                {SOLUTION_BLOCKS.map((block, i) => (
+                  <img
+                    key={block.num}
+                    src={block.img}
+                    alt={block.imgLabel}
+                    className={`bf-approach__media-img${i === activeStep ? ' is-active' : ''}${block.imgFit === 'contain' ? ' bf-approach__media-img--contain' : ''}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ))}
+                <div className="bf-approach__media-dots" aria-hidden="true">
+                  {SOLUTION_BLOCKS.map((block, i) => (
+                    <span
+                      key={block.num}
+                      className={`bf-approach__media-dot${i === activeStep ? ' is-active' : ''}`}
+                    />
+                  ))}
                 </div>
               </div>
-            ))}
+            </div>
+
           </div>
         </div>
       </section>
@@ -524,7 +511,7 @@ export default function BeverageFmcgPage() {
       <section className="section" style={{ padding: '80px 0' }}>
         <div className="container">
           <div className="cta-banner">
-            <h2>Ready to Know Exactly Where Your Packaging Goes — <em>and Prove It?</em></h2>
+            <h2>Ready to Know Exactly Where Your Packaging Goes - <em>and Prove It?</em></h2>
             <p>Let's talk about a pilot for your brand's recovery footprint.</p>
             <div className="btn-cta-row">
               <a
@@ -535,9 +522,6 @@ export default function BeverageFmcgPage() {
               >
                 Get in touch
                 <ChevronRight size={16} aria-hidden="true" />
-              </a>
-              <a href="/contact-us" onClick={navClick('/contact-us')} className="btn btn-outline-dark">
-                Download capability overview
               </a>
             </div>
           </div>

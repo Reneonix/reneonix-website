@@ -1,5 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { ChevronRight, ShieldCheck, FileCheck2, Wallet, Users, RotateCcw } from 'lucide-react';
+import {
+  ChevronRight, ChevronDown, ShieldCheck, FileCheck2, Wallet, Users, RotateCcw,
+  BrainCircuit, Camera, Database, PieChart,
+  Play, Pause, Maximize2,
+} from 'lucide-react';
 import { navClick } from '../utils/nav.js';
 import './GlassManufacturersPage.css';
 
@@ -175,18 +179,6 @@ const PROBLEM_ITEMS = [
   },
 ];
 
-const PROBLEM_STATS = [
-  {
-    value: '60–70%',
-    body: 'Typical accuracy of traditional glass sorting - human eyes and basic colour sensors. Even small classification errors lock recovered glass into low-grade uses.',
-  },
-  {
-    value: '3×',
-    body: 'Value gap between food-grade cullet and downcycled mixed glass.',
-    sm: true,
-  },
-];
-
 const SOLUTION_BLOCKS = [
   {
     num: '01',
@@ -268,17 +260,17 @@ const FLOW_STEPS = [
 ];
 
 const VP_BREAKDOWN = [
-  { label: 'Glass',   value: '42.6%', color: 'var(--lime)' },
-  { label: 'Plastic', value: '31.8%', color: '#5B9DF5' },
-  { label: 'Metal',   value: '14.2%', color: 'rgba(255,255,255,.55)' },
-  { label: 'Other',   value: '11.4%', color: 'rgba(255,255,255,.3)' },
+  { label: 'Glass',   value: '91.4%', color: 'var(--lime)' },
+  { label: 'Plastic', value: '4.6%', color: '#5B9DF5' },
+  { label: 'Stone',   value: '2.4%', color: 'rgba(255,255,255,.55)' },
+  { label: 'Metal',   value: '1.6%', color: 'rgba(255,255,255,.3)' },
 ];
 
-const VP_FEATURES = [
-  { title: 'Object detection',   body: 'Identifies material instances' },
-  { title: 'Stream analysis',    body: 'Aggregates detections' },
-  { title: 'Confidence scoring', body: 'Model confidence per item' },
-  { title: 'Real-time insight',  body: 'Continuous monitoring' },
+const VP_FLOW = [
+  { Icon: Camera,       title: 'Camera observes',      body: 'Incoming material stream is captured' },
+  { Icon: BrainCircuit, title: 'AI detects',            body: 'Materials are identified and classified in real time' },
+  { Icon: Database,     title: 'Detections aggregated', body: 'AI aggregates detections across the stream' },
+  { Icon: PieChart,     title: 'Composition estimated', body: 'Material composition is calculated and updated' },
 ];
 
 const WHY_ITEMS = [
@@ -289,9 +281,7 @@ const WHY_ITEMS = [
 ];
 
 export default function GlassManufacturersPage() {
-  const railWrapRef = useRef(null);
-  const railRef = useRef(null);
-  const railFillRef = useRef(null);
+  const [activeStep, setActiveStep] = useState(0);
   const vpVideoRef = useRef(null);
 
   // AI Vision Prototype demo video - plays while scrolled into view,
@@ -312,49 +302,51 @@ export default function GlassManufacturersPage() {
     return () => observer.disconnect();
   }, []);
 
-  // The rail's track must span exactly from the first step-circle's center
-  // to the last one's - not the wrap's full box - because the step rows
-  // don't share a height (the image column can be taller than the text),
-  // so a fixed CSS top/bottom offset overshoots past the last circle.
+  // Custom video-player chrome (play/pause, elapsed time, seek, fullscreen)
+  // stays in sync with the scroll-driven autoplay above via the video's own events.
+  const [vpPlaying, setVpPlaying] = useState(false);
+  const [vpTime, setVpTime] = useState(0);
+  const [vpDuration, setVpDuration] = useState(0);
+
   useEffect(() => {
-    const wrap = railWrapRef.current;
-    const rail = railRef.current;
-    const fill = railFillRef.current;
-    if (!wrap || !rail || !fill) return;
-
-    function positionRail() {
-      const nums = wrap.querySelectorAll('.gm-step-num');
-      if (nums.length < 2) return;
-      const wrapRect = wrap.getBoundingClientRect();
-      const firstRect = nums[0].getBoundingClientRect();
-      const lastRect = nums[nums.length - 1].getBoundingClientRect();
-      const top = (firstRect.top + firstRect.height / 2) - wrapRect.top;
-      const bottom = (lastRect.top + lastRect.height / 2) - wrapRect.top;
-      rail.style.top = `${top}px`;
-      rail.style.height = `${bottom - top}px`;
-    }
-
-    function updateRail() {
-      // Re-measure every tick, not just once - the step circles start
-      // offset by the scroll-reveal's translateY(24px) (they're below the
-      // fold at mount) and settle into their true position later, which
-      // would otherwise leave the rail's cached end point stale.
-      positionRail();
-      const rect = rail.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const total = rect.height;
-      const scrolled = Math.min(Math.max(vh * 0.5 - rect.top, 0), total);
-      fill.style.height = (total > 0 ? (scrolled / total) * 100 : 0) + '%';
-    }
-
-    updateRail();
-    window.addEventListener('scroll', updateRail, { passive: true });
-    window.addEventListener('resize', updateRail);
+    const video = vpVideoRef.current;
+    if (!video) return undefined;
+    const onPlay = () => setVpPlaying(true);
+    const onPause = () => setVpPlaying(false);
+    const onTime = () => setVpTime(video.currentTime);
+    const onMeta = () => setVpDuration(video.duration || 0);
+    video.addEventListener('play', onPlay);
+    video.addEventListener('pause', onPause);
+    video.addEventListener('timeupdate', onTime);
+    video.addEventListener('loadedmetadata', onMeta);
     return () => {
-      window.removeEventListener('scroll', updateRail);
-      window.removeEventListener('resize', updateRail);
+      video.removeEventListener('play', onPlay);
+      video.removeEventListener('pause', onPause);
+      video.removeEventListener('timeupdate', onTime);
+      video.removeEventListener('loadedmetadata', onMeta);
     };
   }, []);
+
+  function vpToggle() {
+    const video = vpVideoRef.current;
+    if (!video) return;
+    if (video.paused) video.play().catch(() => {});
+    else video.pause();
+  }
+  function vpSeek(e) {
+    const video = vpVideoRef.current;
+    if (!video) return;
+    video.currentTime = Number(e.target.value);
+  }
+  function vpFullscreen() {
+    vpVideoRef.current?.requestFullscreen?.();
+  }
+  function vpFmtTime(s) {
+    if (!Number.isFinite(s)) return '00:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  }
 
   // Page-local reveal - see the note in the effects below: this page is
   // lazy-loaded, so it mounts after SiteEffects' route-keyed
@@ -397,7 +389,6 @@ export default function GlassManufacturersPage() {
         </nav>
 
         <div className="gm-hero__inner">
-          <span className="gm-hero__chip">Industry · Glass Manufacturers</span>
           <h1>
             Glass Is Our <em>First Commercial Deployment</em>
           </h1>
@@ -433,41 +424,29 @@ export default function GlassManufacturersPage() {
       {/* ── THE PROBLEM ── */}
       <section className="section section-paper">
         <div className="container">
-          <div className="gm-problem-grid">
-            <div className="gm-problem-col">
-              <div className="section-head gm-reveal" style={{ margin: '0 0 32px', textAlign: 'left', maxWidth: 'none' }}>
-                <span className="eyebrow">The Problem</span>
-                <h2>A Bottle's Worth Is Lost in the <em>First Ten Minutes</em></h2>
-                <p style={{ textAlign: 'justify' }}>
-                  A recovered bottle starts out clean, intact, food-grade glass - at its highest
-                  possible value. Then it lands in a mixed collection stream, and everything
-                  conventional recovery does next works against it.
-                </p>
-              </div>
+          <div className="section-head gm-reveal" style={{ margin: '0 0 48px', textAlign: 'left', maxWidth: 720 }}>
+            <span className="eyebrow">The Problem</span>
+            <h2>A Bottle's Worth Is Lost in the <em>First Ten Minutes</em></h2>
+            <p>
+              A recovered bottle starts out clean, intact, food-grade glass - at its highest
+              possible value. Then it lands in a mixed collection stream, and everything
+              conventional recovery does next works against it.
+            </p>
+          </div>
 
-              <div className="gm-problem-cards gm-reveal">
-                {PROBLEM_ITEMS.map(({ title, body }) => (
-                  <div className="gm-problem-card" key={title}>
-                    <h4>{title}</h4>
-                    <p>{body}</p>
-                  </div>
-                ))}
-              </div>
+          <div className="gm-problem-grid">
+            <div className="gm-problem-cards gm-reveal">
+              {PROBLEM_ITEMS.map(({ title, body }) => (
+                <div className="gm-problem-card" key={title}>
+                  <h4>{title}</h4>
+                  <p>{body}</p>
+                </div>
+              ))}
             </div>
 
-            <div className="gm-problem-side gm-reveal">
-              <div className="gm-problem-media">
-                <img src="/Glass Industry 1.jpg" alt="Pile of mixed, contaminated cullet before AI sorting" loading="lazy" decoding="async" />
-                <span className="gm-problem-media__caption">Mixed, contaminated cullet - before AI sorting</span>
-              </div>
-              <div className="gm-problem-stats">
-                {PROBLEM_STATS.map(({ value, body, sm }) => (
-                  <div className={sm ? 'gm-stat-card gm-stat-card--sm' : 'gm-stat-card'} key={value}>
-                    <div className="gm-stat-card__big">{value}</div>
-                    <p>{body}</p>
-                  </div>
-                ))}
-              </div>
+            <div className="gm-problem-media gm-reveal">
+              <img src="/Glass Industry 1.jpg" alt="Pile of mixed, contaminated cullet before AI sorting" loading="lazy" decoding="async" />
+              <span className="gm-problem-media__caption">Mixed, contaminated cullet - before AI sorting</span>
             </div>
           </div>
         </div>
@@ -476,69 +455,103 @@ export default function GlassManufacturersPage() {
       {/* ── THE RENEONIX SOLUTION ── */}
       <section className="section section-paper">
         <div className="container">
-          <div className="section-head gm-reveal" style={{ margin: '0 0 48px', textAlign: 'left', maxWidth: 720 }}>
-            <span className="eyebrow">The Reneonix Solution</span>
-            <h2>Identify First, Collect Second - <em>Not the Other Way Around</em></h2>
-            <p>
-              Most recovery infrastructure was built around "collect first, sort later." We
-              rebuilt it around the opposite idea: valuable materials should be identified,
-              classified, and verified the moment they enter the recovery chain.
-            </p>
-          </div>
+          <div className="gm-approach gm-reveal">
 
-          <div className="gm-rail-wrap" ref={railWrapRef}>
-            <div className="gm-rail" ref={railRef}><div className="gm-rail-fill" ref={railFillRef} /></div>
+            <div className="gm-approach__left">
+              <span className="eyebrow">The Reneonix Solution</span>
+              <h2>Identify First, Collect Second - <em>Not the Other Way Around</em></h2>
+              <p className="gm-approach__lead">
+                Most recovery infrastructure was built around "collect first, sort later." We
+                rebuilt it around the opposite idea: valuable materials should be identified,
+                classified, and verified the moment they enter the recovery chain.
+              </p>
 
-            {SOLUTION_BLOCKS.map((block) => (
-              <div className="gm-step gm-reveal" key={block.num}>
-                <div className="gm-step-num">{block.num}</div>
-
-                <div className="gm-step-content">
-                  <span className="gm-row__tag">{block.tag}</span>
-                  <h3>{block.title}</h3>
-                  <p>{block.body}</p>
-
-                  {block.type === 'chips' && (
-                    <div className="gm-chip-row">
-                      {block.chips.map(({ b, label }) => (
-                        <span className="gm-chip" key={label}><b>{b}</b> {label}</span>
-                      ))}
+              <div className="gm-approach__steps">
+                {SOLUTION_BLOCKS.map((block, i) => (
+                  <div
+                    key={block.num}
+                    className={`gm-approach__step${i === activeStep ? ' is-active' : ''}`}
+                  >
+                    <div className="gm-approach__step-circle-col">
+                      <span className="gm-approach__step-circle">{block.num}</span>
                     </div>
-                  )}
 
-                  {block.type === 'table' && (
-                    <div className="gm-table-wrap">
-                      <table className="gm-table">
-                        <thead>
-                          <tr>{block.table.head.map((h) => <th key={h}>{h}</th>)}</tr>
-                        </thead>
-                        <tbody>
-                          {block.table.rows.map((row) => (
-                            <tr key={row[0]}>
-                              <td>{row[0]}</td>
-                              <td>{row[1]}</td>
-                              <td className="gm-table__hl">{row[2]}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="gm-approach__step-content">
+                      <button
+                        type="button"
+                        className="gm-approach__step-header"
+                        onClick={() => setActiveStep(i)}
+                        onMouseEnter={() => setActiveStep(i)}
+                      >
+                        <span className="gm-approach__step-title">{block.title}</span>
+                        <ChevronDown
+                          size={16}
+                          className={`gm-approach__step-chevron${i === activeStep ? ' is-open' : ''}`}
+                          aria-hidden="true"
+                        />
+                      </button>
+
+                      {i === activeStep && (
+                        <div className="gm-approach__step-desc">
+                          <p>{block.body}</p>
+
+                          {block.type === 'chips' && (
+                            <div className="gm-approach__step-chips">
+                              {block.chips.map(({ b, label }) => (
+                                <span className="gm-approach__step-chip" key={label}><b>{b}</b> {label}</span>
+                              ))}
+                            </div>
+                          )}
+
+                          {block.type === 'table' && (
+                            <div className="gm-approach__step-table-wrap">
+                              <table className="gm-approach__step-table">
+                                <thead>
+                                  <tr>{block.table.head.map((h) => <th key={h}>{h}</th>)}</tr>
+                                </thead>
+                                <tbody>
+                                  {block.table.rows.map((row) => (
+                                    <tr key={row[0]}>
+                                      <td>{row[0]}</td>
+                                      <td>{row[1]}</td>
+                                      <td className="gm-approach__step-table-hl">{row[2]}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  )}
-
-                  <a href={block.href} onClick={navClick(block.href)} className="btn-text-link">
-                    Explore {block.tag}
-                    <ChevronRight size={16} aria-hidden="true" />
-                  </a>
-                </div>
-
-                <div className="gm-step-visual">
-                  <div className={`gm-step-visual-card${block.imgFit === 'contain' ? ' gm-step-visual-card--contain' : ''}`}>
-                    {block.img && <img src={block.img} alt={block.imgLabel} loading="lazy" decoding="async" />}
-                    <span className="gm-step-visual-card__caption">{block.imgLabel}</span>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="gm-approach__right">
+              <div className="gm-approach__media">
+                {SOLUTION_BLOCKS.map((block, i) => (
+                  <img
+                    key={block.num}
+                    src={block.img}
+                    alt={block.imgLabel}
+                    className={`gm-approach__media-img${i === activeStep ? ' is-active' : ''}${block.imgFit === 'contain' ? ' gm-approach__media-img--contain' : ''}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ))}
+                <div className="gm-approach__media-dots" aria-hidden="true">
+                  {SOLUTION_BLOCKS.map((block, i) => (
+                    <span
+                      key={block.num}
+                      className={`gm-approach__media-dot${i === activeStep ? ' is-active' : ''}`}
+                    />
+                  ))}
                 </div>
               </div>
-            ))}
+            </div>
+
           </div>
         </div>
       </section>
@@ -615,9 +628,28 @@ export default function GlassManufacturersPage() {
                   muted
                   loop
                   playsInline
-                  controls
                   preload="metadata"
+                  onClick={vpToggle}
                 />
+                <div className="gm-vp__cam-controls">
+                  <button type="button" className="gm-vp__cam-play" onClick={vpToggle} aria-label={vpPlaying ? 'Pause video' : 'Play video'}>
+                    {vpPlaying ? <Pause size={16} aria-hidden="true" /> : <Play size={16} aria-hidden="true" />}
+                  </button>
+                  <span className="gm-vp__cam-time">{vpFmtTime(vpTime)} / {vpFmtTime(vpDuration)}</span>
+                  <input
+                    type="range"
+                    className="gm-vp__cam-seek"
+                    min={0}
+                    max={vpDuration || 0}
+                    step={0.01}
+                    value={vpTime}
+                    onChange={vpSeek}
+                    aria-label="Seek video"
+                  />
+                  <button type="button" className="gm-vp__cam-expand" onClick={vpFullscreen} aria-label="Fullscreen">
+                    <Maximize2 size={15} aria-hidden="true" />
+                  </button>
+                </div>
               </div>
 
               <div className="gm-vp__panel">
@@ -632,8 +664,8 @@ export default function GlassManufacturersPage() {
                     <span>Estimated glass content</span>
                     <span className="gm-vp-stat__tag">AI detected</span>
                   </div>
-                  <div className="gm-vp-stat__value">42.6%<small>Glass</small></div>
-                  <div className="gm-vp-stat__bar"><div style={{ width: '42.6%' }} /></div>
+                  <div className="gm-vp-stat__value">91.4%<small>Glass</small></div>
+                  <div className="gm-vp-stat__bar"><div style={{ width: '91.4%' }} /></div>
                 </div>
 
                 <ul className="gm-vp-breakdown">
@@ -645,27 +677,30 @@ export default function GlassManufacturersPage() {
                     </li>
                   ))}
                 </ul>
-
-                <div className="gm-vp-features">
-                  {VP_FEATURES.map(({ title, body }) => (
-                    <div className="gm-vp-features__item" key={title}>
-                      <h6>{title}</h6>
-                      <p>{body}</p>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
 
-            <div className="gm-vp__foot">
-              <div>
-                <h5>How the prototype works</h5>
-                <p>Camera observes stream → AI detects material types → detections are aggregated → composition estimate.</p>
+            <div className="gm-vp__flow">
+              <span className="gm-vp__flow-label">How the prototype works</span>
+              <div className="gm-vp__flow-steps">
+                {VP_FLOW.map(({ Icon, title, body }, i) => (
+                  <div className="gm-vp__flow-step" key={title}>
+                    <div className="gm-vp__flow-step-inner">
+                      <span className="gm-vp__flow-icon"><Icon size={18} aria-hidden="true" /></span>
+                      <div>
+                        <h6>{title}</h6>
+                        <p>{body}</p>
+                      </div>
+                    </div>
+                    {i < VP_FLOW.length - 1 && <ChevronRight size={16} className="gm-vp__flow-arrow" aria-hidden="true" />}
+                  </div>
+                ))}
               </div>
-              <div>
-                <h5>AGI pilot use case</h5>
-                <p>Demonstrates how Reneonix can help a recovery facility understand incoming material before downstream processing.</p>
-              </div>
+            </div>
+
+            <div className="gm-vp__banner">
+              <ShieldCheck size={16} aria-hidden="true" />
+              <span>Reneonix AI vision transforms complex waste streams into actionable material intelligence.</span>
             </div>
           </div>
         </div>
@@ -686,9 +721,6 @@ export default function GlassManufacturersPage() {
               >
                 Get in touch
                 <ChevronRight size={16} aria-hidden="true" />
-              </a>
-              <a href="/contact-us" onClick={navClick('/contact-us')} className="btn btn-outline-dark">
-                Download capability overview
               </a>
             </div>
           </div>

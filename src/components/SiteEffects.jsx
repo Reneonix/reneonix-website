@@ -1,9 +1,22 @@
 import { useEffect, useLayoutEffect } from 'react';
 
+/* Hero sections sized to ~viewport height (min-height/height ~= 100vh minus
+   the fixed header) — these are the ones where a normal wheel notch or
+   trackpad flick doesn't carry far enough to reach the next section in one
+   gesture. Shorter, content-hugging heroes (Home, Careers, Solutions,
+   Policy, Contact) aren't included since they don't exhibit that problem
+   and shouldn't have their scroll behaviour touched. */
+const TALL_HERO_SELECTORS = [
+  '.hw2-hero', '.sw-hero', '.ms-hero', '.inv-hero',
+  '.gm-hero', '.ro-hero', '.bf-hero', '.mm-hero', '.mg-hero', '.ind-hero',
+  '.tos-hero', '.rr-hero', '.fg-hero', '.avs-hero', '.ba-hero', '.bp-hero',
+].join(',');
+
 /**
  * Global JS behaviours:
  *  - Parallax on [data-parallax]
  *  - Scroll-reveal (.reveal / .reveal-img / .stagger)
+ *  - Hero scroll assist (see bindHeroScrollAssist below)
  *
  * Accepts `route` so the reveal + parallax effects re-run after
  * every hash navigation, picking up fresh DOM nodes.
@@ -111,5 +124,95 @@ export default function SiteEffects({ route }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, [route]);
 
+  /* ─────────────────────────────────────────────────────────────
+     Hero scroll assist — one full-height Hero section per page was
+     requiring 3-4 scroll gestures to get past (the section is simply
+     taller than a single wheel notch/trackpad flick). Rather than
+     shrinking the Hero (changes its design) this completes the
+     Hero -> next-section transition on the first deliberate downward
+     gesture, exactly like the manual "Scroll" cue already printed on
+     some of these heroes, just without requiring the user to find and
+     click it. Entirely position-based (no "already used" flag): it
+     only ever acts while window.scrollY is still inside the Hero, so
+     it's automatically inert everywhere else on the page and re-arms
+     on its own if the user scrolls back up into the Hero.
+  ───────────────────────────────────────────────────────────── */
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    // Most pages are React.lazy-loaded, so their DOM (including the Hero)
+    // may not exist yet on the tick this effect first runs after a route
+    // change — same race the page-local reveal effects elsewhere work
+    // around. Some of these page bundles (e.g. HardwareSystems, with its
+    // large inline SVG scene) are slow to fetch/parse on first visit, so
+    // this polls generously (10s) rather than giving up after a beat.
+    let cleanup;
+    let attempts = 0;
+    const findHero = setInterval(() => {
+      attempts++;
+      const heroEl = document.querySelector(TALL_HERO_SELECTORS);
+      const nextEl = heroEl?.nextElementSibling;
+      if (heroEl && nextEl) {
+        clearInterval(findHero);
+        cleanup = bindHeroScrollAssist(heroEl, nextEl);
+      } else if (attempts > 100) {
+        clearInterval(findHero);
+      }
+    }, 100);
+
+    return () => {
+      clearInterval(findHero);
+      cleanup?.();
+    };
+  }, [route]);
+
   return null;
+}
+
+function bindHeroScrollAssist(heroEl, nextEl) {
+  let triggered = false;
+  let cooldown;
+
+  const insideHero = () => window.scrollY < heroEl.offsetHeight - 40;
+
+  const goToNext = () => {
+    triggered = true;
+    const headerH = document.querySelector('header')?.offsetHeight || 0;
+    const targetY = Math.max(0, nextEl.getBoundingClientRect().top + window.scrollY - headerH);
+    window.scrollTo({ top: targetY, behavior: 'smooth' });
+    clearTimeout(cooldown);
+    cooldown = setTimeout(() => { triggered = false; }, 1000);
+  };
+
+  const onWheel = (e) => {
+    if (!triggered && e.deltaY > 4 && insideHero()) {
+      e.preventDefault();
+      goToNext();
+    }
+  };
+
+  let touchStartY = 0;
+  let capturing = false;
+  const onTouchStart = (e) => { touchStartY = e.touches[0].clientY; capturing = false; };
+  const onTouchMove = (e) => {
+    // Once engaged, keep intercepting for the rest of this touch so the
+    // animated scroll isn't fought by the finger still moving on screen.
+    if (capturing) { e.preventDefault(); return; }
+    if (!triggered && touchStartY - e.touches[0].clientY > 10 && insideHero()) {
+      capturing = true;
+      e.preventDefault();
+      goToNext();
+    }
+  };
+
+  window.addEventListener('wheel', onWheel, { passive: false });
+  window.addEventListener('touchstart', onTouchStart, { passive: true });
+  window.addEventListener('touchmove', onTouchMove, { passive: false });
+
+  return () => {
+    window.removeEventListener('wheel', onWheel);
+    window.removeEventListener('touchstart', onTouchStart);
+    window.removeEventListener('touchmove', onTouchMove);
+    clearTimeout(cooldown);
+  };
 }
