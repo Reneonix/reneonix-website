@@ -22,7 +22,7 @@
      whole block inside a laptop-height viewport (same fix as the Glass
      Manufacturers hero). */
   padding: clamp(88px, 9.5vw, 112px) 0 clamp(28px, 4vw, 44px);
-  background: var(--bg) url('/recycling hero.png') center / cover no-repeat;
+  background: var(--bg) url('/recycling hero.webp') center / cover no-repeat;
 }
 @media (max-width: 1024px) { .ro-hero { min-height: calc(100vh - 68px); } }
 @media (max-width: 480px) { .ro-hero { min-height: calc(100vh - 60px); } }

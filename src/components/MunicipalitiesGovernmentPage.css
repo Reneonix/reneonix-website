@@ -18,7 +18,7 @@
   min-height: calc(100vh - 76px);
   display: flex; align-items: center; justify-content: flex-start;
   padding: clamp(88px, 9.5vw, 112px) 0 clamp(28px, 4vw, 44px);
-  background: var(--bg) url('/government hero.png') center / cover no-repeat;
+  background: var(--bg) url('/government hero.webp') center / cover no-repeat;
 }
 @media (max-width: 1024px) { .mg-hero { min-height: calc(100vh - 68px); } }
 @media (max-width: 480px) { .mg-hero { min-height: calc(100vh - 60px); } }

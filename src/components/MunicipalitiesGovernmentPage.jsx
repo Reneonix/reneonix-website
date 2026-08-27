@@ -32,7 +32,7 @@ const SOLUTION_BLOCKS = [
     title: 'Household Collection & Source Segregation',
     body: 'Waste is collected directly from homes and establishments and segregated into dry and wet streams at the point of collection - the single highest-leverage step for effective recovery.',
     imgLabel: 'Collection worker segregating dry and wet waste into separate bins at a household doorstep',
-    img: '/collection government.png',
+    img: '/collection government.webp',
   },
   {
     num: '02',
@@ -44,7 +44,7 @@ const SOLUTION_BLOCKS = [
       { b: 'Wet waste →', label: 'Composting pathway' },
     ],
     imgLabel: 'Two-path routing: dry waste under AI-vision sorting on the left, wet waste going to compost on the right',
-    img: '/government routing.png',
+    img: '/government routing.webp',
   },
   {
     num: '03',
@@ -52,7 +52,7 @@ const SOLUTION_BLOCKS = [
     title: 'Household QR Transparency',
     body: 'Every household is issued a QR code. Scanning it opens a personal dashboard showing exactly how much waste that home has handed over - by date, by type, over time.',
     imgLabel: 'Household QR code sticker and phone screen showing a personal waste-contribution dashboard',
-    img: '/government traceability.png',
+    img: '/government traceability.webp',
   },
   {
     num: '04',
@@ -60,7 +60,7 @@ const SOLUTION_BLOCKS = [
     title: 'Municipal Dashboard & Reporting',
     body: 'Household-level data rolls up into an aggregate view for the local administration - total volumes, segregation compliance, recycling versus composting split, and trends over time.',
     imgLabel: 'Municipal officer reviewing the City Waste Overview dashboard - total volumes, recycling vs. composting split, and ward-level segregation compliance',
-    img: '/government governance.png',
+    img: '/government governance.webp',
   },
 ];
 
@@ -198,7 +198,7 @@ export default function MunicipalitiesGovernmentPage() {
 
             <div className="mg-problem-media mg-reveal">
               <img
-                src="/government problem.png"
+                src="/government problem.webp"
                 alt="Mixed, unsegregated household waste at a hill-station collection point overlooking a hillside town"
                 loading="lazy"
                 decoding="async"
@@ -317,7 +317,7 @@ export default function MunicipalitiesGovernmentPage() {
             <video
               ref={flowVideoRef}
               className="mg-flow-video__player"
-              src="/government video.mp4"
+              src="/government video optimized.mp4"
               muted
               loop
               playsInline

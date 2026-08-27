@@ -140,7 +140,7 @@ const SOLUTION_BLOCKS = [
     title: 'MRM (AI) - Smarter Intake, Before Contamination Begins',
     body: 'Identifies, classifies, and verifies materials the moment they enter your facility - colour, material type, condition, and contamination.',
     imgLabel: "MRM (AI) unit installed at a facility's intake point, integrated with the existing conveyor line",
-    img: '/recycling hardware.png',
+    img: '/recycling hardware.webp',
     href: '/solutions/hardware',
     type: 'chips',
     chips: [
@@ -155,7 +155,7 @@ const SOLUTION_BLOCKS = [
     title: 'AI Vision Sorting - Line-Speed Accuracy, Shift After Shift',
     body: "Validated across live MRF deployments. Replaces human-eye and basic-sensor sorting with a system that doesn't fatigue or vary shift to shift.",
     imgLabel: 'AI Vision Sorting live overlay — colour, material, and confidence score on items moving down the line',
-    img: '/recycling hardware 2.png',
+    img: '/recycling hardware 2.webp',
     // Live HUD overlay with a stats bar flush to the top edge and item
     // labels reaching close to the bottom — cover would crop them, so show
     // the whole frame, same fix used for the dashboard shots on this page.
@@ -176,7 +176,7 @@ const SOLUTION_BLOCKS = [
     title: 'Retraiz (TraceOS) - Turn Your Operation Into a Documented, Auditable Asset',
     body: 'Live operational dashboards, AI decision support, and buyer-ready documentation - generated automatically, no manual work.',
     imgLabel: 'Retraiz operator dashboard — live recovery rate, quality grade, and uptime for the facility',
-    img: '/recycling - software.png',
+    img: '/recycling - software.webp',
     // Dashboard screenshot with content flush to every edge (sidebar, top
     // bar, batch table) — cover would crop it, so show it whole, same fix
     // used for the equivalent dashboard shots on the FMCG and Glass pages.
@@ -347,7 +347,7 @@ export default function RecyclingOperatorsPage() {
 
             <div className="ro-problem-media ro-reveal">
               <img
-                src="/recycling problem.png"
+                src="/recycling problem.webp"
                 alt="Manual sorting line — workers picking mixed, contaminated material by hand before automation"
                 loading="lazy"
                 decoding="async"

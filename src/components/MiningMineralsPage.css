@@ -22,7 +22,7 @@
      stats strip), so the plain-article hero's larger 140-180/48-72
      padding was leaving it overflowing a laptop-height viewport. */
   padding: clamp(88px, 9.5vw, 112px) 0 clamp(28px, 4vw, 44px);
-  background: var(--bg) url('/mining-hero.png') center / cover no-repeat;
+  background: var(--bg) url('/mining-hero.webp') center / cover no-repeat;
 }
 @media (max-width: 1024px) { .mm-hero { min-height: calc(100vh - 68px); } }
 @media (max-width: 480px) { .mm-hero { min-height: calc(100vh - 60px); } }

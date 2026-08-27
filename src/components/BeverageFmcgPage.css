@@ -21,7 +21,7 @@
      room back to keep the whole block inside a laptop-height viewport
      (matches the Glass Manufacturers hero, .gm-hero). */
   padding: clamp(88px, 9.5vw, 112px) 0 clamp(28px, 4vw, 44px);
-  background: var(--bg) url('/fmcg hero.png') center / cover no-repeat;
+  background: var(--bg) url('/fmcg hero.webp') center / cover no-repeat;
 }
 @media (max-width: 1024px) { .bf-hero { min-height: calc(100vh - 68px); } }
 @media (max-width: 480px) { .bf-hero { min-height: calc(100vh - 60px); } }

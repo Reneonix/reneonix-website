@@ -22,7 +22,7 @@
      on top of chip/h1/cta, so it needs the extra room back to keep the
      whole block inside a laptop-height viewport. */
   padding: clamp(88px, 9.5vw, 112px) 0 clamp(28px, 4vw, 44px);
-  background: var(--bg) url('/glass hero.png') center / cover no-repeat;
+  background: var(--bg) url('/glass hero.webp') center / cover no-repeat;
 }
 @media (max-width: 1024px) { .gm-hero { min-height: calc(100vh - 68px); } }
 @media (max-width: 480px) { .gm-hero { min-height: calc(100vh - 60px); } }

@@ -186,7 +186,7 @@ const SOLUTION_BLOCKS = [
     title: 'MRM (AI) - Front-End Material Recovery',
     body: 'A bottle is deposited, and within milliseconds integrated sensors and on-edge AI vision detect material type, colour, condition, and contamination - no waiting for a downstream MRF to sort it.',
     imgLabel: 'MRM (AI) unit installed at a glass manufacturer\'s intake point',
-    img: '/step1 solution.png',
+    img: '/step1 solution.webp',
     // Portrait-ish product shot (1.25:1) in this landscape (~1.7:1) card —
     // object-fit:cover was cropping the top branding bar and base feet off.
     // "contain" instead so the whole uploaded photo stays visible.
@@ -206,7 +206,7 @@ const SOLUTION_BLOCKS = [
     title: 'AI Vision Sorting - Industrial-Grade Classification',
     body: 'Reads a full profile per bottle - colour, shape, brand, surface condition, structural integrity - and assigns a confidence score, all in real time.',
     imgLabel: 'AI vision overlay identifying a glass bottle by colour, shape and confidence score',
-    img: '/step2 solution.png',
+    img: '/step2 solution.webp',
     href: '/solutions/hardware',
     type: 'table',
     table: {
@@ -244,7 +244,7 @@ const SOLUTION_BLOCKS = [
     title: "Material Science - A Pathway for What's Left Over",
     body: 'Residual glass fines (sub-4mm) are formulated and tested into foam glass insulation. We\'re also exploring converting byproduct silica dust into glass-feed granules, targeting a >50% raw-material cost reduction versus virgin silica sand.',
     imgLabel: 'Foam glass insulation blocks made from residual glass fines',
-    img: '/step4 solution.png',
+    img: '/step4 solution.webp',
     href: '/solutions/material-science',
     type: 'none',
   },
@@ -624,7 +624,7 @@ export default function GlassManufacturersPage() {
                 <video
                   ref={vpVideoRef}
                   className="gm-vp__cam-video"
-                  src="/prototype video.mp4"
+                  src="/prototype video optimized.mp4"
                   muted
                   loop
                   playsInline

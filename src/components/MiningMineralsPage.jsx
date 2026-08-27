@@ -40,7 +40,7 @@ const SOLUTION_BLOCKS = [
     title: 'Engineer a Conversion Pathway',
     body: 'Our clearest proof point today: converting silica dust - a mining/processing byproduct - into granulated, glass-feed-grade material, targeting a processing cost around ₹3,000/ton against virgin silica sand at ₹6,000/ton.',
     imgLabel: 'Granulated silica dust byproduct, converted to glass-feed-grade material — in development with an industrial partner',
-    img: '/conversion.png',
+    img: '/conversion.webp',
   },
   {
     num: '03',
@@ -48,7 +48,7 @@ const SOLUTION_BLOCKS = [
     title: 'Trace It Like an Industrial Input, Not Waste',
     body: 'Every batch that moves through this pathway gets the same digital identity as our packaging materials - via Retraiz (TraceOS): source, processing history, quality metrics, and compliance documentation, immutable and auditable.',
     imgLabel: 'Retraiz dashboard, adapted to show a mineral byproduct batch',
-    img: '/traceability.png',
+    img: '/traceability.webp',
     // Dashboard screenshot - cover was slicing the sidebar/table edges off,
     // same fix as GlassManufacturersPage's Retraiz shot.
     imgFit: 'contain',
@@ -59,7 +59,7 @@ const SOLUTION_BLOCKS = [
     title: 'Apply AI Vision Where Sorting Is the Bottleneck',
     body: "For mineral streams that require sorting or grading before reuse, the same AI vision approach we've proven on glass - colour, condition, material classification at line speed  can be adapted to mineral and ore byproduct sorting use cases.",
     imgLabel: 'AI vision classification adapted for mineral and ore byproduct sorting',
-    img: '/ai vision.png',
+    img: '/ai vision.webp',
   },
 ];
 
@@ -86,7 +86,7 @@ const FLOW_STEPS = [
     tag: 'Trace', title: 'Digital Material Passport',
     body: 'Record batch history, quality reports and compliance data.',
     imgLabel: 'Reneonix Material Passport for a verified mineral byproduct batch',
-    img: '/mining4.png',
+    img: '/mining4.webp',
   },
   {
     tag: 'Supply', title: 'Verified Material Delivery',
@@ -232,7 +232,7 @@ export default function MiningMineralsPage() {
 
             <div className="mm-problem-media mm-reveal">
               <img
-                src="/mining-problem.png"
+                src="/mining-problem.webp"
                 alt="Stockpiled byproduct fines at a mineral processing site, currently treated as waste rather than input"
                 loading="lazy"
                 decoding="async"
@@ -262,7 +262,7 @@ export default function MiningMineralsPage() {
               <div className="mm-material-transform">
                 <div className="mm-material-specimen">
                   <img
-                    src="/starting material.png"
+                    src="/starting material.webp"
                     alt="Fine quartz stream, the byproduct starting material"
                     loading="lazy"
                     decoding="async"
@@ -284,7 +284,7 @@ export default function MiningMineralsPage() {
 
                 <div className="mm-material-specimen">
                   <img
-                    src="/final product.png"
+                    src="/final product.webp"
                     alt="Controlled quartz granules, the engineered material output"
                     loading="lazy"
                     decoding="async"

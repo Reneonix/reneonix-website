@@ -142,7 +142,7 @@ const SOLUTION_BLOCKS = [
     title: 'Brand-Level Identification at the Point of Recovery',
     body: 'Our MRM (AI) hardware identifies brand at the moment a bottle is deposited, using label recognition, bottle geometry, and embossing.',
     imgLabel: 'MRM (AI) hardware scanning bottles and cans on the recovery line, with detection dashboards monitored in real time',
-    img: '/fmcg hardware.png',
+    img: '/fmcg hardware.webp',
     href: '/solutions/hardware',
     chips: [
       { b: '95%', label: 'brand detection accuracy' },
@@ -155,7 +155,7 @@ const SOLUTION_BLOCKS = [
     title: 'Retraiz (TraceOS) - Your Recycled-Content Proof, on Demand',
     quote: "The batch doesn't just move through the facility. Its story is written, verified and sealed - automatically, at every step.",
     imgLabel: 'Retraiz recycled-content traceability dashboard — batch overview, recovery score, packaging composition, and EPR-compliant grade classification',
-    img: '/fmcg software.png',
+    img: '/fmcg software.webp',
     // Dashboard screenshot with content flush to every edge (sidebar, top
     // bar, batch history table) — cover would crop it, so show it whole,
     // same fix used for the equivalent dashboard shot on the Glass page.
@@ -173,7 +173,7 @@ const SOLUTION_BLOCKS = [
     title: 'Full-Stack Recovery, Not a Single Point Solution',
     body: 'Most vendors serving brands operate in one slice - hardware, or software, or MRF operations. Reneonix runs the full stack, integrated, so one partner is accountable for the whole chain from collection to verified output.',
     imgLabel: 'Full-stack recovery infrastructure — AI scanning hardware, technician dashboards, and baled recycled material in one facility',
-    img: '/fmcg fullstack.png',
+    img: '/fmcg fullstack.webp',
     href: '/solutions',
   },
 ];
@@ -351,7 +351,7 @@ export default function BeverageFmcgPage() {
 
             <div className="bf-problem-media bf-reveal">
               <img
-                src="/fmcg problem.png"
+                src="/fmcg problem.webp"
                 alt="Mixed post-consumer packaging stream at collection — brand labels no longer distinguishable"
                 loading="lazy"
                 decoding="async"

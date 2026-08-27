@@ -8,7 +8,7 @@ const INDUSTRIES = [
   {
     badge: 'Live deployment',
     variant: 'live',
-    img: '/glass hero.png',
+    img: '/glass hero.webp',
     title: 'Glass Manufacturers',
     tagline: 'From ungraded cullet to furnace-ready raw material, verified batch by batch.',
     href: '/industries/glass-manufacturers',
@@ -16,7 +16,7 @@ const INDUSTRIES = [
   {
     badge: 'Live deployment',
     variant: 'live',
-    img: '/recycling - main.png',
+    img: '/recycling - main.webp',
     title: 'Recycling Operators',
     tagline: 'Turn mixed, contaminated intake into buyer-ready output, without adding headcount.',
     href: '/industries/recycling-operators',
@@ -24,7 +24,7 @@ const INDUSTRIES = [
   {
     badge: 'Pilot discussion',
     variant: 'pilot',
-    img: '/fmcg main.png',
+    img: '/fmcg main.webp',
     title: 'Beverage & FMCG Brands',
     tagline: 'Know exactly where your packaging goes after the point of sale, and prove it to a regulator.',
     href: '/industries/beverage-fmcg-brands',
@@ -32,7 +32,7 @@ const INDUSTRIES = [
   {
     badge: 'Positioning',
     variant: 'position',
-    img: '/mining-hero.png',
+    img: '/mining-hero.webp',
     title: 'Minerals & Mining',
     tagline: "Byproduct isn't waste until you decide not to characterise it.",
     href: '/industries/mining-minerals',
@@ -40,7 +40,7 @@ const INDUSTRIES = [
   {
     badge: 'Concept',
     variant: 'position',
-    img: '/government hero.png',
+    img: '/government hero.webp',
     title: 'Government & Municipalities',
     tagline: 'Household-level waste visibility for the communities that need it most.',
     href: '/industries/municipalities-government',
@@ -87,7 +87,7 @@ export default function IndustriesPage() {
           preload="auto"
           aria-hidden="true"
         >
-          <source src="/industry bg video.mp4" type="video/mp4" />
+          <source src="/industry bg video optimized.mp4" type="video/mp4" />
         </video>
         <div className="ind-hero__veil" aria-hidden="true" />
 
